@@ -13,7 +13,7 @@ RESET='\033[0m'  # Reset color to default
 OK='\033[1;34m [---- OK  ----]:\033[0m'
 OPS='\033[0;31m [--- Ooops ---]:\033[0m'
 
-main_CPP_test_directory=regression-tests/regression-tests
+main_CPP_test_directory=regressions
 KEEP_MODE=0
 DIR=0
 # Parse command-line options
@@ -56,7 +56,7 @@ then
   echo "$OK Directory has been found successfully: $DIR"
   echo "$OK Linking with test: $DIR"
 
-  make compile-test src="$DIR/main.c" target="$DIR/$BASE_DIR"
+  make compile-test src="$DIR/main.cpp" target="$DIR/$BASE_DIR"
   echo "$OK Linking has been finished successfully"
   
   test_file=$(find "$DIR" -type f -name "*.testelf")

@@ -1,6 +1,7 @@
 INPUT_FILE := ./modules.in
 DIRS := ./mcal ./hal ./utils
 SOURCES := $(shell sed 's/$$/.cpp/' "$(INPUT_FILE)")
+SOURCES += $(wildcard utils/src/*.cpp) # ALl utils should be added with all modules
 SRC_NAMES:= $(notdir $(SOURCES))
 SOURCES_COUNT:= $(words $(SOURCES))
 SOURCES_CTR:=0
@@ -96,8 +97,6 @@ clean:
 	@rm -rf *.hex
 	@rm -rf avr
 	@rm -rf .build
-	@find app/* -name "*.hex" -type f -delete
-	@find app/* -name "*.elf" -type f -delete
 
 
 

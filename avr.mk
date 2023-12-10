@@ -3,9 +3,9 @@ AVR_GCC:= avr-g++
 AVR_MCU:= atmega32a
 AVR_CLK:= 8000000
 AVR_OBJ_COPY:= avr-objcopy
-AVR_GCCFLAGS:=    -g -Wall -DF_CPU=$(AVR_CLK) -mmcu=$(AVR_MCU) -gdwarf-2 -O2 -Werror
-AVR_OPT_CCFLAGS:= -g -Wall -DF_CPU=$(AVR_CLK) -mmcu=$(AVR_MCU) -gdwarf-2 -O3 -Werror
-AVR_GCC_TEST_FLAGS:= -g -Wall -DF_CPU=$(AVR_CLK) -mmcu=$(AVR_MCU) -gdwarf-2 -O2
+AVR_GCCFLAGS:=    	 -g -Wall -DF_CPU=$(AVR_CLK) -mmcu=$(AVR_MCU) -gdwarf-2 -O2 -Werror -std=c++14
+AVR_OPT_CCFLAGS:= 	 -g -Wall -DF_CPU=$(AVR_CLK) -mmcu=$(AVR_MCU) -gdwarf-2 -O3 -Werror -std=c++14
+AVR_GCC_TEST_FLAGS:= -g -Wall -DF_CPU=$(AVR_CLK) -mmcu=$(AVR_MCU) -gdwarf-2 -O2 -Werror -std=c++14
 AVR_OBJ_COPY_OPTS:= -j .text -j .data -O ihex 
 
 AVR_TARGET:= avr
