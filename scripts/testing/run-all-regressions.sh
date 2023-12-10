@@ -1,7 +1,7 @@
 #!/bin/bash
 
 EXIT=0
-main_CPP_test_directory=regression-tests/regression-tests
+main_CPP_test_directory=regressions
 
 if [ -d "$main_CPP_test_directory" ]; then
   test_files_dirs=$(ls "$main_CPP_test_directory")
