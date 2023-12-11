@@ -55,4 +55,4 @@ int main () {
     R.Clear();
     print_num(R.Get()); //0
     new_line();
-}   
+}
