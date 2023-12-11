@@ -10,6 +10,11 @@ class Register {
 public:
     Register(const RegWidth_t address);
     
+    template<uint8_t address>
+    void SetAddress() {
+        _pReg = reinterpret_cast<volatile RegWidth_t *>(address);
+    }
+    
     template<uint8_t bitNumber>
     void SetBit() const {
         *_pReg |=  (1 << bitNumber);
