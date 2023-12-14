@@ -18,7 +18,7 @@ enum Pin {
 using AvrRegWidth  = uint8_t;
 }}
 
-#define GPIOA_BASE_ADDRESS              (PORTA)
+#define GPIOA_BASE_ADDRESS             (PORTA)
 #define PORTA                          (0x3B)
 #define DDRA                           (0x3A)
 #define PINA                           (0x39)

@@ -10,7 +10,7 @@ class Register {
 public:
     Register(const RegWidth_t address);
     
-    template<uint8_t address>
+    template<RegWidth_t address>
     void SetAddress() {
         _pReg = reinterpret_cast<volatile RegWidth_t *>(address);
     }

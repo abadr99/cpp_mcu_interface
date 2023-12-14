@@ -4,7 +4,6 @@
 namespace avr {
 namespace mcu {
 namespace gpio{
-
 template <avr::types::Port TPort>
 class Gpio {
 public:
@@ -19,8 +18,9 @@ public:
      * @param val voltage level kHigh OR kLow
      */
     // TODO(@abadr99): Support variadic templates for pinNumbers
-    template <avr::types::Pin TPinNumber>
-    void Write(DigitalLevel val);
+    template <avr::types::Pin TPinNumber, 
+              DigitalLevel TDigitalVal>
+    void Write();
 
     /**
      * @brief Read applied voltage at 'TPinNumber' at 'TPort'
@@ -55,13 +55,21 @@ public:
      */
     void SetDirection(types::AvrRegWidth val);
 private:
-    struct GpioRegisters {
-        utils::Register<avr::types::AvrRegWidth> port;
-        utils::Register<avr::types::AvrRegWidth> ddr;
-        utils::Register<avr::types::AvrRegWidth> pin;
-        GpioRegisters(const avr::types::AvrRegWidth base_address);
+    template <avr::types::Port UPort>
+    class GpioRegisters {
+    public:
+        using Register_t = utils::Register<avr::types::AvrRegWidth>;
+        explicit GpioRegisters(const avr::types::AvrRegWidth base_address);
+        Register_t& GetPortRegister();
+        Register_t& GetDdrRegister();
+        Register_t& GetPinRegister();
+        static GpioRegisters CreateGpioRegistersObj();
+    private:
+        Register_t port_;
+        Register_t ddr_;
+        Register_t pin_;
     };
-    GpioRegisters gpioRegisters_;
+    GpioRegisters<TPort> gpioRegisters_;
 };
 
 }}} // avr::mcu::gpio
