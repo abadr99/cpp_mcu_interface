@@ -1,7 +1,7 @@
 #!/bin/bash
 
 EXIT=0
-main_CPP_test_directory=regressions
+main_CPP_test_directory=tests/integration
 
 if [ -d "$main_CPP_test_directory" ]; then
   rm -rf "$main_CPP_test_directory"/summary

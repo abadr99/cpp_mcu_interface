@@ -13,7 +13,7 @@ RESET='\033[0m'  # Reset color to default
 OK='\033[1;34m [---- OK  ----]:\033[0m'
 OPS='\033[0;31m [--- Ooops ---]:\033[0m'
 
-main_CPP_test_directory=regressions
+main_CPP_test_directory=tests/integration
 KEEP_MODE=0
 DIR=0
 # Parse command-line options
