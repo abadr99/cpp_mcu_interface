@@ -4,6 +4,7 @@ EXIT=0
 main_CPP_test_directory=regressions
 
 if [ -d "$main_CPP_test_directory" ]; then
+  rm -rf "$main_CPP_test_directory"/summary
   test_files_dirs=$(ls "$main_CPP_test_directory")
 else
   echo "Directory not found: $main_CPP_test_directory"
