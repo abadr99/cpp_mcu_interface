@@ -10,23 +10,16 @@ INC:=  $(foreach dir,$(DIRS), -I$(dir)/inc)
 include avr.mk
 include tools.mk
 
-.PHONY: all clean build 
+.PHONY: all clean build-avr build-avr-opt compile-hardware-test compile-test run-regressions style-check 
 
 all:build-avr style-check
-	@echo -n "[Doxygen] : "
-	@sh $(DOXYGEN_SCRIPT) $(DOXYGEN_CONFIG) $(TREAT_WARN_AS_WARN) 
 
-debug:
-	@echo " Includes = $(INC)"
-	@echo " Sources = $(SOURCES)"
-	@echo " objects = $(AVR_OBJS)"
-	@echo " objects dire = $(AVR_OBJDIR)"
-
+build: build-avr style-check
 # ------------------------------------------
 # Rule to build avr for debug and test mode 
 # make build-avr
 # ------------------------------------------
-build-avr: $(AVR_OBJS)
+build-avr: $(AVR_OBJS) 
 	@$(AVR_GCC) $(AVR_GCCFLAGS) $(AVR_OBJS) ./main.cpp -o $(AVR_ELF_TARGET)
 	@$(AVR_OBJ_COPY) $(AVR_OBJ_COPY_OPTS) $(AVR_ELF_TARGET) $(AVR_HEX_TARGET)
 	@echo "\n[Makefile][build] : Compiled successfully."
@@ -40,6 +33,8 @@ build-avr-opt:$(AVR_OBJS)
 	@$(AVR_OBJ_COPY) $(AVR_OBJ_COPY_OPTS) $(AVR_ELF_TARGET) $(AVR_HEX_TARGET)
 	@echo "\n[Makefile][opt-build] : Compiled successfully."	
 
+compile-hardware-test:
+	@$(AVR_GCC) $(AVR_OPT_CCFLAGS) $(AVR_OBJS) $(test) -o $(dir $(test))/$(name).elf
 # --------------------------------------------------------
 # Rule to compile test 
 # make compile-test src=path/to/main/file target=test_name
@@ -97,8 +92,5 @@ clean:
 	@rm -rf *.hex
 	@rm -rf avr
 	@rm -rf .build
-
-
-
-
-
+	@find . -name "*.o" -type f -delete
+	@find tests/hardware/ -name "*.elf" -type f -delete

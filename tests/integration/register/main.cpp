@@ -43,13 +43,13 @@ int main () {
     print_num(EECR); //15
     new_line();
 
-    print_num(R.GetBit<0>()); //1
+    print_num(R.ReadBit<0>()); //1
     new_line();
-    print_num(R.GetBit<1>()); //1
+    print_num(R.ReadBit<1>()); //1
     new_line();
-    print_num(R.GetBit<2>()); //1
+    print_num(R.ReadBit<2>()); //1
     new_line();
-    print_num(R.GetBit<3>()); //1
+    print_num(R.ReadBit<3>()); //1
     new_line();
 
     R.Clear();
