@@ -7,7 +7,11 @@ namespace gpio{
 
 enum DigitalLevel{kLow, kHigh};
 
-enum DirectionState{kInput, kOutput};
+enum DirectionState{
+    kInput, 
+    kInputPullUp,
+    kOutput,
+};
 template <avr::types::Port TPort>
 class Gpio {
 public:

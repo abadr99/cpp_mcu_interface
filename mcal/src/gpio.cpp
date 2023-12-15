@@ -65,12 +65,17 @@ template<Pin TPinNumber, DirectionState TDirectionState>
 void Gpio<TPort>::SetDirection() {
     using DIR = DirectionState;
     switch (TDirectionState) {
-        case DIR::kInput :  gpioRegisters_.GetDdrRegister()
-                                          .template ClearBit<TPinNumber>();
-                            break;
-        case DIR::kOutput:  gpioRegisters_.GetDdrRegister()
-                                          .template SetBit<TPinNumber>();
-                            break;
+        case DIR::kInput :  
+            gpioRegisters_.GetDdrRegister().template ClearBit<TPinNumber>(); 
+            gpioRegisters_.GetPortRegister().template ClearBit<TPinNumber>(); 
+            break;
+        case DIR::kOutput:  
+            gpioRegisters_.GetDdrRegister().template SetBit<TPinNumber>();
+            break;
+        case DIR::kInputPullUp: 
+            gpioRegisters_.GetDdrRegister().template ClearBit<TPinNumber>(); 
+            gpioRegisters_.GetPortRegister().template SetBit<TPinNumber>();
+            break;
     }
 }
 
@@ -132,6 +137,14 @@ template void Gpio<Port::kPortA>::SetDirection<Pin::kPin4, DirectionState::kInpu
 template void Gpio<Port::kPortA>::SetDirection<Pin::kPin5, DirectionState::kInput>();  //IGNORE-STYLE-CHECK[L004]
 template void Gpio<Port::kPortA>::SetDirection<Pin::kPin6, DirectionState::kInput>();  //IGNORE-STYLE-CHECK[L004]
 template void Gpio<Port::kPortA>::SetDirection<Pin::kPin7, DirectionState::kInput>();  //IGNORE-STYLE-CHECK[L004]
+template void Gpio<Port::kPortA>::SetDirection<Pin::kPin0, DirectionState::kInputPullUp>();  //IGNORE-STYLE-CHECK[L004]
+template void Gpio<Port::kPortA>::SetDirection<Pin::kPin1, DirectionState::kInputPullUp>();  //IGNORE-STYLE-CHECK[L004]
+template void Gpio<Port::kPortA>::SetDirection<Pin::kPin2, DirectionState::kInputPullUp>();  //IGNORE-STYLE-CHECK[L004]
+template void Gpio<Port::kPortA>::SetDirection<Pin::kPin3, DirectionState::kInputPullUp>();  //IGNORE-STYLE-CHECK[L004]
+template void Gpio<Port::kPortA>::SetDirection<Pin::kPin4, DirectionState::kInputPullUp>();  //IGNORE-STYLE-CHECK[L004]
+template void Gpio<Port::kPortA>::SetDirection<Pin::kPin5, DirectionState::kInputPullUp>();  //IGNORE-STYLE-CHECK[L004]
+template void Gpio<Port::kPortA>::SetDirection<Pin::kPin6, DirectionState::kInputPullUp>();  //IGNORE-STYLE-CHECK[L004]
+template void Gpio<Port::kPortA>::SetDirection<Pin::kPin7, DirectionState::kInputPullUp>();  //IGNORE-STYLE-CHECK[L004]
 template void Gpio<Port::kPortA>::SetDirection<Pin::kPin0, DirectionState::kOutput>();  //IGNORE-STYLE-CHECK[L004]
 template void Gpio<Port::kPortA>::SetDirection<Pin::kPin1, DirectionState::kOutput>();  //IGNORE-STYLE-CHECK[L004]
 template void Gpio<Port::kPortA>::SetDirection<Pin::kPin2, DirectionState::kOutput>();  //IGNORE-STYLE-CHECK[L004]
@@ -149,6 +162,14 @@ template void Gpio<Port::kPortB>::SetDirection<Pin::kPin4, DirectionState::kInpu
 template void Gpio<Port::kPortB>::SetDirection<Pin::kPin5, DirectionState::kInput>();  //IGNORE-STYLE-CHECK[L004]
 template void Gpio<Port::kPortB>::SetDirection<Pin::kPin6, DirectionState::kInput>();  //IGNORE-STYLE-CHECK[L004]
 template void Gpio<Port::kPortB>::SetDirection<Pin::kPin7, DirectionState::kInput>();  //IGNORE-STYLE-CHECK[L004]
+template void Gpio<Port::kPortB>::SetDirection<Pin::kPin0, DirectionState::kInputPullUp>();  //IGNORE-STYLE-CHECK[L004]
+template void Gpio<Port::kPortB>::SetDirection<Pin::kPin1, DirectionState::kInputPullUp>();  //IGNORE-STYLE-CHECK[L004]
+template void Gpio<Port::kPortB>::SetDirection<Pin::kPin2, DirectionState::kInputPullUp>();  //IGNORE-STYLE-CHECK[L004]
+template void Gpio<Port::kPortB>::SetDirection<Pin::kPin3, DirectionState::kInputPullUp>();  //IGNORE-STYLE-CHECK[L004]
+template void Gpio<Port::kPortB>::SetDirection<Pin::kPin4, DirectionState::kInputPullUp>();  //IGNORE-STYLE-CHECK[L004]
+template void Gpio<Port::kPortB>::SetDirection<Pin::kPin5, DirectionState::kInputPullUp>();  //IGNORE-STYLE-CHECK[L004]
+template void Gpio<Port::kPortB>::SetDirection<Pin::kPin6, DirectionState::kInputPullUp>();  //IGNORE-STYLE-CHECK[L004]
+template void Gpio<Port::kPortB>::SetDirection<Pin::kPin7, DirectionState::kInputPullUp>();  //IGNORE-STYLE-CHECK[L004]
 template void Gpio<Port::kPortB>::SetDirection<Pin::kPin0, DirectionState::kOutput>();  //IGNORE-STYLE-CHECK[L004]
 template void Gpio<Port::kPortB>::SetDirection<Pin::kPin1, DirectionState::kOutput>();  //IGNORE-STYLE-CHECK[L004]
 template void Gpio<Port::kPortB>::SetDirection<Pin::kPin2, DirectionState::kOutput>();  //IGNORE-STYLE-CHECK[L004]
@@ -166,6 +187,14 @@ template void Gpio<Port::kPortC>::SetDirection<Pin::kPin4, DirectionState::kInpu
 template void Gpio<Port::kPortC>::SetDirection<Pin::kPin5, DirectionState::kInput>();  //IGNORE-STYLE-CHECK[L004]
 template void Gpio<Port::kPortC>::SetDirection<Pin::kPin6, DirectionState::kInput>();  //IGNORE-STYLE-CHECK[L004]
 template void Gpio<Port::kPortC>::SetDirection<Pin::kPin7, DirectionState::kInput>();  //IGNORE-STYLE-CHECK[L004]
+template void Gpio<Port::kPortC>::SetDirection<Pin::kPin0, DirectionState::kInputPullUp>();  //IGNORE-STYLE-CHECK[L004]
+template void Gpio<Port::kPortC>::SetDirection<Pin::kPin1, DirectionState::kInputPullUp>();  //IGNORE-STYLE-CHECK[L004]
+template void Gpio<Port::kPortC>::SetDirection<Pin::kPin2, DirectionState::kInputPullUp>();  //IGNORE-STYLE-CHECK[L004]
+template void Gpio<Port::kPortC>::SetDirection<Pin::kPin3, DirectionState::kInputPullUp>();  //IGNORE-STYLE-CHECK[L004]
+template void Gpio<Port::kPortC>::SetDirection<Pin::kPin4, DirectionState::kInputPullUp>();  //IGNORE-STYLE-CHECK[L004]
+template void Gpio<Port::kPortC>::SetDirection<Pin::kPin5, DirectionState::kInputPullUp>();  //IGNORE-STYLE-CHECK[L004]
+template void Gpio<Port::kPortC>::SetDirection<Pin::kPin6, DirectionState::kInputPullUp>();  //IGNORE-STYLE-CHECK[L004]
+template void Gpio<Port::kPortC>::SetDirection<Pin::kPin7, DirectionState::kInputPullUp>();  //IGNORE-STYLE-CHECK[L004]
 template void Gpio<Port::kPortC>::SetDirection<Pin::kPin0, DirectionState::kOutput>();  //IGNORE-STYLE-CHECK[L004]
 template void Gpio<Port::kPortC>::SetDirection<Pin::kPin1, DirectionState::kOutput>();  //IGNORE-STYLE-CHECK[L004]
 template void Gpio<Port::kPortC>::SetDirection<Pin::kPin2, DirectionState::kOutput>();  //IGNORE-STYLE-CHECK[L004]
@@ -183,6 +212,14 @@ template void Gpio<Port::kPortD>::SetDirection<Pin::kPin4, DirectionState::kInpu
 template void Gpio<Port::kPortD>::SetDirection<Pin::kPin5, DirectionState::kInput>();  //IGNORE-STYLE-CHECK[L004]
 template void Gpio<Port::kPortD>::SetDirection<Pin::kPin6, DirectionState::kInput>();  //IGNORE-STYLE-CHECK[L004]
 template void Gpio<Port::kPortD>::SetDirection<Pin::kPin7, DirectionState::kInput>();  //IGNORE-STYLE-CHECK[L004]
+template void Gpio<Port::kPortD>::SetDirection<Pin::kPin0, DirectionState::kInputPullUp>();  //IGNORE-STYLE-CHECK[L004]
+template void Gpio<Port::kPortD>::SetDirection<Pin::kPin1, DirectionState::kInputPullUp>();  //IGNORE-STYLE-CHECK[L004]
+template void Gpio<Port::kPortD>::SetDirection<Pin::kPin2, DirectionState::kInputPullUp>();  //IGNORE-STYLE-CHECK[L004]
+template void Gpio<Port::kPortD>::SetDirection<Pin::kPin3, DirectionState::kInputPullUp>();  //IGNORE-STYLE-CHECK[L004]
+template void Gpio<Port::kPortD>::SetDirection<Pin::kPin4, DirectionState::kInputPullUp>();  //IGNORE-STYLE-CHECK[L004]
+template void Gpio<Port::kPortD>::SetDirection<Pin::kPin5, DirectionState::kInputPullUp>();  //IGNORE-STYLE-CHECK[L004]
+template void Gpio<Port::kPortD>::SetDirection<Pin::kPin6, DirectionState::kInputPullUp>();  //IGNORE-STYLE-CHECK[L004]
+template void Gpio<Port::kPortD>::SetDirection<Pin::kPin7, DirectionState::kInputPullUp>();  //IGNORE-STYLE-CHECK[L004]
 template void Gpio<Port::kPortD>::SetDirection<Pin::kPin0, DirectionState::kOutput>();  //IGNORE-STYLE-CHECK[L004]
 template void Gpio<Port::kPortD>::SetDirection<Pin::kPin1, DirectionState::kOutput>();  //IGNORE-STYLE-CHECK[L004]
 template void Gpio<Port::kPortD>::SetDirection<Pin::kPin2, DirectionState::kOutput>();  //IGNORE-STYLE-CHECK[L004]
