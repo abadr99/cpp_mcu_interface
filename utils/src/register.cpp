@@ -31,7 +31,7 @@ void Register<RegWidth_t>::SetRegisterValue(RegWidth_t R) {
 }
 template<typename RegWidth_t>
 RegWidth_t Register<RegWidth_t>::GetRegisterValue() {
-    return *_pReg ;
+    return *_pReg;
 }
 template class Register<uint8_t>;
 template class Register<uint32_t>;

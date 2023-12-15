@@ -64,7 +64,7 @@ template <Port TPort>
 template<Pin TPinNumber, DirectionState TDirectionState>
 void Gpio<TPort>::SetDirection() {
     using DIR = DirectionState;
-    switch(TDirectionState) {
+    switch (TDirectionState) {
         case DIR::kInput :  gpioRegisters_.GetDdrRegister()
                                           .template ClearBit<TPinNumber>();
                             break;

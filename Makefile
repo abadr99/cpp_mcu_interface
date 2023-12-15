@@ -26,7 +26,7 @@ debug:
 # Rule to build avr for debug and test mode 
 # make build-avr
 # ------------------------------------------
-build-avr: $(AVR_OBJS)
+build-avr: $(AVR_OBJS) style-check
 	@$(AVR_GCC) $(AVR_GCCFLAGS) $(AVR_OBJS) ./main.cpp -o $(AVR_ELF_TARGET)
 	@$(AVR_OBJ_COPY) $(AVR_OBJ_COPY_OPTS) $(AVR_ELF_TARGET) $(AVR_HEX_TARGET)
 	@echo "\n[Makefile][build] : Compiled successfully."
