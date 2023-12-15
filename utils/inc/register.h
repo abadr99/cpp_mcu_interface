@@ -26,7 +26,7 @@ public:
     }
 
     template<uint8_t bitNumber>
-    uint8_t GetBit() const {
+    uint8_t ReadBit() const {
         return ((*_pReg & (1 << bitNumber)) >> bitNumber);
     }
 
@@ -35,6 +35,9 @@ public:
         *_pReg ^=  (1 << bitNumber);
     }
 
+    void SetRegisterValue(RegWidth_t R);
+    RegWidth_t GetRegisterValue();
+    // Set all bits to one
     void Set() const;
     void Clear() const;
     RegWidth_t Get() const;

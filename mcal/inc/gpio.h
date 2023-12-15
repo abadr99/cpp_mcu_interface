@@ -4,13 +4,31 @@
 namespace avr {
 namespace mcu {
 namespace gpio{
+
+enum DigitalLevel{kLow, kHigh};
+
+enum DirectionState{kInput, kOutput};
 template <avr::types::Port TPort>
 class Gpio {
 public:
-    enum DigitalLevel{kLow, kHigh};
-    enum DirectionState{kInput, kOutput};
     Gpio();
-    
+
+    /**
+     * @brief Set the Direction of 'TPinNumber' at 'TPort'
+     * 
+     * @tparam TPinNumber 
+     * @tparam TdirectionState 
+     */
+    template<avr::types::Pin TPinNumber, DirectionState TDirectionState>
+    void SetDirection();
+
+    /**
+     * @brief Set the Direction of 'TPort'
+     * 
+     * @param val 
+     */
+    void SetDirection(types::AvrRegWidth val);
+
     /**
      * @brief Write a specific value to 'TPinNumber' at 'TPort'
      * 
@@ -21,6 +39,7 @@ public:
     template <avr::types::Pin TPinNumber, 
               DigitalLevel TDigitalVal>
     void Write();
+    void Write(types::AvrRegWidth val);
 
     /**
      * @brief Read applied voltage at 'TPinNumber' at 'TPort'
@@ -37,23 +56,6 @@ public:
      * @return types::AvrRegWidth 
      */
     avr::types::AvrRegWidth Read();
-    void Write(types::AvrRegWidth val);
-    
-    /**
-     * @brief Set the Direction of 'TPinNumber' at 'TPort'
-     * 
-     * @tparam TPinNumber 
-     * @tparam TdirectionState 
-     */
-    template<avr::types::Pin TPinNumber, DirectionState TdirectionState>
-    void SetDirection();
-
-    /**
-     * @brief Set the Direction of 'TPort'
-     * 
-     * @param val 
-     */
-    void SetDirection(types::AvrRegWidth val);
 private:
     template <avr::types::Port UPort>
     class GpioRegisters {

@@ -40,6 +40,8 @@ build-avr-opt:$(AVR_OBJS)
 	@$(AVR_OBJ_COPY) $(AVR_OBJ_COPY_OPTS) $(AVR_ELF_TARGET) $(AVR_HEX_TARGET)
 	@echo "\n[Makefile][opt-build] : Compiled successfully."	
 
+compile-hardware-test:
+	@$(AVR_GCC) $(AVR_OPT_CCFLAGS) $(AVR_OBJS) $(test) -o $(dir $(test))/$(name).elf
 # --------------------------------------------------------
 # Rule to compile test 
 # make compile-test src=path/to/main/file target=test_name
@@ -97,8 +99,5 @@ clean:
 	@rm -rf *.hex
 	@rm -rf avr
 	@rm -rf .build
-
-
-
-
-
+	@find . -name "*.o" -type f -delete
+	@find tests/hardware/ -name "*.elf" -type f -delete
