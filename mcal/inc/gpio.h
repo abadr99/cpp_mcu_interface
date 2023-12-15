@@ -2,7 +2,7 @@
 #define _GPIO_H_H
 
 namespace avr {
-namespace mcu {
+namespace mcal {
 namespace gpio{
 
 enum DigitalLevel{kLow, kHigh};
@@ -78,6 +78,6 @@ private:
     GpioRegisters<TPort> gpioRegisters_;
 };
 
-}}} // avr::mcu::gpio
+}}} // avr::mcal::gpio
 
 #endif // _GPIO_H_H

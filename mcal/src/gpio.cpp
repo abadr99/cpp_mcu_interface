@@ -4,7 +4,7 @@
 #include "gpio.h"
 
 using namespace utils;
-using namespace avr::mcu::gpio;
+using namespace avr::mcal::gpio;
 using namespace avr::types;
 
 // -----------------------------------------------------------------------------
