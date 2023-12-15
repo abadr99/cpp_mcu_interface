@@ -89,12 +89,12 @@ template <Pin TPinNumber, DigitalLevel TDigitalVal>
 void Gpio<TPort>::Write() {
     using DL = DigitalLevel;
     switch (TDigitalVal) {
-        case DL::kHigh : gpioRegisters_.GetPortRegister()
-                                       .template SetBit<TPinNumber>();   
-                                       break;
-        case DL::kLow  : gpioRegisters_.GetPortRegister()
-                                       .template ClearBit<TPinNumber>(); 
-                                       break;
+        case DL::kHigh : 
+            gpioRegisters_.GetPortRegister().template SetBit<TPinNumber>();   
+            break;
+        case DL::kLow : 
+            gpioRegisters_.GetPortRegister().template ClearBit<TPinNumber>(); 
+            break;
     } 
 }
 
