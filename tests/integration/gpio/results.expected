@@ -46,4 +46,9 @@ DDRD: 127
 PORTD: 128
 DDRD: 0
 PORTD: 128
+0
+11111111
+1111
+11001000
+100
 SystemClock::Endless stopped
