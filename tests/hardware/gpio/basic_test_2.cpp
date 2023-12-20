@@ -21,7 +21,7 @@ int main() {
        
     val= gpioA.Read<Pin::kPin1>();
         _delay_ms(50);
-        if(val == kLow)
+        if ( val == kLow)
         {
         gpioA.Write<Pin::kPin0, DigitalLevel::kHigh>();
         }
