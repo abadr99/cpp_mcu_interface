@@ -32,6 +32,27 @@ private:
     void SetLowPin(avr::types::Pin pin);
 };
 
+
+// All digital Input devices should inherit from this class
+template <avr::types::Port TPort>
+class InputDeviceInterface {
+public:
+    // As we use template variadic methods then we should have the base case
+    // for each method. 
+    // See: https://en.cppreference.com/w/cpp/language/parameter_pack
+    // NOTE: Base case should be before recursive case
+    InputDeviceInterface(avr::types::Pin pin);
+
+    template<typename T, typename... Ts>
+    InputDeviceInterface(T pin, Ts... pins);
+
+    template<avr::types::Pin TPin>
+    avr::mcal::gpio::DigitalLevel GetPinState();
+private:
+    avr::mcal::gpio::Gpio<TPort> gpio_;
+    void SetInputPin(avr::types::Pin pin);
+};
+
 }}} // avr::hal::gpio
 
 #endif // _GPIO_DEVICE_INTERFACE_H_H

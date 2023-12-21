@@ -100,3 +100,46 @@ template class OutputDeviceInterface<Port::kPortA>;
 template class OutputDeviceInterface<Port::kPortB>;
 template class OutputDeviceInterface<Port::kPortC>;
 template class OutputDeviceInterface<Port::kPortD>;
+
+// =============================================================================
+// --------------------- InputDeviceInterface impl ----------------------------
+// =============================================================================
+template <Port TPort>
+void InputDeviceInterface<TPort>::SetInputPin(Pin pin) {
+    using DS = DirectionState;
+    #define X(Pin_)\
+      case (k##Pin_): gpio_.template SetDirection<Pin::k##Pin_, DS::kInput>();\
+      break;
+
+    switch (pin) {
+        ATMEGA32_PINS
+    }
+
+    #undef X
+}
+
+template <Port TPort>
+InputDeviceInterface<TPort>::InputDeviceInterface(Pin pin) {
+    SetInputPin(pin);
+}
+
+template <Port TPort>
+template<typename T, typename... Ts>
+InputDeviceInterface<TPort>::InputDeviceInterface(T pin, Ts... pins) {
+    SetInputPin(pin);
+    InputDeviceInterface(pins...);
+}
+
+template <Port TPort>
+template<Pin TPin>
+DigitalLevel InputDeviceInterface<TPort>::GetPinState(){
+    return gpio_.template Read<TPin>();
+}
+
+// =============================================================================
+// ------------------Explicit template method instantiations-------------------
+// =============================================================================
+template class InputDeviceInterface<Port::kPortA>;
+template class InputDeviceInterface<Port::kPortB>;
+template class InputDeviceInterface<Port::kPortC>;
+template class InputDeviceInterface<Port::kPortD>;
