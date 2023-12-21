@@ -31,7 +31,7 @@ using namespace avr::types;
 int main() 
 {
     // 1] Create a led object with PortA
-           Led<kPortA, kActiveHigh>led_1(kPin0) ;
+           Led<kPortA, kActiveHigh>led_1(kPin0);
     
          while (1) {
     // 2] Turn the led on  
