@@ -1,7 +1,7 @@
 #include <stdint.h>
-#include "Register.h"
-#include "Helpers.h"
-#include "Test.h"
+#include "../../../utils/inc/Register.h"
+#include "../../../utils/inc/Helpers.h"
+#include "../../../utils/inc/Test.h"
  
 #define TESTED_REGISTER (0x3B)
 #define EECR       *((volatile uint8_t *)TESTED_REGISTER)
