@@ -35,4 +35,19 @@ using AvrRegWidth  = uint8_t;
 #define DDRD                           (0x31)
 #define PIND                           (0x30)
 
+#define ATMEGA32_PINS\
+    X(Pin0)\
+    X(Pin1)\
+    X(Pin2)\
+    X(Pin3)\
+    X(Pin4)\
+    X(Pin5)\
+    X(Pin6)\
+    X(Pin7)
+#define ATMEGA32_PORTS\
+    X(PortA)\
+    X(PortB)\
+    X(PortC)\
+    X(PortD)
+
 #endif // _ATMEGA32_H_

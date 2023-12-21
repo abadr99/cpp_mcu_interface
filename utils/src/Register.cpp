@@ -1,6 +1,6 @@
 #include <stdint.h>
-#include "helpers.h"
-#include "register.h"
+#include "Helpers.h"
+#include "Register.h"
 
 using namespace utils;
 

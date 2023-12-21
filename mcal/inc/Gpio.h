@@ -12,6 +12,7 @@ enum DirectionState{
     kInputPullUp,
     kOutput,
 };
+
 template <avr::types::Port TPort>
 class Gpio {
 public:
@@ -40,8 +41,7 @@ public:
      * @param val voltage level kHigh OR kLow
      */
     // TODO(@abadr99): Support variadic templates for pinNumbers
-    template <avr::types::Pin TPinNumber, 
-              DigitalLevel TDigitalVal>
+    template <avr::types::Pin TPinNumber, DigitalLevel TDigitalVal>
     void Write();
     void Write(types::AvrRegWidth val);
 
