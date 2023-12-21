@@ -250,4 +250,14 @@ int main () {
     print_str("PORTD: ");
     print_num(*((volatile uint8_t*) PORTD));
     new_line();
+    print_num_binary(0);
+    print_str("\n");
+    print_num_binary(255);
+    print_str("\n");
+    print_num_binary(15);
+    print_str("\n");
+    print_num_binary(200);
+    print_str("\n");
+    print_num_binary(4);
+    print_str("\n");
 }
