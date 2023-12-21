@@ -1,9 +1,9 @@
 #include <stdint.h>
 
-#include "../../../mcal/inc/atmega32.h"
-#include "../../../utils/inc/register.h"
-#include "../../../mcal/inc/gpio.h"
-#include "../../../utils/inc/test.h"
+#include "../../../mcal/inc/Atmega32.h"
+#include "../../../utils/inc/Register.h"
+#include "../../../mcal/inc/Gpio.h"
+#include "../../../utils/inc/Test.h"
  
 using namespace utils;
 using namespace avr::mcal::gpio;

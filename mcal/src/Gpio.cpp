@@ -1,7 +1,7 @@
 #include <stdint.h>
-#include "atmega32.h"
-#include "register.h"
-#include "gpio.h"
+#include "Atmega32.h"
+#include "Register.h"
+#include "Gpio.h"
 
 using namespace utils;
 using namespace avr::mcal::gpio;
