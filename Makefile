@@ -35,6 +35,7 @@ build-avr-opt:$(AVR_OBJS)
 
 compile-hardware-test:
 	@$(AVR_GCC) $(AVR_OPT_CCFLAGS) $(AVR_OBJS) $(test) -o $(dir $(test))/$(name).elf
+	@$(AVR_OBJ_COPY) -O ihex $(dir $(test))/$(name).elf $(dir $(test))/$(name).hex
 # --------------------------------------------------------
 # Rule to compile test 
 # make compile-test src=path/to/main/file target=test_name
