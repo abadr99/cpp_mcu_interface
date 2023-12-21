@@ -1,3 +1,20 @@
+ /**
+ * @file basic_test_2.cpp
+ * @author @Mariamahmed44 (madiam.ahmed300@gmail.com)
+ * @brief  - Very simple gpio test that reads the value of pin A1 (button)
+ *         - If it is low, or if the button is pressed, it turns on led on A0
+ *         - If it is high, or if the button is not pressed,
+ *            it turns off  led on A0
+ *         - This is done by connecting positive pin of led with A0 and negative
+ *            pin with 220ohm resistor connected to ground.
+ *         -And by connecting the first pin of the push button with A1, 
+ *            and the other pin with the ground
+ * @version 0.1
+ * @date 2023-12-21
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
 #include <stdint.h>
 #include <util/delay.h>
 #include "../../../mcal/inc/atmega32.h"
@@ -22,16 +39,15 @@ int main() {
     DigitalLevel val=kHigh;
     while (1) {
     // 6]read value of A1
-    val= gpioA.Read<Pin::kPin1>();
+        val= gpioA.Read<Pin::kPin1>();
     // 7]for debouncing 
         _delay_ms(50);
-   // 8]if the value is low , turn on the led , else turn it off, for A0
-        if ( val == kLow)
-        {
+    // 8]if the value is low , turn on the led , else turn it off, for A0
+        if ( val == kLow){
         gpioA.Write<Pin::kPin0, DigitalLevel::kHigh>();
         }
         else{
-gpioA.Write<Pin::kPin0, DigitalLevel::kLow>();
+        gpioA.Write<Pin::kPin0, DigitalLevel::kLow>();
         }
         
     }
