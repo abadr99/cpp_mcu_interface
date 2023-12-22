@@ -6,16 +6,12 @@ namespace avr {
 namespace hal {
 namespace buzzer {
 
-enum OutputMode {
-    kActiveLow,     /**< Indicates the device will be on with low signal>*/
-    kActiveHigh,    /**< Indicates the device will be off with low signal>*/
-};
 
 enum Buzzerstate {
     kOff,
     kOn
 };
-template <avr::types::Port TPort, OutputMode M = OutputMode::kActiveHigh>
+template <avr::types::Port TPort>
 class Buzzer : public avr::hal::gpio::OutputDeviceInterface<TPort> {
 public:
     Buzzer(avr::types::Pin pin);
