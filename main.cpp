@@ -11,15 +11,19 @@ using namespace avr::hal;
 using namespace avr::hal::led;
 
 int main() {
-   avr::hal::gpio::OutputDeviceInterface<kPortA> obj1(Pin::kPin1);
-   avr::hal::gpio::OutputDeviceInterface<kPortA> obj2(Pin::kPin1, Pin::kPin2);
+   
+   avr::hal::gpio::OutputDeviceInterface<kPortB> obj1(Pin::kPin1);
+   avr::hal::gpio::OutputDeviceInterface<kPortC> obj2(Pin::kPin1, Pin::kPin2);
+   
+   // 1] Set A1, A2, A3 as output pins
    avr::hal::gpio::OutputDeviceInterface<kPortA> obj3(Pin::kPin1, 
                                                       Pin::kPin2,
                                                       Pin::kPin3);
+   // 2] Apply high voltage on A1, A2 and apply low voltage on A3
+   obj3.SetHighVoltage(Pin::kPin1)
+       .SetHighVoltage(Pin::kPin2)
+       .SetLowVoltage(Pin::kPin3);
 
-
-   while (1) {
-       
-   }
+   while (1) {/* EMPTY */}
 }
 

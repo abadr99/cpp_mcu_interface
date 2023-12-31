@@ -9,21 +9,11 @@ namespace gpio {
 template <avr::types::Port TPort>
 class OutputDeviceInterface {
 public:
-    // As we use template variadic methods then we should have the base case
-    // for each method. 
-    // See: https://en.cppreference.com/w/cpp/language/parameter_pack
-    // NOTE: Base case should be before recursive case
-    void SetHighVoltage(avr::types::Pin pin);
-    void SetLowVoltage(avr::types::Pin pin);
-
     template<typename... Ts>
     OutputDeviceInterface(Ts... pins);
 
-    template<typename T, typename... Ts>
-    void SetHighVoltage(T pin, Ts... pins);
-
-    template<typename T, typename... Ts>
-    void SetLowVoltage(T pin, Ts... pins);
+    OutputDeviceInterface& SetHighVoltage(avr::types::Pin pin);
+    OutputDeviceInterface& SetLowVoltage(avr::types::Pin pin);
 private:
     avr::mcal::gpio::Gpio<TPort> gpio_;
     template<typename T>
@@ -31,8 +21,6 @@ private:
     template<typename T, typename... Ts>
     void helper_OutputDeviceInterface(T pin, Ts... pins);
     void SetOutputPin(avr::types::Pin pin);
-    void SetHighPin(avr::types::Pin pin);
-    void SetLowPin(avr::types::Pin pin);
 };
 
 

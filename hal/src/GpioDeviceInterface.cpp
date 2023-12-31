@@ -30,33 +30,6 @@ void OutputDeviceInterface<TPort>::SetOutputPin(Pin pin) {
 }
 
 template <Port TPort>
-void OutputDeviceInterface<TPort>::SetHighPin(Pin pin) {
-    using DL = DigitalLevel;
-    #define X(Pin_)\
-        case (k##Pin_): gpio_.template Write<Pin::k##Pin_, DL::kHigh>();\
-        break;
-    
-    switch (pin) {
-        ATMEGA32_PINS
-    }
-
-    #undef X
-}
-
-template <Port TPort>
-void OutputDeviceInterface<TPort>::SetLowPin(Pin pin) {
-    using DL = DigitalLevel;
-    #define X(Pin_)\
-        case (k##Pin_): gpio_.template Write<Pin::k##Pin_, DL::kLow>();\
-        break;
-    
-    switch (pin) {
-        ATMEGA32_PINS
-    }
-    
-    #undef X
-}
-template <Port TPort>
 template<typename T>
 void OutputDeviceInterface<TPort>::helper_OutputDeviceInterface(T pin) {
     SetOutputPin(pin);
@@ -68,16 +41,6 @@ void
 OutputDeviceInterface<TPort>::helper_OutputDeviceInterface(T pin, Ts... pins) {
     SetOutputPin(pin);
     helper_OutputDeviceInterface(pins...);
-}
-
-template <Port TPort>
-void OutputDeviceInterface<TPort>::SetHighVoltage(Pin pin) {
-    SetHighPin(pin);
-}
-
-template <Port TPort>
-void OutputDeviceInterface<TPort>::SetLowVoltage(Pin pin) {
-    SetLowPin(pin);
 }
 
 template <Port TPort>
@@ -108,18 +71,35 @@ OutputDeviceInterface<TPort>::OutputDeviceInterface(Ts... pins) {
 ATMEGA32_PORTS
 #undef X
 #undef T
+
 template <Port TPort>
-template<typename T, typename... Ts>
-void OutputDeviceInterface<TPort>::SetHighVoltage(T pin, Ts... pins) {
-    SetHighPin(pin);
-    SetHighVoltage(pins...);
+OutputDeviceInterface<TPort>& 
+OutputDeviceInterface<TPort>::SetHighVoltage(Pin pin) {
+    using DL = DigitalLevel;
+    #define X(Pin_)\
+        case (k##Pin_): gpio_.template Write<Pin::k##Pin_, DL::kHigh>();\
+        break;
+    
+    switch (pin) {
+        ATMEGA32_PINS
+    }
+    #undef X
+    return *this;
 }
 
 template <Port TPort>
-template<typename T, typename... Ts>
-void OutputDeviceInterface<TPort>::SetLowVoltage(T pin, Ts... pins) {
-    SetLowPin(pin);
-    SetLowVoltage(pins...);
+OutputDeviceInterface<TPort>&  
+OutputDeviceInterface<TPort>::SetLowVoltage(Pin pin) {
+    using DL = DigitalLevel;
+    #define X(Pin_)\
+        case (k##Pin_): gpio_.template Write<Pin::k##Pin_, DL::kLow>();\
+        break;
+    
+    switch (pin) {
+        ATMEGA32_PINS
+    }
+    #undef X
+    return *this;
 }
 
 // =============================================================================
