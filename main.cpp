@@ -7,14 +7,15 @@
 
 using namespace avr::types;
 using namespace avr::mcal::gpio;
-using namespace avr::hal;
-using namespace avr::hal::led;
+using namespace avr::hal::gpio;
 
 int main() {
    
-   avr::hal::gpio::OutputDeviceInterface<kPortB> obj1(Pin::kPin1);
-   avr::hal::gpio::OutputDeviceInterface<kPortC> obj2(Pin::kPin1, Pin::kPin2);
-   
+   OutputDeviceInterface<kPortB> obj1(Pin::kPin1);
+   OutputDeviceInterface<kPortC> obj2(Pin::kPin1, Pin::kPin2);
+   InputDeviceInterface<kPortA>  inp1(Pin::kPin0);
+   InputDeviceInterface<kPortA>  inp2(Pin::kPin4, Pin::kPin5);
+
    // 1] Set A1, A2, A3 as output pins
    avr::hal::gpio::OutputDeviceInterface<kPortA> obj3(Pin::kPin1, 
                                                       Pin::kPin2,

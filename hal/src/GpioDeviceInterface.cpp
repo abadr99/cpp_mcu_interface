@@ -48,6 +48,7 @@ template<typename... Ts>
 OutputDeviceInterface<TPort>::OutputDeviceInterface(Ts... pins) {
     helper_OutputDeviceInterface(pins...);
 }
+
 #define T template
 #define X(Port_)\
   T OutputDeviceInterface<Port::k##Port_>::OutputDeviceInterface(Pin);\
@@ -127,23 +128,59 @@ void InputDeviceInterface<TPort>::SetInputPin(Pin pin) {
 }
 
 template <Port TPort>
-InputDeviceInterface<TPort>::InputDeviceInterface(Pin pin) {
+template<typename T>
+void 
+InputDeviceInterface<TPort>::helper_InputDeviceInterface(T pin) {
     SetInputPin(pin);
 }
 
 template <Port TPort>
 template<typename T, typename... Ts>
-InputDeviceInterface<TPort>::InputDeviceInterface(T pin, Ts... pins) {
+void 
+InputDeviceInterface<TPort>::helper_InputDeviceInterface(T pin, Ts... pins) {
     SetInputPin(pin);
-    InputDeviceInterface(pins...);
+    helper_InputDeviceInterface(pins...);
 }
 
 template <Port TPort>
-template<Pin TPin>
-DigitalLevel InputDeviceInterface<TPort>::GetPinState(){
-    return gpio_.template Read<TPin>();
+template<typename... Ts>
+InputDeviceInterface<TPort>::InputDeviceInterface(Ts... pins) {
+    helper_InputDeviceInterface(pins...);
 }
 
+template <Port TPort>
+DigitalLevel InputDeviceInterface<TPort>::GetPinState(Pin pin) {
+    #define X(pin_)\
+        if (pin == Pin::k##pin_) { return gpio_.template Read<Pin::k##pin_>(); }
+        ATMEGA32_PINS
+    #undef X
+    // TODO(@abadr99): Improve unreachable code system 
+    return static_cast<DigitalLevel>(0); // WE SHOULDN'T GET HERE
+}
+
+#define T template
+#define X(Port_)\
+  T InputDeviceInterface<Port::k##Port_>::InputDeviceInterface(Pin);\
+  T InputDeviceInterface<Port::k##Port_>::InputDeviceInterface(Pin, Pin);\
+  T InputDeviceInterface<Port::k##Port_>::InputDeviceInterface(Pin, Pin,\
+                                                                 Pin);\
+  T InputDeviceInterface<Port::k##Port_>::InputDeviceInterface(Pin, Pin,\
+                                                                 Pin, Pin);\
+  T InputDeviceInterface<Port::k##Port_>::InputDeviceInterface(Pin, Pin, Pin,\
+                                                                 Pin, Pin);\
+  T InputDeviceInterface<Port::k##Port_>::InputDeviceInterface(Pin, Pin, Pin,\
+                                                                 Pin, Pin,\
+                                                                 Pin);\
+  T InputDeviceInterface<Port::k##Port_>::InputDeviceInterface(Pin, Pin, Pin,\
+                                                                 Pin, Pin, Pin,\
+                                                                 Pin);\
+  T InputDeviceInterface<Port::k##Port_>::InputDeviceInterface(Pin, Pin, Pin,\
+                                                                 Pin, Pin, Pin,\
+                                                                 Pin, Pin);
+
+ATMEGA32_PORTS
+#undef X
+#undef T
 // =============================================================================
 // ------------------Explicit template method instantiations-------------------
 // =============================================================================
