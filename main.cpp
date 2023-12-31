@@ -11,9 +11,15 @@ using namespace avr::hal;
 using namespace avr::hal::led;
 
 int main() {
-gpio::OutputDeviceInterface<kPortA>(avr::types::kPin1, avr::types::kPin2);
-    while (1) {
-        
-    }
+   avr::hal::gpio::OutputDeviceInterface<kPortA> obj1(Pin::kPin1);
+   avr::hal::gpio::OutputDeviceInterface<kPortA> obj2(Pin::kPin1, Pin::kPin2);
+   avr::hal::gpio::OutputDeviceInterface<kPortA> obj3(Pin::kPin1, 
+                                                      Pin::kPin2,
+                                                      Pin::kPin3);
+
+
+   while (1) {
+       
+   }
 }
 

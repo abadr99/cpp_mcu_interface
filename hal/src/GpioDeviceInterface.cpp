@@ -56,10 +56,18 @@ void OutputDeviceInterface<TPort>::SetLowPin(Pin pin) {
     
     #undef X
 }
+template <Port TPort>
+template<typename T>
+void OutputDeviceInterface<TPort>::helper_OutputDeviceInterface(T pin) {
+    SetOutputPin(pin);
+}
 
 template <Port TPort>
-OutputDeviceInterface<TPort>::OutputDeviceInterface(Pin pin) {
+template<typename T, typename... Ts>
+void 
+OutputDeviceInterface<TPort>::helper_OutputDeviceInterface(T pin, Ts... pins) {
     SetOutputPin(pin);
+    helper_OutputDeviceInterface(pins...);
 }
 
 template <Port TPort>
@@ -73,12 +81,33 @@ void OutputDeviceInterface<TPort>::SetLowVoltage(Pin pin) {
 }
 
 template <Port TPort>
-template<typename T, typename... Ts>
-OutputDeviceInterface<TPort>::OutputDeviceInterface(T pin, Ts... pins) {
-    SetOutputPin(pin);
-    OutputDeviceInterface(pins...);
+template<typename... Ts>
+OutputDeviceInterface<TPort>::OutputDeviceInterface(Ts... pins) {
+    helper_OutputDeviceInterface(pins...);
 }
+#define T template
+#define X(Port_)\
+  T OutputDeviceInterface<Port::k##Port_>::OutputDeviceInterface(Pin);\
+  T OutputDeviceInterface<Port::k##Port_>::OutputDeviceInterface(Pin, Pin);\
+  T OutputDeviceInterface<Port::k##Port_>::OutputDeviceInterface(Pin, Pin,\
+                                                                 Pin);\
+  T OutputDeviceInterface<Port::k##Port_>::OutputDeviceInterface(Pin, Pin,\
+                                                                 Pin, Pin);\
+  T OutputDeviceInterface<Port::k##Port_>::OutputDeviceInterface(Pin, Pin, Pin,\
+                                                                 Pin, Pin);\
+  T OutputDeviceInterface<Port::k##Port_>::OutputDeviceInterface(Pin, Pin, Pin,\
+                                                                 Pin, Pin,\
+                                                                 Pin);\
+  T OutputDeviceInterface<Port::k##Port_>::OutputDeviceInterface(Pin, Pin, Pin,\
+                                                                 Pin, Pin, Pin,\
+                                                                 Pin);\
+  T OutputDeviceInterface<Port::k##Port_>::OutputDeviceInterface(Pin, Pin, Pin,\
+                                                                 Pin, Pin, Pin,\
+                                                                 Pin, Pin);
 
+ATMEGA32_PORTS
+#undef X
+#undef T
 template <Port TPort>
 template<typename T, typename... Ts>
 void OutputDeviceInterface<TPort>::SetHighVoltage(T pin, Ts... pins) {
@@ -114,7 +143,6 @@ void InputDeviceInterface<TPort>::SetInputPin(Pin pin) {
     switch (pin) {
         ATMEGA32_PINS
     }
-
     #undef X
 }
 

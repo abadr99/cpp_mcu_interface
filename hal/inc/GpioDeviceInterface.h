@@ -13,12 +13,11 @@ public:
     // for each method. 
     // See: https://en.cppreference.com/w/cpp/language/parameter_pack
     // NOTE: Base case should be before recursive case
-    OutputDeviceInterface(avr::types::Pin pin);
     void SetHighVoltage(avr::types::Pin pin);
     void SetLowVoltage(avr::types::Pin pin);
 
-    template<typename T, typename... Ts>
-    OutputDeviceInterface(T pin, Ts... pins);
+    template<typename... Ts>
+    OutputDeviceInterface(Ts... pins);
 
     template<typename T, typename... Ts>
     void SetHighVoltage(T pin, Ts... pins);
@@ -27,6 +26,10 @@ public:
     void SetLowVoltage(T pin, Ts... pins);
 private:
     avr::mcal::gpio::Gpio<TPort> gpio_;
+    template<typename T>
+    void helper_OutputDeviceInterface(T pin);
+    template<typename T, typename... Ts>
+    void helper_OutputDeviceInterface(T pin, Ts... pins);
     void SetOutputPin(avr::types::Pin pin);
     void SetHighPin(avr::types::Pin pin);
     void SetLowPin(avr::types::Pin pin);
