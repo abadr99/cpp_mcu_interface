@@ -11,7 +11,7 @@ using namespace avr::hal;
 using namespace avr::hal::led;
 
 template <Port TPort, OutputMode M>
-Led<TPort, M>::Led(avr::types::Pin pin)
+Led<TPort, M>::Led(Pin pin)
 :gpio::OutputDeviceInterface<TPort>(pin),
  ledPin_(pin), 
  currentState_(LedState::kOff)
@@ -62,11 +62,11 @@ bool Led<TPort, M>::IsOff() {
 // =============================================================================
 // ------------------Explicit template method instantiations-------------------
 // =============================================================================
-template class Led<Port::kPortA, OutputMode::kActiveHigh>;
-template class Led<Port::kPortA, OutputMode::kActiveLow>;
-template class Led<Port::kPortB, OutputMode::kActiveHigh>;
-template class Led<Port::kPortB, OutputMode::kActiveLow>;
-template class Led<Port::kPortC, OutputMode::kActiveHigh>;
-template class Led<Port::kPortC, OutputMode::kActiveLow>;
-template class Led<Port::kPortD, OutputMode::kActiveHigh>;
-template class Led<Port::kPortD, OutputMode::kActiveLow>;
+
+#define X(port_)      template class Led<Port::k##port_, OutputMode::kActiveHigh>; //IGNORE-STYLE-CHECK[L004]
+    ATMEGA32_PORTS
+#undef X
+
+#define X(port_)      template class Led<Port::k##port_, OutputMode::kActiveLow>; //IGNORE-STYLE-CHECK[L004]
+    ATMEGA32_PORTS
+#undef X
