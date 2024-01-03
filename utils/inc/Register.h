@@ -11,28 +11,32 @@ public:
     Register(const RegWidth_t address);
     
     template<RegWidth_t address>
-    void SetAddress() {
+    Register& SetAddress() {
         _pReg = reinterpret_cast<volatile RegWidth_t *>(address);
+        return *this;
     }
     
     template<uint8_t bitNumber>
-    void SetBit() const {
+    Register& SetBit() {
         *_pReg |=  (1 << bitNumber);
+        return *this;
     }
     
     template<uint8_t bitNumber>
-    void ClearBit() const{
+    Register& ClearBit() {
         *_pReg  &= ~(1 << bitNumber);
+        return *this;
     }
 
     template<uint8_t bitNumber>
-    uint8_t ReadBit() const {
+    uint8_t ReadBit() {
         return ((*_pReg & (1 << bitNumber)) >> bitNumber);
     }
 
     template<uint8_t bitNumber>
-    void ToggleBit() const {
+    Register& ToggleBit() {
         *_pReg ^=  (1 << bitNumber);
+        return *this;
     }
 
     void SetRegisterValue(RegWidth_t R);

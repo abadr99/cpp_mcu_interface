@@ -4,13 +4,19 @@
 namespace avr {
 namespace mcal {
 namespace adc {
-#define ADC_BASE_REG        (0x08)
+#define ADC_BASE_REG             (0x07)
+#define ADC_CHANNEL_MODE_MASK    (0xE0)
 struct AdcRegisters {
     AdcRegisters(const avr::types::AvrRegWidth baseAddr);
-    utils::Register<avr::types::AvrRegWidth> adcmux;
-    utils::Register<avr::types::AvrRegWidth> adcsra;
-    utils::Register<avr::types::AvrRegWidth> adcl;
-    utils::Register<avr::types::AvrRegWidth> adch;
+    utils::Register<avr::types::AvrRegWidth> admux_;
+    utils::Register<avr::types::AvrRegWidth> adcsra_;
+    utils::Register<avr::types::AvrRegWidth> adcl_;
+    utils::Register<avr::types::AvrRegWidth> adch_;
+    utils::Register<avr::types::AvrRegWidth>& GetADMUX();
+    utils::Register<avr::types::AvrRegWidth>& GetADCSRA();
+    utils::Register<avr::types::AvrRegWidth>& GetADCL();
+    utils::Register<avr::types::AvrRegWidth>& GetADCH();
+
 };
 
 enum VoltageRefMode: uint8_t {
@@ -19,45 +25,53 @@ enum VoltageRefMode: uint8_t {
     k2_56v = 0x11   /*< Internal 2.56V Voltage Reference with external 
                         capacitor at AREF pin >*/
 };
-
+enum AdmuxReg : uint8_t {
+    kMUX0 = 0x00,
+    kMUX1,
+    kMUX2,
+    kMUX3,
+    kMUX4,
+    kADLAR,
+    kREFS0,
+    kREFS1       
+};
 // Mode Value
 #define ADC_CHANNEL_MODES\
-    X(SingleEnded_ADC0           ,  0b00000)\
-    X(SingleEnded_ADC1           ,  0b00001)\
-    X(SingleEnded_ADC2           ,  0b00010)\
-    X(SingleEnded_ADC3           ,  0b00011)\
-    X(SingleEnded_ADC4           ,  0b00100)\
-    X(SingleEnded_ADC5           ,  0b00101)\
-    X(SingleEnded_ADC6           ,  0b00110)\
-    X(SingleEnded_ADC7           ,  0b00111)\
-    X(Differential_ADC0_ADC0_10x ,  0b01000)\
-    X(Differential_ADC1_ADC0_10x ,  0b01001)\
+    X(SingleEnded_ADC0,             0b00000)\
+    X(SingleEnded_ADC1,             0b00001)\
+    X(SingleEnded_ADC2,             0b00010)\
+    X(SingleEnded_ADC3,             0b00011)\
+    X(SingleEnded_ADC4,             0b00100)\
+    X(SingleEnded_ADC5,             0b00101)\
+    X(SingleEnded_ADC6,             0b00110)\
+    X(SingleEnded_ADC7,             0b00111)\
+    X(Differential_ADC0_ADC0_10x,   0b01000)\
+    X(Differential_ADC1_ADC0_10x,   0b01001)\
     X(Differential_ADC0_ADC0_200x,  0b01010)\
     X(Differential_ADC1_ADC0_200x,  0b01011)\
-    X(Differential_ADC2_ADC2_10x ,  0b01100)\
-    X(Differential_ADC3_ADC0_10x ,  0b01101)\
+    X(Differential_ADC2_ADC2_10x,   0b01100)\
+    X(Differential_ADC3_ADC0_10x,   0b01101)\
     X(Differential_ADC2_ADC2_200x,  0b01110)\
     X(Differential_ADC3_ADC0_200x,  0b01111)\
-    X(Differential_ADC0_ADC1_1x  ,  0b10000)\
-    X(Differential_ADC1_ADC1_1x  ,  0b10001)\
-    X(Differential_ADC2_ADC1_1x  ,  0b10010)\
-    X(Differential_ADC3_ADC1_1x  ,  0b10011)\
-    X(Differential_ADC4_ADC1_1x  ,  0b10100)\
-    X(Differential_ADC5_ADC1_1x  ,  0b10101)\
-    X(Differential_ADC6_ADC1_1x  ,  0b10110)\
-    X(Differential_ADC7_ADC1_1x  ,  0b10111)\
-    X(Differential_ADC0_ADC2_1x  ,  0b11000)\
-    X(Differential_ADC1_ADC2_1x  ,  0b11001)\
-    X(Differential_ADC2_ADC2_1x  ,  0b11010)\
-    X(Differential_ADC3_ADC2_1x  ,  0b11011)\
-    X(Differential_ADC4_ADC2_1x  ,  0b11100)\
-    X(Differential_ADC5_ADC2_1x  ,  0b11101)\
-    X(SingleEnded_1_22V          ,  0b11110)\
-    X(SingleEnded_gnd            ,  0b11111)
+    X(Differential_ADC0_ADC1_1x,    0b10000)\
+    X(Differential_ADC1_ADC1_1x,    0b10001)\
+    X(Differential_ADC2_ADC1_1x,    0b10010)\
+    X(Differential_ADC3_ADC1_1x,    0b10011)\
+    X(Differential_ADC4_ADC1_1x,    0b10100)\
+    X(Differential_ADC5_ADC1_1x,    0b10101)\
+    X(Differential_ADC6_ADC1_1x,    0b10110)\
+    X(Differential_ADC7_ADC1_1x,    0b10111)\
+    X(Differential_ADC0_ADC2_1x,    0b11000)\
+    X(Differential_ADC1_ADC2_1x,    0b11001)\
+    X(Differential_ADC2_ADC2_1x,    0b11010)\
+    X(Differential_ADC3_ADC2_1x,    0b11011)\
+    X(Differential_ADC4_ADC2_1x,    0b11100)\
+    X(Differential_ADC5_ADC2_1x,    0b11101)\
+    X(SingleEnded_1_22V,            0b11110)\
+    X(SingleEnded_gnd,              0b11111)
 
 #define ADC_DIVISION_FACTOR\
     X(DivisionFactor_2x,     0b000)\
-    X(DivisionFactor_2x,     0b001)\
     X(DivisionFactor_4x,     0b010)\
     X(DivisionFactor_8x,     0b011)\
     X(DivisionFactor_16x,    0b100)\
@@ -74,9 +88,6 @@ enum VoltageRefMode: uint8_t {
     X(Timer1_CompareMatchB,     0b101)\
     X(Timer1_OverFlow,          0b110)\
     X(Timer1_CaptureEvent,      0b111)
-
-
-
 
 enum ChannelMode : uint8_t {
     #define X(mode_, val_)  k##mode_ = val_,
@@ -96,8 +107,14 @@ enum AutoTriggerMode : uint8_t {
     #undef X
 };
 
+enum ResultAdjustMode : uint8_t {
+    kLeft,
+    kRight
+};
+
 class Adc {
 public:
+    Adc();
     template<VoltageRefMode M>
     void SetReferenceVoltageMode();
 
@@ -105,13 +122,19 @@ public:
     void SelectChannel();
 
     void Enable();
-    void StartConversion();
+    void Disable();
+    
+    template <typename T = uint16_t>
+    T StartConversion();
 
     template<DivisionFactorMode M>
     void SetPreScalarMode();
 
     template <AutoTriggerMode M>
     void SetAutoTriggerMode();
+
+    template<ResultAdjustMode M>
+    void SetAdjustMode();
 
 private:
     AdcRegisters registers_;
