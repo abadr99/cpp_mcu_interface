@@ -45,7 +45,12 @@ public:
     void Set() const;
     void Clear() const;
     RegWidth_t Get() const;
-    void SetRegisterWithMask(RegWidth_t mask, uint8_t startBit, RegWidth_t val);
+
+    template<RegWidth_t mask, uint8_t startBit, RegWidth_t val>
+    void SetRegisterWithMask(RegWidth_t mask, uint8_t startBit, RegWidth_t val)
+    {
+         *_pReg = (*_pReg & mask) | ((val << startBit) & (~mask));
+    }
 private:
     volatile RegWidth_t* _pReg;
 };
