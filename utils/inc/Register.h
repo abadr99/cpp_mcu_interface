@@ -47,8 +47,10 @@ public:
     RegWidth_t Get() const;
 
     template<RegWidth_t mask, uint8_t startBit, RegWidth_t val>
-    void SetRegisterWithMask(RegWidth_t mask, uint8_t startBit, RegWidth_t val)
+    void SetRegisterWithMask()
     {
+        static_assert(startBit < sizeof(RegWidth_t)*8,  
+                      "Calling SetRegisterWithMask() with out of range bit");
          *_pReg = (*_pReg & mask) | ((val << startBit) & (~mask));
     }
 private:
