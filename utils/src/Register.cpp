@@ -25,14 +25,25 @@ template<typename RegWidth_t>
 RegWidth_t Register<RegWidth_t>::Get() const {
     return *_pReg;
 }
+
 template<typename RegWidth_t>
 void Register<RegWidth_t>::SetRegisterValue(RegWidth_t R) {
     *_pReg  = R;
 }
+
 template<typename RegWidth_t>
 RegWidth_t Register<RegWidth_t>::GetRegisterValue() {
     return *_pReg;
 }
+
+template<typename RegWidth_t>
+void Register<RegWidth_t>::SetRegisterWithMask(RegWidth_t mask, 
+                                               uint8_t startBit,
+                                               RegWidth_t val)
+{
+    *_pReg = (*_pReg & mask) | (val << startBit);
+}
+
 template class Register<uint8_t>;
 template class Register<uint32_t>;
 template class Register<uint64_t>;

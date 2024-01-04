@@ -45,6 +45,7 @@ public:
     void Set() const;
     void Clear() const;
     RegWidth_t Get() const;
+    void SetRegisterWithMask(RegWidth_t mask, uint8_t startBit, RegWidth_t val);
 private:
     volatile RegWidth_t* _pReg;
 };

@@ -55,4 +55,13 @@ int main () {
     R.Clear();
     print_num(R.Get()); //0
     new_line();
+
+    R.SetRegisterValue(0b11110011); 
+    print_num_binary(R.Get()); // 0b11110011
+    new_line();
+    // suppose we want to change the third three bits i.e. Bits 2,3,4
+    // to be 101
+    R.SetRegisterWithMask(0b11100011, 2, 5);
+    print_num_binary(R.Get()); // 0b11110111
+    new_line();
 }
