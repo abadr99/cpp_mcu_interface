@@ -4,19 +4,24 @@
 namespace avr {
 namespace mcal {
 namespace adc {
+
 #define ADC_BASE_REG             (0x07)
 #define ADC_CHANNEL_MODE_MASK    (0xE0)
+#define ADC_PRESCALAR_MASK       (0xF8)
+#define ADC_AUTO_TRIGGER_MASK    (0xF1)
+
 struct AdcRegisters {
     AdcRegisters(const avr::types::AvrRegWidth baseAddr);
     utils::Register<avr::types::AvrRegWidth> admux_;
     utils::Register<avr::types::AvrRegWidth> adcsra_;
     utils::Register<avr::types::AvrRegWidth> adcl_;
     utils::Register<avr::types::AvrRegWidth> adch_;
+    utils::Register<avr::types::AvrRegWidth> sfior_;
     utils::Register<avr::types::AvrRegWidth>& GetADMUX();
     utils::Register<avr::types::AvrRegWidth>& GetADCSRA();
     utils::Register<avr::types::AvrRegWidth>& GetADCL();
     utils::Register<avr::types::AvrRegWidth>& GetADCH();
-
+    utils::Register<avr::types::AvrRegWidth>& GetSFIOR();
 };
 
 enum VoltageRefMode: uint8_t {
@@ -34,6 +39,17 @@ enum AdmuxReg : uint8_t {
     kADLAR,
     kREFS0,
     kREFS1       
+};
+
+enum Adcsra : uint8_t {
+    kADPS0 = 0x00,
+    kADPS1,
+    kADPS2,
+    kADIE,
+    kADIF,
+    kADATE,
+    kADSC,
+    kADEN
 };
 // Mode Value
 #define ADC_CHANNEL_MODES\
