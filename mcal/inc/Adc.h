@@ -130,6 +130,7 @@ enum ResultAdjustMode : uint8_t {
 
 class Adc {
 public:
+    using pFunction_t = void (*)();
     Adc();
     template<VoltageRefMode M>
     void SetReferenceVoltageMode();
@@ -140,8 +141,7 @@ public:
     void Enable();
     void Disable();
     
-    template <typename T = uint16_t>
-    T StartConversion();
+    uint16_t StartConversion();
 
     template<DivisionFactorMode M>
     void SetPreScalarMode();
@@ -152,10 +152,24 @@ public:
     template<ResultAdjustMode M>
     void SetAdjustMode();
 
+    void SetConvertedValue(uint16_t val);
+    
+    uint16_t StartConversion(pFunction_t pFun);
+
+    uint16_t GetConvertedValue();
+    uint16_t GetDataRegister();
+    void SetCallBack(pFunction_t pFun);
+    pFunction_t GetCallBack();
+    ResultAdjustMode GetAdjustMode();
+    
 private:
     AdcRegisters registers_;
+    uint16_t convertedVal_;
+    pFunction_t AdcCallBack_;
 };
 
 }}}
+
+extern avr::mcal::adc::Adc ADC;
 
 #endif // _ADC_H_H

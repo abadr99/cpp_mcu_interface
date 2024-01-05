@@ -64,8 +64,8 @@ int main () {
     R.SetRegisterWithMask<0b11100011, 2, 5>();
     print_num_binary(R.Read()); // 0b11110111
     new_line();
-    print_num(R.ReadBits<2,4>()); // 5
+    print_num(R.ReadBits<2, 4>()); // 5
     new_line();
-    print_num(R.ReadBits<0,1>()); // 3
+    print_num(R.ReadBits<0, 1>()); // 3
     new_line();
 }
