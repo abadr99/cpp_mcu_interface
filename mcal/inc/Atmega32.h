@@ -34,7 +34,7 @@ using AvrRegWidth  = uint8_t;
 #define PORTD                          (0x32)
 #define DDRD                           (0x31)
 #define PIND                           (0x30)
-
+#define SFIOR                          (0x50)
 #define ATMEGA32_PINS\
     X(Pin0)\
     X(Pin1)\

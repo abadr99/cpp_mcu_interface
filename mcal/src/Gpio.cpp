@@ -104,7 +104,7 @@ void Gpio<TPort>::Write(AvrRegWidth val) {
 
 template <Port TPort>
 AvrRegWidth Gpio<TPort>::Read() {
-    return gpioRegisters_.GetPortRegister().GetRegisterValue();
+    return gpioRegisters_.GetPortRegister().Read();
 }
 
 template <Port TPort>
