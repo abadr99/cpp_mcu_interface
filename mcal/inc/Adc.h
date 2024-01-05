@@ -1,3 +1,24 @@
+/**
+ * @file Adc.h
+ * @author abadr99 (abdelrhmanezzbadr@outlook.com)
+ * @brief  How to use this driver?
+ *          // TODO(@abadr99): Make this class as singleton class
+ *          - As we have only one ADC in atmega32 then you should deal with 
+ *            'ADC' object and not creat any new objects from this class.
+ *          - Here is the steps of configuring ADC and how to deal with it.
+ *              1] According to specs if ADC is not enable no configurations 
+ *                 would be configured. So THIS STEP SHOULD BE THE FIRST STEP.
+ *                 ADC.Enable();
+ *              2] Select Reference voltage mode 
+ *              3] Select Channel 
+ *              4] Select Adjust mode
+ *              5] Start conversion (either with callback or without)
+ * @version 0.1
+ * @date 2024-01-05
+ * 
+ * @copyright Copyright (c) 2024
+ * 
+ */
 #ifndef _ADC_H_H
 #define _ADC_H_H
 
