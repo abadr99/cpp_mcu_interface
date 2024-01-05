@@ -23,7 +23,7 @@ Adc ADC;
 
 AdcRegisters::AdcRegisters(const AvrRegWidth baseAddr) 
 :admux_(baseAddr), adcsra_(baseAddr - 1), 
- adcl_(baseAddr - 2), adch_(baseAddr - 3),
+ adch_(baseAddr - 2), adcl_(baseAddr - 3),
  sfior_(SFIOR)
  { /* EMPTY */ } 
 
@@ -179,6 +179,7 @@ void __vector_16(void)
 {
     // Get converted value
     ADC.SetConvertedValue(ADC.GetDataRegister());
+    // Execute callback
     auto cb = ADC.GetCallBack();
     cb();
 }

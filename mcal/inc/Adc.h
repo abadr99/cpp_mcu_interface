@@ -5,7 +5,7 @@ namespace avr {
 namespace mcal {
 namespace adc {
 
-#define ADC_BASE_REG             (0x07)
+#define ADC_BASE_REG             (0x27)
 #define ADC_CHANNEL_MODE_MASK    (0xE0)
 #define ADC_PRESCALAR_MASK       (0xF8)
 #define ADC_AUTO_TRIGGER_MASK    (0xF1)
@@ -14,8 +14,8 @@ struct AdcRegisters {
     AdcRegisters(const avr::types::AvrRegWidth baseAddr);
     utils::Register<avr::types::AvrRegWidth> admux_;
     utils::Register<avr::types::AvrRegWidth> adcsra_;
-    utils::Register<avr::types::AvrRegWidth> adcl_;
     utils::Register<avr::types::AvrRegWidth> adch_;
+    utils::Register<avr::types::AvrRegWidth> adcl_;
     utils::Register<avr::types::AvrRegWidth> sfior_;
     utils::Register<avr::types::AvrRegWidth>& GetADMUX();
     utils::Register<avr::types::AvrRegWidth>& GetADCSRA();
