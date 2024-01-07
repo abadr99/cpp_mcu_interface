@@ -46,6 +46,16 @@ using AvrRegWidth  = uint8_t;
     X(Pin6)\
     X(Pin7)
 
+#define ATMEGA32_PINS_VALUE\
+    X(Pin0, 0)\
+    X(Pin1, 1)\
+    X(Pin2, 2)\
+    X(Pin3, 3)\
+    X(Pin4, 4)\
+    X(Pin5, 5)\
+    X(Pin6, 6)\
+    X(Pin7, 7)
+
 #define ATMEGA32_PORTS\
     X(PortA)\
     X(PortB)\
