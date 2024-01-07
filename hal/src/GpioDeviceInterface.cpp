@@ -24,6 +24,7 @@ void OutputDeviceInterface<TPort>::SetOutputPin(Pin pin) {
 
     switch (pin) {
         ATMEGA32_PINS
+        case kNotConnected: break;
     }
 
     #undef X
@@ -83,6 +84,7 @@ OutputDeviceInterface<TPort>::SetHighVoltage(Pin pin) {
     
     switch (pin) {
         ATMEGA32_PINS
+        case kNotConnected: break;
     }
     #undef X
     return *this;
@@ -98,6 +100,7 @@ OutputDeviceInterface<TPort>::SetLowVoltage(Pin pin) {
     
     switch (pin) {
         ATMEGA32_PINS
+        case kNotConnected : break;
     }
     #undef X
     return *this;
@@ -123,6 +126,7 @@ void InputDeviceInterface<TPort>::SetInputPin(Pin pin) {
 
     switch (pin) {
         ATMEGA32_PINS
+        case kNotConnected: break;
     }
     #undef X
 }
