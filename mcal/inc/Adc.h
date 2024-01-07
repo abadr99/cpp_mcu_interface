@@ -153,6 +153,19 @@ class Adc {
 public:
     using pFunction_t = void (*)();
     Adc();
+
+    template <VoltageRefMode     TVoltageMode    = VoltageRefMode::kAref,
+              DivisionFactorMode TDivisionFactor = DivisionFactorMode::kDivisionFactor_2x,  //IGNORE-STYLE-CHECK[L004]
+              AutoTriggerMode    TTriggerMode    = AutoTriggerMode::kFreeRunningMode,       //IGNORE-STYLE-CHECK[L004]
+              ResultAdjustMode   TAdjustMode     = ResultAdjustMode::kLeft>                 //IGNORE-STYLE-CHECK[L004]
+    void Init() {
+        Enable();
+        SetReferenceVoltageMode<TVoltageMode>();
+        SetPreScalarMode<TDivisionFactor>();
+        SetAutoTriggerMode<TTriggerMode>();
+        SetAdjustMode<TAdjustMode>();
+    }
+    
     template<VoltageRefMode M>
     void SetReferenceVoltageMode();
 
