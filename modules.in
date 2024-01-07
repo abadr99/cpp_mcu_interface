@@ -3,3 +3,4 @@ mcal/src/Gpio
 hal/src/GpioDeviceInterface
 hal/src/AdcDeviceInterface
 hal/src/Led
+hal/src/Lm35
