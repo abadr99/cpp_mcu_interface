@@ -152,7 +152,21 @@ enum ResultAdjustMode : uint8_t {
 class Adc {
 public:
     using pFunction_t = void (*)();
+    using digitalVal_t = uint16_t;
     Adc();
+
+    template <VoltageRefMode     TVoltageMode    = VoltageRefMode::kAref,
+              DivisionFactorMode TDivisionFactor = DivisionFactorMode::kDivisionFactor_2x,  //IGNORE-STYLE-CHECK[L004]
+              AutoTriggerMode    TTriggerMode    = AutoTriggerMode::kFreeRunningMode,       //IGNORE-STYLE-CHECK[L004]
+              ResultAdjustMode   TAdjustMode     = ResultAdjustMode::kLeft>                 //IGNORE-STYLE-CHECK[L004]
+    void Init() {
+        Enable();
+        SetReferenceVoltageMode<TVoltageMode>();
+        SetPreScalarMode<TDivisionFactor>();
+        SetAutoTriggerMode<TTriggerMode>();
+        SetAdjustMode<TAdjustMode>();
+    }
+    
     template<VoltageRefMode M>
     void SetReferenceVoltageMode();
 
@@ -162,7 +176,7 @@ public:
     void Enable();
     void Disable();
     
-    uint16_t StartConversion();
+    digitalVal_t StartConversion();
 
     template<DivisionFactorMode M>
     void SetPreScalarMode();
@@ -173,19 +187,19 @@ public:
     template<ResultAdjustMode M>
     void SetAdjustMode();
 
-    void SetConvertedValue(uint16_t val);
+    void SetConvertedValue(digitalVal_t val);
     
-    uint16_t StartConversion(pFunction_t pFun);
+    digitalVal_t StartConversion(pFunction_t pFun);
 
-    uint16_t GetConvertedValue();
-    uint16_t GetDataRegister();
+    digitalVal_t GetConvertedValue();
+    digitalVal_t GetDataRegister();
     void SetCallBack(pFunction_t pFun);
     pFunction_t GetCallBack();
     ResultAdjustMode GetAdjustMode();
     
 private:
     AdcRegisters registers_;
-    uint16_t convertedVal_;
+    digitalVal_t convertedVal_;
     pFunction_t AdcCallBack_;
 };
 

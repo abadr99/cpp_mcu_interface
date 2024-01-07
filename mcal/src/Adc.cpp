@@ -118,12 +118,12 @@ ResultAdjustMode Adc::GetAdjustMode() {
                                                        : RAM::kRight;
 }
 
-uint16_t Adc::GetConvertedValue() {
+Adc::digitalVal_t Adc::GetConvertedValue() {
     return convertedVal_;
 }
 
-uint16_t Adc::GetDataRegister() {
-    uint16_t convertedVal = 0;
+Adc::digitalVal_t Adc::GetDataRegister() {
+    Adc::digitalVal_t convertedVal = 0;
     // Read the converted value depending on :
     //   a) Adjust mode {left, right}
     if (GetAdjustMode() == ResultAdjustMode::kLeft) {
@@ -137,7 +137,7 @@ uint16_t Adc::GetDataRegister() {
     return convertedVal;
 }
 
-void Adc::SetConvertedValue(uint16_t val) {
+void Adc::SetConvertedValue(Adc::digitalVal_t val) {
     convertedVal_ = val;
 }
 
@@ -149,8 +149,8 @@ Adc::pFunction_t Adc::GetCallBack() {
     return AdcCallBack_;
 }
 
-uint16_t Adc::StartConversion() {
-    uint16_t convertedVal = 0;
+Adc::digitalVal_t Adc::StartConversion() {
+    Adc::digitalVal_t convertedVal = 0;
     // 1] Start conversion
     registers_.GetADCSRA().SetBit<Adcsra::kADSC>();
     // 2] Wait until conversion be completed
@@ -162,7 +162,7 @@ uint16_t Adc::StartConversion() {
     return convertedVal;
 }
 
-uint16_t Adc::StartConversion(Adc::pFunction_t pFun) {
+Adc::digitalVal_t Adc::StartConversion(Adc::pFunction_t pFun) {
     // 1] Enable interrupt 
     // TODO(@abadr): (NOTE: Global interrupt should be enabled)
     registers_.GetADCSRA().SetBit<Adcsra::kADIE>();

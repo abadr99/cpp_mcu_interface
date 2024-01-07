@@ -14,6 +14,7 @@ enum Port {
 enum Pin {
     kPin0, kPin1, kPin2, kPin3,
     kPin4, kPin5, kPin6, kPin7,
+    kNotConnected,
 };
 using AvrRegWidth  = uint8_t;
 }}
@@ -44,6 +45,16 @@ using AvrRegWidth  = uint8_t;
     X(Pin5)\
     X(Pin6)\
     X(Pin7)
+
+#define ATMEGA32_PINS_VALUE\
+    X(Pin0, 0)\
+    X(Pin1, 1)\
+    X(Pin2, 2)\
+    X(Pin3, 3)\
+    X(Pin4, 4)\
+    X(Pin5, 5)\
+    X(Pin6, 6)\
+    X(Pin7, 7)
 
 #define ATMEGA32_PORTS\
     X(PortA)\
