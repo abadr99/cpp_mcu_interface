@@ -46,11 +46,14 @@ public:
     void Clear() const;
     RegWidth_t Read() const;
 
+    // mask : set all bits to ones except to certain bits has to be zeros
+    // if we want to set 2,3,4 bits to specific values then:
+    // the mask should be 0b1110_0011
     template<RegWidth_t mask, uint8_t startBit, RegWidth_t val>
-    void SetRegisterWithMask()
+    void WriteWithMask()
     {
         static_assert(startBit < sizeof(RegWidth_t)*8,  
-                      "Calling SetRegisterWithMask() with out of range bit");
+                      "Calling WriteWithMask() with out of range bit");
          *_pReg = (*_pReg & mask) | ((val << startBit) & (~mask));
     }
     /**
