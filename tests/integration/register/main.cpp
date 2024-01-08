@@ -69,7 +69,7 @@ int main () {
     print_num(R.ReadBits<0, 1>()); // 3
     new_line();
     R.Clear();
-    R.SetBits<2,4>();
+    R.SetBits<2, 4>();
     print_num_binary(R.Read()); // 0b0001_1100
     new_line();
 }
