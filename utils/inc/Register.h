@@ -1,6 +1,7 @@
 #ifndef _REGISTER_H_
 #define _REGISTER_H_
 
+#include "Helpers.h"
 namespace utils {
 // Wrapper class for register 
 // All register modification should be handled in 
@@ -67,7 +68,16 @@ public:
         static_assert(startBit < endBit,  
                       "Calling ReadBits with startBit first");
         uint8_t numberOfBits = endBit - startBit + 1;
-        return (*_pReg >> startBit) & ((1 << numberOfBits) - 1);
+        return (*_pReg >> startBit) & (utils::GetOnes<uint8_t>(numberOfBits));
+    }
+
+    template<uint8_t startBit, uint8_t endBit>
+    void SetBits() {
+        static_assert(startBit < endBit,  
+                      "Calling ReadBits with startBit first");
+        uint8_t numberOfBits = endBit - startBit + 1;
+        uint8_t mask = utils::GetOnes<uint8_t>(numberOfBits) << startBit;
+        *_pReg |= mask;
     }
 private:
     volatile RegWidth_t* _pReg;
