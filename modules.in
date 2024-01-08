@@ -1,5 +1,6 @@
 mcal/src/Adc
 mcal/src/Gpio
+mcal/src/Usart
 hal/src/GpioDeviceInterface
 hal/src/AdcDeviceInterface
 hal/src/Led
