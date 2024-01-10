@@ -104,8 +104,10 @@ template<ResultAdjustMode M>
 void Adc::SetAdjustMode() {
     using RAM = ResultAdjustMode;
     switch (M) {
-        case RAM::kLeft : registers_.GetADMUX().SetBit<AdmuxReg::kADLAR>();break;
-        case RAM::kRight: registers_.GetADMUX().ClearBit<AdmuxReg::kADLAR>();break;
+        case RAM::kLeft : registers_.GetADMUX().SetBit<AdmuxReg::kADLAR>();
+        break;
+        case RAM::kRight: registers_.GetADMUX().ClearBit<AdmuxReg::kADLAR>();
+        break;
     }
 }
 template void Adc::SetAdjustMode<ResultAdjustMode::kLeft>();

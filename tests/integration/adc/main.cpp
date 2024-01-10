@@ -33,8 +33,8 @@ int main () {
     new_line();
 
     ADC.Init<VoltageRefMode::kAvcc,
-            DivisionFactorMode::kDivisionFactor_4x,  //IGNORE-STYLE-CHECK[L004]
-              AutoTriggerMode::kTimer1_CaptureEvent,       //IGNORE-STYLE-CHECK[L004]
+            DivisionFactorMode::kDivisionFactor_4x,
+              AutoTriggerMode::kTimer1_CaptureEvent,
              ResultAdjustMode::kRight>();
     print_str("**********************");
     new_line();
@@ -55,8 +55,8 @@ int main () {
     new_line();
 
     ADC.Init<VoltageRefMode::k2_56v,
-            DivisionFactorMode::kDivisionFactor_8x,  //IGNORE-STYLE-CHECK[L004]
-              AutoTriggerMode::kExternalInterrupt0,       //IGNORE-STYLE-CHECK[L004]
+            DivisionFactorMode::kDivisionFactor_8x,
+              AutoTriggerMode::kExternalInterrupt0,
              ResultAdjustMode::kRight>();
     print_str("**********************");
     new_line();
@@ -77,8 +77,8 @@ int main () {
     new_line();
 
     ADC.Init<VoltageRefMode::kAref,
-            DivisionFactorMode::kDivisionFactor_16x,  //IGNORE-STYLE-CHECK[L004]
-              AutoTriggerMode::kTimer0_CompareMatch,       //IGNORE-STYLE-CHECK[L004]
+            DivisionFactorMode::kDivisionFactor_16x,
+              AutoTriggerMode::kTimer0_CompareMatch,
              ResultAdjustMode::kRight>();
     print_str("**********************");
     new_line();
@@ -99,8 +99,8 @@ int main () {
     new_line();
 
     ADC.Init<VoltageRefMode::kAref,
-            DivisionFactorMode::kDivisionFactor_32x,  //IGNORE-STYLE-CHECK[L004]
-              AutoTriggerMode::kTimer0_OverFlow,       //IGNORE-STYLE-CHECK[L004]
+            DivisionFactorMode::kDivisionFactor_32x, 
+              AutoTriggerMode::kTimer0_OverFlow,
              ResultAdjustMode::kRight>();
     print_str("**********************");
     new_line();
@@ -121,8 +121,8 @@ int main () {
     new_line();
 
     ADC.Init<VoltageRefMode::kAref,
-            DivisionFactorMode::kDivisionFactor_64x,  //IGNORE-STYLE-CHECK[L004]
-              AutoTriggerMode::kTimer1_OverFlow,       //IGNORE-STYLE-CHECK[L004]
+            DivisionFactorMode::kDivisionFactor_64x,
+              AutoTriggerMode::kTimer1_OverFlow,
              ResultAdjustMode::kRight>();
     print_str("**********************");
     new_line();
@@ -143,8 +143,8 @@ int main () {
     new_line();
 
     ADC.Init<VoltageRefMode::kAref,
-            DivisionFactorMode::kDivisionFactor_128x,  //IGNORE-STYLE-CHECK[L004]
-              AutoTriggerMode::kTimer1_CompareMatchB,       //IGNORE-STYLE-CHECK[L004]
+            DivisionFactorMode::kDivisionFactor_128x,
+              AutoTriggerMode::kTimer1_CompareMatchB,
              ResultAdjustMode::kRight>();
     print_str("**********************");
     new_line();
