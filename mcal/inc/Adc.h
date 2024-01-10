@@ -29,7 +29,7 @@ namespace adc {
 #define ADC_BASE_REG             (0x27)
 #define ADC_CHANNEL_MODE_MASK    (0xE0)
 #define ADC_PRESCALAR_MASK       (0xF8)
-#define ADC_AUTO_TRIGGER_MASK    (0xF1)
+#define ADC_AUTO_TRIGGER_MASK    (0x1F)
 
 struct AdcRegisters {
     AdcRegisters(const avr::types::AvrRegWidth baseAddr);
