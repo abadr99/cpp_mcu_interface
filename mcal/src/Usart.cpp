@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include "Helpers.h"
 #include "Atmega32.h"
 #include "Register.h"
 #include "Usart.h"
@@ -14,20 +15,25 @@ using namespace avr::mcal::usart;
 // ============================================================================
 
 UsartRegisters::UsartRegisters(avr::types::AvrRegWidth baseAddr) 
-: udr_(baseAddr),       ucsra_(baseAddr - 1), 
-  ucsrb_(baseAddr - 2), ubrrl_(baseAddr - 3),
+: udr_(baseAddr), 
+  ucsra_(baseAddr - 1), 
+  ucsrb_(baseAddr - 2), 
+  ubrrl_(baseAddr - 3), 
+  ubrrh_(UCSRH_REGISTER),
   ucsrc_(UCSRC_REGISTER)
 { /* EMPTY */}
 
 typename UsartRegisters::Register_t& UsartRegisters::GetUDR() {
     return udr_;
 }
-typename UsartRegisters::Register_t& UsartRegisters::GetUCSRA() {
+typename UsartRegisters::Register_t& UsartRegisters::GetUCSRA(bool isWrite) {
     // According to specs:
     // Always set this bit to zero when writing to UCSRA {FE, DOR, PE}
-    ucsra_.ClearBit<UCSRA::kFE>()
-          .ClearBit<UCSRA::kDOR>()
-          .ClearBit<UCSRA::kPE>();
+    if (isWrite) {
+        ucsra_.ClearBit<UCSRA::kFE>()
+              .ClearBit<UCSRA::kDOR>()
+              .ClearBit<UCSRA::kPE>();
+    }
     return ucsra_;
 }
 typename UsartRegisters::Register_t& UsartRegisters::GetUCSRB() {
@@ -42,6 +48,13 @@ typename UsartRegisters::Register_t& UsartRegisters::GetUCSRC() {
     // The URSEL must be one when writing the UCSRC.
     ucsrc_.SetBit<UCSRC::kURSEL>();
     return ucsrc_;
+}
+typename UsartRegisters::Register_t& UsartRegisters::GetUBRRH() {
+    // if we use this function this mean we are going to modify 
+    // this register. According to specs:
+    // The URSEL must be one when writing the UCSRC.
+    ubrrh_.ClearBit<UCSRC::kURSEL>();
+    return ubrrh_;
 }
 // ============================================================================
 // -------------------------------- USART ------------------------------------
@@ -106,10 +119,10 @@ void Usart::SetClockPolarity() {
 template<ErrorType E>
 void Usart::GetErrorType() {
     // TODO(@abadr99): Check what is the best order for errors?
-    if (registers_.GetUCSRA().ReadBit<UCSRA::kFE>()) {
+    if (registers_.GetUCSRA(false).ReadBit<UCSRA::kFE>()) {
         return ErrorType::kFrameError;
     }
-    if (registers_.GetUCSRA().ReadBit<UCSRA::kDOR>()) {
+    if (registers_.GetUCSRA(false).ReadBit<UCSRA::kDOR>()) {
         return ErrorType::kDataOverRun;
     }
     if (registers_.GetUCSRC().ReadBits<UCSRC::kUPM0, UCSRC::kUPM1>() > 1) {
@@ -124,7 +137,71 @@ template<TransferMode M>
 void Usart::SelectTransferMode() {
     using TM = TransferMode;
     switch (M) {
-        case TM::kAsynchronous: registers_.GetUCSRC().ClearBit<UCSRC::kUMSEL>(); break; //IGNORE-STYLE-CHECK[L004]
-        case TM::kSynchronous: registers_.GetUCSRC().SetBit<UCSRC::kUMSEL>(); break; //IGNORE-STYLE-CHECK[L004]
+        case TM::kAsynchronous_1x: 
+            registers_.GetUCSRC().ClearBit<UCSRC::kUMSEL>();
+            registers_.GetUCSRA().ClearBit<UCSRA::kU2X>(); 
+            break;
+        case TM::kAsynchronous_2x:
+            registers_.GetUCSRC().ClearBit<UCSRC::kUMSEL>();
+            registers_.GetUCSRA().SetBit<UCSRA::kU2X>(); 
+            break;
+        case TM::kSynchronous:
+            registers_.GetUCSRC().SetBit<UCSRC::kUMSEL>();
+            registers_.GetUCSRA().ClearBit<UCSRA::kU2X>(); 
+            break;
     }
+}
+
+TransferMode Usart::GetTransferMode() {
+    using TM = TransferMode;
+    if (registers_.GetUCSRC().ReadBit<UCSRC::kUMSEL>()) {
+        return TM::kSynchronous;
+    }
+    if (registers_.GetUCSRA().ReadBit<UCSRC::kUMSEL>()) {
+        return TM::kAsynchronous_2x;
+    }
+    return TM::kAsynchronous_1x;
+}
+
+template <Usart::BaudRate_t BR>
+void Usart::SetBaudRate() {
+    using TM = TransferMode;
+    constexpr auto Calculate_ubrr = [&](const uint8_t mode) -> uint32_t 
+                        {
+                          return ((ATMEGA32_CLK) / (static_cast<float>(mode) * BR)) - 1; //IGNORE-STYLE-CHECK[L004]
+                        };
+    uint32_t ubrr = 0;
+    TransferMode mode = GetTransferMode();
+    switch (mode) {
+        case TM::kAsynchronous_1x: ubrr = Calculate_ubrr(16); break;
+        case TM::kAsynchronous_2x: ubrr = Calculate_ubrr(8);  break;
+        case TM::kSynchronous:     ubrr = Calculate_ubrr(2);  break;
+    }
+    registers_.GetUBRRL().WriteRegister(static_cast<uint8_t>(ubrr));
+    uint8_t ubbrh = utils::ExtractBits<uint16_t, 8, 11>(ubrr);
+    registers_.GetUBRRH().template WriteRegister<Mask::kHighDataBits, 8>(ubbrh);
+}
+
+template <TX_RX_Mode M>
+void Usart::SetTxRxMode() {
+    registers_.GetUCSRB().WriteWithMask<Mask::kTxRx, UCSRB::kTXEN, M>();
+}
+
+template<typename T>
+void Usart::Send(T data) {
+    // 1]  --- WAIT UNTIL TRANSMIT BUFFER BE EMPTY
+    while (registers_.GetUCSRA().ReadBit<UCSRA::kUDRE>() == 0) { /* EMPTY */}
+    // 2]  ---  WRITE DATA TO TRANSMIT BUFFER
+    //  Check if we have more that one byte to transfer and according to specs:
+    //  – TXB8 :Must be written before writing the low bits to UDR.
+    if (sizeof(T) > 1) {
+        registers_.GetUCSRB()
+                  .template WriteRegister<Mask::kTxB8, UCSRB::kTXB8>(utils::ExtractBits<8>(data)); //IGNORE-STYLE-CHECK[L004]
+    }
+    registers_.GetUDR().WriteRegister(data);
+}
+
+template<typename T>
+T Usart::Receive() {
+
 }

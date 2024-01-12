@@ -7,6 +7,7 @@ namespace usart {
 
 #define USART_BASE_ADDR             (0x2C)
 #define UCSRC_REGISTER              (0x40)
+#define UCSRH_REGISTER              (UCSRC_REGISTER)
 
 #define USART_PARITY_MODE\
     X(Disabled, 0b00)\
@@ -35,7 +36,8 @@ namespace usart {
     X(Success)
 
 #define USART_TRANSFER_MODE\
-    X(Asynchronous)\
+    X(Asynchronous_1x)\
+    X(Asynchronous_2x)\
     X(Synchronous)
 
 enum ParityMode {
@@ -74,6 +76,12 @@ enum TransferMode {
     #undef X
 };
 
+enum TX_RX_Mode {
+    kDisableRX_DisableTX = 0x00,
+    kDisableRX_EnableTX  = 0x01,
+    kEnableRX_DisableTX  = 0x10,
+    kEnableRX_EnableTX   = 0x11,
+};
 class UsartRegisters {
 public:
     enum UCSRC {
@@ -106,18 +114,29 @@ public:
         kTXC,
         kRXC,
     };
+    enum Mask {
+        kParityMode = 0xC2,
+        kHighDataBits = 0xF0,
+        kTxRx = 0xE7,
+        kTxB8 = 0x01,
+    };
     using Register_t = utils::Register<avr::types::AvrRegWidth>;
     UsartRegisters(avr::types::AvrRegWidth baseAddr);
     Register_t& GetUDR();
-    Register_t& GetUCSRA();
+    // NOTE: We need this parameter with this register because if we are going
+    // to write then we MUST clear certain bits, otherwise we shouldn't modify
+    // register before reading,
+    Register_t& GetUCSRA(bool isWrite = true);
     Register_t& GetUCSRB();
     Register_t& GetUBRRL();
+    Register_t& GetUBRRH();
     Register_t& GetUCSRC();
 private:
     Register_t udr_;
     Register_t ucsra_;
     Register_t ucsrb_;
     Register_t ubrrl_;
+    Register_t ubrrh_;
     Register_t ucsrc_;
 };
 
@@ -126,9 +145,35 @@ public:
     using UCSRA = UsartRegisters::UCSRA;
     using UCSRB = UsartRegisters::UCSRB;
     using UCSRC = UsartRegisters::UCSRC;
-
+    using Mask  = UsartRegisters::Mask;
+    using BaudRate_t = uint32_t;
     Usart();
-    void Init();
+    template <
+              BaudRate_t    BR   = 9600,
+              TX_RX_Mode    TR   = TX_RX_Mode::kEnableRX_EnableTX,
+              DataSize      DS   = DataSize::kEightBits,
+              ParityMode    PM   = ParityMode::kDisabled,
+              StopBits      SP   = StopBits::kOneBit,
+              TransferMode  TM   = TransferMode::kAsynchronous_1x,
+              ClockPolarity CP   = ClockPolarity::kTxRising_RxFalling
+             >
+    void Init() {
+        SetDataSize<DS>();
+        SetParityMode<PM>();
+        SetNumberOfStopBits<SP>();
+        SelectTransferMode<TM>();
+        SetBaudRate<BR>();
+        SetTxRxMode<TR>();
+        if (TM == TransferMode::kSynchronous) {
+            SetClockPolarity<CP>();
+        }
+    }
+    template<typename T = uint8_t>
+    void Send(T data);
+    template<typename T = uint8_t>
+    T Receive();
+private:
+    UsartRegisters registers_;
     template <ParityMode M>
     void SetParityMode();
     template <StopBits N>
@@ -141,11 +186,13 @@ public:
     void GetErrorType();
     template<TransferMode M>
     void SelectTransferMode();
-private:
-    UsartRegisters registers_;
-    enum Mask {
-        kParityMode = 0xC2,
-    };
+    TransferMode GetTransferMode();
+    template <TX_RX_Mode M>
+    void SetTxRxMode();
+    // This function should be called after configuring TransferMode as the 
+    // calculations are depending on mode of data transfer
+    template <BaudRate_t BR>
+    void SetBaudRate();
 };
 
 }}} // avr::mcal::usart
