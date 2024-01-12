@@ -71,6 +71,4 @@ void print_char(char C)
     SPECIAL_OUTPUT_PORT = C;
 }
 
-
-
 #endif /* TEST_H_ */
