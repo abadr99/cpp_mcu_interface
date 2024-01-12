@@ -41,6 +41,12 @@ public:
     }
 
     void WriteRegister(RegWidth_t R);
+    
+    template<RegWidth_t mask, uint8_t startBit>
+    void WriteRegister(RegWidth_t val) {
+        *_pReg = (*_pReg & mask) | ((val << startBit) & (~mask));
+    }
+    
     // Set all bits to one
     void Set() const;
     void Clear() const;
