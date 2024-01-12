@@ -15,6 +15,11 @@ void print_str(const char *str)
     }
 }
 
+void new_line()
+{
+    SPECIAL_OUTPUT_PORT = '\n';
+}
+
 void print_num(int num)
 {
     char str[15];
@@ -41,24 +46,24 @@ void print_num_binary(int num)
 {
     int str[sizeof(int)*8];
     int i = 0;
-    if (num==0)
-    {
-    print_str("0b");
-    SPECIAL_OUTPUT_PORT ='0';
+    if (num == 0) {
+        print_str("0b");
+        SPECIAL_OUTPUT_PORT = '0';
     }
     else
     {
-    for (i=0;num>0;i++)
-    {
-    str[i]=num%2;
-    num=num/2;
+        for (i = 0 ; num > 0 ; i++)
+        {
+            str[i] = num % 2;
+            num = num / 2;
+        }
+        print_str("0b");
+        for (i=i-1;i>=0;i--)
+        {
+            SPECIAL_OUTPUT_PORT = str[i]+'0';
+        }
     }
-    print_str("0b");
-    for (i=i-1;i>=0;i--)
-    {
-    SPECIAL_OUTPUT_PORT = str[i]+'0';
-    }
-    }
+    new_line();
 }
 
 void print_char(char C)
@@ -66,9 +71,6 @@ void print_char(char C)
     SPECIAL_OUTPUT_PORT = C;
 }
 
-void new_line()
-{
-    SPECIAL_OUTPUT_PORT = '\n';
-}
+
 
 #endif /* TEST_H_ */
