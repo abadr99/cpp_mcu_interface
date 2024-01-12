@@ -18,5 +18,7 @@ int main () {
         print_num_binary(RESULT);
         RESULT = utils::ExtractBits<uint32_t, 28, 31>(VALUE); //0b1010
         print_num_binary(RESULT);
+        RESULT = utils::ExtractBits<uint32_t, 0>(VALUE); //0b1
+        print_num_binary(RESULT);
     }
 }
