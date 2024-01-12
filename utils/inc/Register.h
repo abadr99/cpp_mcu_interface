@@ -40,7 +40,7 @@ public:
         return *this;
     }
 
-    void SetRegisterValue(RegWidth_t R);
+    void WriteRegister(RegWidth_t R);
     // Set all bits to one
     void Set() const;
     void Clear() const;
