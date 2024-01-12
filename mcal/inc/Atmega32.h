@@ -19,6 +19,7 @@ enum Pin {
 using AvrRegWidth  = uint8_t;
 }}
 
+#define ATMEGA32_CLK                   (8000000)
 #define GPIOA_BASE_ADDRESS             (PORTA)
 #define PORTA                          (0x3B)
 #define DDRA                           (0x3A)
