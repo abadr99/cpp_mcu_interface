@@ -124,8 +124,8 @@ public:
     UsartRegisters(avr::types::AvrRegWidth baseAddr);
     Register_t& GetUDR();
     // NOTE: We need this parameter with this register because if we are going
-    // to write then we MUST clear certain bits, otherwise we shouldn't modify
-    // register before reading,
+    // to write then we MUST clear certain bits first, otherwise we shouldn't 
+    // modify register before reading.
     Register_t& GetUCSRA(bool isWrite = true);
     Register_t& GetUCSRB();
     Register_t& GetUBRRL();
@@ -147,6 +147,7 @@ public:
     using UCSRC = UsartRegisters::UCSRC;
     using Mask  = UsartRegisters::Mask;
     using BaudRate_t = uint32_t;
+    using PFunction_t  = void(*)();
     Usart();
     template <
               BaudRate_t    BR   = 9600,
@@ -168,18 +169,20 @@ public:
             SetClockPolarity<CP>();
         }
     }
-    template<typename T = uint8_t>
-    void Send(T data);
-    template<typename T = uint8_t>
-    T Receive();
+    void Send(uint16_t data);
+    void Send(PFunction_t pFun);
+    PFunction_t GetTransmitterCallBack();
+    uint16_t Receive();
 private:
     UsartRegisters registers_;
+    PFunction_t transmitterCallBack_;
     template <ParityMode M>
     void SetParityMode();
     template <StopBits N>
     void SetNumberOfStopBits();
     template <DataSize S>
     void SetDataSize();
+    DataSize GetDataSize();
     template<ClockPolarity P>
     void SetClockPolarity();
     template<ErrorType E>

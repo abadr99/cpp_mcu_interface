@@ -9,6 +9,7 @@
 // ============================================================================
 
 using namespace avr::mcal::usart;
+Usart USART;
 
 // ============================================================================
 // ---------------------------- USART-REGISTES-IMPL ---------------------------
@@ -103,6 +104,12 @@ void Usart::SetDataSize() {
     }
 }
 
+DataSize Usart::GetDataSize() {
+    if (registers_.GetUCSRB().ReadBit<UCSRB::kUCSZ2>()) {
+        return DataSize::kNineBits;
+    }
+    return static_cast<DataSize>(registers_.GetUCSRC().ReadBits<UCSRC::kUCSZ0, UCSRC::kUCSZ1>()); //IGNORE-STYLE-CHECK[L004]
+}
 template<ClockPolarity P>
 void Usart::SetClockPolarity() {
     using CP = ClockPolarity;
@@ -187,21 +194,59 @@ void Usart::SetTxRxMode() {
     registers_.GetUCSRB().WriteWithMask<Mask::kTxRx, UCSRB::kTXEN, M>();
 }
 
-template<typename T>
-void Usart::Send(T data) {
+void Usart::Send(uint16_t data) {
     // 1]  --- WAIT UNTIL TRANSMIT BUFFER BE EMPTY
     while (registers_.GetUCSRA().ReadBit<UCSRA::kUDRE>() == 0) { /* EMPTY */}
     // 2]  ---  WRITE DATA TO TRANSMIT BUFFER
-    //  Check if we have more that one byte to transfer and according to specs:
+    //  Check if we have more than one byte to transfer and according to specs:
     //  – TXB8 :Must be written before writing the low bits to UDR.
-    if (sizeof(T) > 1) {
+    if (GetDataSize() == DataSize::kNineBits) {
         registers_.GetUCSRB()
-                  .template WriteRegister<Mask::kTxB8, UCSRB::kTXB8>(utils::ExtractBits<8>(data)); //IGNORE-STYLE-CHECK[L004]
+                  .template WriteRegister<Mask::kTxB8, UCSRB::kTXB8>(utils::ExtractBits<uint16_t, 8>(data)); //IGNORE-STYLE-CHECK[L004]
     }
     registers_.GetUDR().WriteRegister(data);
 }
 
-template<typename T>
-T Usart::Receive() {
+PFunction_t Usart::GetTransmitterCallBack() {
+    return transmitterCallBack_;
+}
 
+void Usart::Send(PFunction_t pFun) {
+    // 1] Set callback
+    transmitterCallBack_ = pFun;
+    // TODO(abadr99) :2] Enable global interrupt
+    // 3] 
+}
+
+uint16_t Usart::Receive() {
+    uint16_t data = 0;
+    // WAIT FOR DATA UNTIL BE RECEIVED
+    while (registers_.GetUCSRA().ReadBit<UCSRA::kRXC>() == 0) { /* EMPTY */}
+    if (GetDataSize() == DataSize::kNineBits) {
+        data = registers_.GetUCSRB().ReadBit<UCSRB::kRXB8>();
+    }
+    data = (data << 8) | registers_.GetUCSRB().Read();
+    return data;
+}
+
+//  ---- USART, Rx Complete
+void __vector_13(void) __attribute__((signal));
+void __vector_13(void)
+{
+    
+}
+
+
+//  ----  USART Data Register Empty
+void __vector_14(void) __attribute__((signal));
+void __vector_14(void)
+{
+    
+}
+
+//  ----  USART, Tx Complete
+void __vector_15(void) __attribute__((signal));
+void __vector_15(void)
+{
+    
 }
