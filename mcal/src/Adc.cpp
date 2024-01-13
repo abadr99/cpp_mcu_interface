@@ -176,7 +176,7 @@ Adc::digitalVal_t Adc::StartConversion(Adc::pFunction_t pFun) {
     return GetConvertedValue();
 }
 
-void __vector_16(void) __attribute__((signal));
+extern "C" void __vector_16(void) __attribute__((signal));
 void __vector_16(void)
 {
     // Get converted value

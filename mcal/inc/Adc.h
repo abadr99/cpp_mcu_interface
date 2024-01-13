@@ -199,7 +199,7 @@ public:
     
 private:
     AdcRegisters registers_;
-    digitalVal_t convertedVal_;
+    volatile digitalVal_t convertedVal_;
     pFunction_t AdcCallBack_;
 };
 
