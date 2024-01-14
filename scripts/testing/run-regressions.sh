@@ -93,7 +93,7 @@ then
   echo "$OK Output file has been generated successfully : $test_dir/results.output"
 fi
 
-diff $test_dir/results.output $test_dir/results.expected
+diff -B $test_dir/results.output $test_dir/results.expected
 
 if [ $? -eq 0 ]
 then  
