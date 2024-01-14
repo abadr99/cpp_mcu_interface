@@ -39,6 +39,25 @@ namespace usart {
     X(Asynchronous_1x)\
     X(Asynchronous_2x)\
     X(Synchronous)
+    
+#define USART_BAUD_RATES\
+    X(300) \
+    X(600) \
+    X(1200) \
+    X(2400) \
+    X(4800) \
+    X(9600) \
+    X(19200) \
+    X(38400) \
+    X(57600) \
+    X(115200) \
+    X(230400) \
+    X(460800) \
+    X(921600) \
+    X(1000000) \
+    X(2000000) \
+    X(3000000) \
+    X(4000000)
 
 enum ParityMode {
     #define X(name_, val_)  k##name_ = val_,
@@ -170,12 +189,24 @@ public:
         }
     }
     void Send(uint16_t data);
-    void Send(PFunction_t pFun);
+    void Send(uint16_t data, PFunction_t pFun);
     PFunction_t GetTransmitterCallBack();
+    PFunction_t GetReceiverCallBack();
+    void WriteDataRegister(uint16_t data);
+    uint16_t ReadDataRegister();
+    uint16_t GetTransmittedData();
+    void SetReceivedData(uint16_t data);
+    uint16_t GetReceivedData();
     uint16_t Receive();
+    uint16_t Receive(PFunction_t pFun);
+    template<ErrorType E>
+    ErrorType GetErrorType();
 private:
     UsartRegisters registers_;
     PFunction_t transmitterCallBack_;
+    PFunction_t receiverCallBack_;
+    uint16_t tx_data_;
+    uint16_t rx_data_;
     template <ParityMode M>
     void SetParityMode();
     template <StopBits N>
@@ -185,8 +216,6 @@ private:
     DataSize GetDataSize();
     template<ClockPolarity P>
     void SetClockPolarity();
-    template<ErrorType E>
-    void GetErrorType();
     template<TransferMode M>
     void SelectTransferMode();
     TransferMode GetTransferMode();

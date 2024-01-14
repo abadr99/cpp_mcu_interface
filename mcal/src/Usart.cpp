@@ -61,12 +61,19 @@ typename UsartRegisters::Register_t& UsartRegisters::GetUBRRH() {
 // -------------------------------- USART ------------------------------------
 // ============================================================================
 
-Usart::Usart() : registers_(USART_BASE_ADDR) { /* EMPTY */}
+Usart::Usart() : registers_(USART_BASE_ADDR), 
+                 transmitterCallBack_(nullptr),
+                 receiverCallBack_(nullptr)
+ { /* EMPTY */}
 
 template <ParityMode M>
 void Usart::SetParityMode() {
     registers_.GetUCSRC().WriteWithMask<Mask::kParityMode, UCSRC::kUPM0, M>(); 
 }
+#define X(mode_, val_)\
+ template void Usart::SetParityMode<ParityMode::k##mode_>();
+ USART_PARITY_MODE
+#undef X
 
 template <StopBits N>
 void Usart::SetNumberOfStopBits() {
@@ -76,6 +83,10 @@ void Usart::SetNumberOfStopBits() {
         case SB::kTwoBits: registers_.GetUCSRC().SetBit<UCSRC::kUSBS>();   break; //IGNORE-STYLE-CHECK[L004]
     }
 }
+#define X(mode_, val_)\
+ template void Usart::SetNumberOfStopBits<StopBits::k##mode_>();
+ USART_STOP_BITS
+#undef X
 
 template <DataSize S>
 void Usart::SetDataSize() {
@@ -103,6 +114,10 @@ void Usart::SetDataSize() {
             break;
     }
 }
+#define X(mode_, val_)\
+ template void Usart::SetDataSize<DataSize::k##mode_>();
+ USART_DATA_SIZE
+#undef X
 
 DataSize Usart::GetDataSize() {
     if (registers_.GetUCSRB().ReadBit<UCSRB::kUCSZ2>()) {
@@ -110,6 +125,7 @@ DataSize Usart::GetDataSize() {
     }
     return static_cast<DataSize>(registers_.GetUCSRC().ReadBits<UCSRC::kUCSZ0, UCSRC::kUCSZ1>()); //IGNORE-STYLE-CHECK[L004]
 }
+
 template<ClockPolarity P>
 void Usart::SetClockPolarity() {
     using CP = ClockPolarity;
@@ -122,9 +138,13 @@ void Usart::SetClockPolarity() {
             break;
     }
 }
+#define X(mode_, val_)\
+ template void Usart::SetClockPolarity<ClockPolarity::k##mode_>();
+ USART_CLK_POLARITY
+#undef X
 
 template<ErrorType E>
-void Usart::GetErrorType() {
+ErrorType Usart::GetErrorType() {
     // TODO(@abadr99): Check what is the best order for errors?
     if (registers_.GetUCSRA(false).ReadBit<UCSRA::kFE>()) {
         return ErrorType::kFrameError;
@@ -139,6 +159,10 @@ void Usart::GetErrorType() {
     }
     return ErrorType::kSuccess;
 }
+#define X(mode_)\
+ template ErrorType Usart::GetErrorType<ErrorType::k##mode_>();
+ USART_ERROR_TYPE
+#undef X
 
 template<TransferMode M>
 void Usart::SelectTransferMode() {
@@ -158,6 +182,10 @@ void Usart::SelectTransferMode() {
             break;
     }
 }
+#define X(mode_)\
+ template void Usart::SelectTransferMode<TransferMode::k##mode_>();
+ USART_TRANSFER_MODE
+#undef X
 
 TransferMode Usart::GetTransferMode() {
     using TM = TransferMode;
@@ -188,16 +216,21 @@ void Usart::SetBaudRate() {
     uint8_t ubbrh = utils::ExtractBits<uint16_t, 8, 11>(ubrr);
     registers_.GetUBRRH().template WriteRegister<Mask::kHighDataBits, 8>(ubbrh);
 }
+#define X(val_)\
+template void Usart::SetBaudRate<val_>();
+USART_BAUD_RATES
+#undef X
 
 template <TX_RX_Mode M>
 void Usart::SetTxRxMode() {
     registers_.GetUCSRB().WriteWithMask<Mask::kTxRx, UCSRB::kTXEN, M>();
 }
-
-void Usart::Send(uint16_t data) {
-    // 1]  --- WAIT UNTIL TRANSMIT BUFFER BE EMPTY
-    while (registers_.GetUCSRA().ReadBit<UCSRA::kUDRE>() == 0) { /* EMPTY */}
-    // 2]  ---  WRITE DATA TO TRANSMIT BUFFER
+template void Usart::SetTxRxMode<TX_RX_Mode::kDisableRX_DisableTX>();
+template void Usart::SetTxRxMode<TX_RX_Mode::kDisableRX_EnableTX>();
+template void Usart::SetTxRxMode<TX_RX_Mode::kEnableRX_DisableTX>();
+template void Usart::SetTxRxMode<TX_RX_Mode::kEnableRX_EnableTX>();
+ 
+void Usart::WriteDataRegister(uint16_t data) {
     //  Check if we have more than one byte to transfer and according to specs:
     //  – TXB8 :Must be written before writing the low bits to UDR.
     if (GetDataSize() == DataSize::kNineBits) {
@@ -205,43 +238,89 @@ void Usart::Send(uint16_t data) {
                   .template WriteRegister<Mask::kTxB8, UCSRB::kTXB8>(utils::ExtractBits<uint16_t, 8>(data)); //IGNORE-STYLE-CHECK[L004]
     }
     registers_.GetUDR().WriteRegister(data);
+    
 }
-
-PFunction_t Usart::GetTransmitterCallBack() {
-    return transmitterCallBack_;
-}
-
-void Usart::Send(PFunction_t pFun) {
-    // 1] Set callback
-    transmitterCallBack_ = pFun;
-    // TODO(abadr99) :2] Enable global interrupt
-    // 3] 
-}
-
-uint16_t Usart::Receive() {
+uint16_t Usart::ReadDataRegister() {
     uint16_t data = 0;
-    // WAIT FOR DATA UNTIL BE RECEIVED
-    while (registers_.GetUCSRA().ReadBit<UCSRA::kRXC>() == 0) { /* EMPTY */}
     if (GetDataSize() == DataSize::kNineBits) {
         data = registers_.GetUCSRB().ReadBit<UCSRB::kRXB8>();
     }
-    data = (data << 8) | registers_.GetUCSRB().Read();
-    return data;
+    return (data << 8) | registers_.GetUCSRB().Read();;
+}
+
+void Usart::Send(uint16_t data) {
+    // 1]  --- WAIT UNTIL TRANSMIT BUFFER BE EMPTY
+    while (registers_.GetUCSRA().ReadBit<UCSRA::kUDRE>() == 0) { /* EMPTY */}
+    // 2]  ---  WRITE DATA TO TRANSMIT BUFFER
+    WriteDataRegister(data);
+}
+
+typename Usart::PFunction_t Usart::GetTransmitterCallBack() {
+    return transmitterCallBack_;
+}
+
+typename Usart::PFunction_t Usart::GetReceiverCallBack() {
+    return receiverCallBack_;
+}
+
+uint16_t Usart::GetTransmittedData() {
+    return tx_data_;
+}
+
+void Usart::SetReceivedData(uint16_t data) {
+    rx_data_ = data;
+}
+
+uint16_t Usart::GetReceivedData() {
+    return rx_data_;
+}
+
+// Instead of busy waiting in UDRE flag we can use UDRE-INTERRUPT to execute 
+// ISR i.e. to send data.
+void Usart::Send(uint16_t data, PFunction_t pFun) {
+    // --- Set callback
+    transmitterCallBack_ = pFun;
+    // --- Set data
+    tx_data_ = data;
+    // --- Enable transmit complete interrupt 
+    registers_.GetUCSRB().SetBit<UCSRB::kUDRIE>();
+    // TODO(abadr99): --- Enable global interrupt
+}
+
+uint16_t Usart::Receive() {
+    // WAIT FOR DATA UNTIL BE RECEIVED
+    while (registers_.GetUCSRA().ReadBit<UCSRA::kRXC>() == 0) { /* EMPTY */}
+    return ReadDataRegister();
+}
+
+uint16_t Usart::Receive(PFunction_t pFun) {
+    // --- Set callback
+    receiverCallBack_ = pFun;
+    // --- Enable transmit complete interrupt 
+    registers_.GetUCSRB().SetBit<UCSRB::kUDRIE>();
+    // TODO(abadr99): --- Enable global interrupt
+    return rx_data_;
 }
 
 //  ---- USART, Rx Complete
-void __vector_13(void) __attribute__((signal));
+void __vector_13(void) __attribute__ ((signal, used, externally_visible));
 void __vector_13(void)
 {
-    
+    USART.SetReceivedData(USART.ReadDataRegister());
+    if (USART.GetReceiverCallBack()) {
+        USART.GetReceiverCallBack();
+    }
 }
 
 
 //  ----  USART Data Register Empty
-void __vector_14(void) __attribute__((signal));
+void __vector_14(void) __attribute__((signal, used, externally_visible));
 void __vector_14(void)
 {
-    
+    USART.WriteDataRegister(USART.GetTransmittedData());
+    if (USART.GetTransmitterCallBack()) {
+        USART.GetTransmitterCallBack()();
+    }
 }
 
 //  ----  USART, Tx Complete
