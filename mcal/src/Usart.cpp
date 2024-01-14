@@ -303,6 +303,7 @@ uint16_t Usart::Receive(PFunction_t pFun) {
 }
 
 //  ---- USART, Rx Complete
+extern "C"
 void __vector_13(void) __attribute__ ((signal, used, externally_visible));
 void __vector_13(void)
 {
@@ -314,6 +315,7 @@ void __vector_13(void)
 
 
 //  ----  USART Data Register Empty
+extern "C"
 void __vector_14(void) __attribute__((signal, used, externally_visible));
 void __vector_14(void)
 {
