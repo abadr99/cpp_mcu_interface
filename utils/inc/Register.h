@@ -1,6 +1,7 @@
 #ifndef _REGISTER_H_
 #define _REGISTER_H_
 
+#include "Helpers.h"
 namespace utils {
 // Wrapper class for register 
 // All register modification should be handled in 
@@ -39,17 +40,26 @@ public:
         return *this;
     }
 
-    void SetRegisterValue(RegWidth_t R);
+    void WriteRegister(RegWidth_t R);
+    
+    template<RegWidth_t mask, uint8_t startBit>
+    void WriteRegister(RegWidth_t val) {
+        *_pReg = (*_pReg & mask) | ((val << startBit) & (~mask));
+    }
+    
     // Set all bits to one
     void Set() const;
     void Clear() const;
     RegWidth_t Read() const;
 
+    // mask : set all bits to ones except to certain bits has to be zeros
+    // if we want to set 2,3,4 bits to specific values then:
+    // the mask should be 0b1110_0011
     template<RegWidth_t mask, uint8_t startBit, RegWidth_t val>
-    void SetRegisterWithMask()
+    void WriteWithMask()
     {
         static_assert(startBit < sizeof(RegWidth_t)*8,  
-                      "Calling SetRegisterWithMask() with out of range bit");
+                      "Calling WriteWithMask() with out of range bit");
          *_pReg = (*_pReg & mask) | ((val << startBit) & (~mask));
     }
     /**
@@ -67,7 +77,16 @@ public:
         static_assert(startBit < endBit,  
                       "Calling ReadBits with startBit first");
         uint8_t numberOfBits = endBit - startBit + 1;
-        return (*_pReg >> startBit) & ((1 << numberOfBits) - 1);
+        return (*_pReg >> startBit) & (utils::GetOnes<uint8_t>(numberOfBits));
+    }
+
+    template<uint8_t startBit, uint8_t endBit>
+    void SetBits() {
+        static_assert(startBit < endBit,  
+                      "Calling ReadBits with startBit first");
+        uint8_t numberOfBits = endBit - startBit + 1;
+        uint8_t mask = utils::GetOnes<uint8_t>(numberOfBits) << startBit;
+        *_pReg |= mask;
     }
 private:
     volatile RegWidth_t* _pReg;

@@ -80,7 +80,7 @@ void Gpio<TPort>::SetDirection() {
 
 template <Port TPort>
 void Gpio<TPort>::SetDirection(types::AvrRegWidth val) {
-    gpioRegisters_.GetDdrRegister().SetRegisterValue(val);
+    gpioRegisters_.GetDdrRegister().WriteRegister(val);
 }
 
 template <Port TPort>
@@ -99,7 +99,7 @@ void Gpio<TPort>::Write() {
 
 template <Port TPort>
 void Gpio<TPort>::Write(AvrRegWidth val) {
-    gpioRegisters_.GetPortRegister().SetRegisterValue(val);
+    gpioRegisters_.GetPortRegister().WriteRegister(val);
 }
 
 template <Port TPort>
