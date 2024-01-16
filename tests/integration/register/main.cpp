@@ -56,16 +56,20 @@ int main () {
     print_num(R.Read()); //0
     new_line();
 
-    R.SetRegisterValue(0b11110011); 
+    R.WriteRegister(0b11110011); 
     print_num_binary(R.Read()); // 0b11110011
     new_line();
     // suppose we want to change the third three bits i.e. Bits 2,3,4
     // to be 101
-    R.SetRegisterWithMask<0b11100011, 2, 5>();
+    R.WriteWithMask<0b11100011, 2, 5>();
     print_num_binary(R.Read()); // 0b11110111
     new_line();
     print_num(R.ReadBits<2, 4>()); // 5
     new_line();
     print_num(R.ReadBits<0, 1>()); // 3
+    new_line();
+    R.Clear();
+    R.SetBits<2, 4>();
+    print_num_binary(R.Read()); // 0b0001_1100
     new_line();
 }

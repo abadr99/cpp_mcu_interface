@@ -27,7 +27,7 @@ RegWidth_t Register<RegWidth_t>::Read() const {
 }
 
 template<typename RegWidth_t>
-void Register<RegWidth_t>::SetRegisterValue(RegWidth_t R) {
+void Register<RegWidth_t>::WriteRegister(RegWidth_t R) {
     *_pReg  = R;
 }
 

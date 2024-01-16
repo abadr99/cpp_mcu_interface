@@ -64,7 +64,7 @@ template void Adc::SetReferenceVoltageMode<VoltageRefMode::k2_56v>();
 
 template <ChannelMode M>
 void Adc::SelectChannel() {
-    registers_.GetADMUX().SetRegisterWithMask<ADC_CHANNEL_MODE_MASK, 0, M>();
+    registers_.GetADMUX().WriteWithMask<ADC_CHANNEL_MODE_MASK, 0, M>();
 }
 #define X(mode_, val_)\
  template void Adc::SelectChannel<ChannelMode::k##mode_>();
@@ -81,7 +81,7 @@ void Adc::Disable() {
 
 template<DivisionFactorMode M>
 void Adc::SetPreScalarMode() {
-    registers_.GetADCSRA().SetRegisterWithMask<ADC_PRESCALAR_MASK, 0, M>();
+    registers_.GetADCSRA().WriteWithMask<ADC_PRESCALAR_MASK, 0, M>();
 }
 #define X(mode_, val_)\
  template void Adc::SetPreScalarMode<DivisionFactorMode::k##mode_>();
@@ -93,7 +93,7 @@ void Adc::SetAutoTriggerMode() {
     // Enable auto trigger
     registers_.GetADCSRA().SetBit<Adcsra::kADATE>();
     // Select auto trigger source
-    registers_.GetSFIOR().SetRegisterWithMask<ADC_AUTO_TRIGGER_MASK, 5, M>();
+    registers_.GetSFIOR().WriteWithMask<ADC_AUTO_TRIGGER_MASK, 5, M>();
 }
 #define X(mode_, val_)\
  template void Adc::SetAutoTriggerMode<AutoTriggerMode::k##mode_>();
@@ -176,7 +176,7 @@ Adc::digitalVal_t Adc::StartConversion(Adc::pFunction_t pFun) {
     return GetConvertedValue();
 }
 
-void __vector_16(void) __attribute__((signal));
+extern "C" void __vector_16(void) __attribute__((signal));
 void __vector_16(void)
 {
     // Get converted value
