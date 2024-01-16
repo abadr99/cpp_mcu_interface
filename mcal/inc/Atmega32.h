@@ -37,6 +37,7 @@ using AvrRegWidth  = uint8_t;
 #define DDRD                           (0x31)
 #define PIND                           (0x30)
 #define SFIOR                          (0x50)
+#define SREG                           (*((volatile uint8_t*) 0x5F))
 #define ATMEGA32_PINS\
     X(Pin0)\
     X(Pin1)\
