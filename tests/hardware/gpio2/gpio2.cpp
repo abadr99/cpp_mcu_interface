@@ -17,9 +17,9 @@
  */
 #include <stdint.h>
 #include <util/delay.h>
-#include "../../../mcal/inc/atmega32.h"
-#include "../../../utils/inc/register.h"
-#include "../../../mcal/inc/gpio.h"
+#include "../../../mcal/inc/Atmega32.h"
+#include "../../../utils/inc/Register.h"
+#include "../../../mcal/inc/Gpio.h"
 
 using namespace utils;
 using namespace avr::mcal::gpio;
