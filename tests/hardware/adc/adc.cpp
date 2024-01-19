@@ -13,10 +13,10 @@
  */
 #include <stdint.h>
 #include <util/delay.h>
-#include "mcal/inc/Atmega32.h"
-#include "utils/inc/Register.h"
-#include "mcal/inc/Gpio.h"
-#include "mcal/inc/Adc.h"
+#include "../../../mcal/inc/Atmega32.h"
+#include "../../../utils/inc/Register.h"
+#include "../../../mcal/inc/Gpio.h"
+#include "../../../mcal/inc/Adc.h"
 
 using namespace avr::mcal::gpio;
 using namespace avr::mcal::adc;
