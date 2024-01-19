@@ -15,7 +15,7 @@ constexpr uint16_t ConvertToMilli(uint8_t Val) {
 // Return specific number of ones
 // Example: GetOnes(4) --> 0b1111
 template<typename T>
-constexpr T GetOnes(const T NumberOfOnes) {
+inline constexpr T GetOnes(const T NumberOfOnes) {
     return (1 << NumberOfOnes) - 1;
 }
 
