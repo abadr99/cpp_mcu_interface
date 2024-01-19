@@ -72,7 +72,7 @@ AVRTest::~AVRTest() {
 }
 
 template <typename T>
-void AVRTest::Expected_Eq(T actual, T expected) {
+void AVRTest::Expect_Eq(T actual, T expected) {
     if (actual == expected) {
         Print("[       OK ] ");
         Print("Two values are equal\n");
@@ -89,7 +89,7 @@ void AVRTest::Expected_Eq(T actual, T expected) {
 }
 
 template <typename T>
-void AVRTest::Expected_Neq(T actual, T expected) {
+void AVRTest::Expect_Neq(T actual, T expected) {
     if (actual != expected) {
         Print("[       OK ] ");
         Print("Two values are not equal\n");
@@ -135,8 +135,8 @@ void AVRTest::Expected_False(T expected) {
     template void AVRTest::method_(uint8_t, uint8_t);\
     template void AVRTest::method_(uint16_t, uint16_t);
 
-INSTANTIATE_METHOD(Expected_Eq)
-INSTANTIATE_METHOD(Expected_Neq)
+INSTANTIATE_METHOD(Expect_Eq)
+INSTANTIATE_METHOD(Expect_Neq)
 
 #undef INSTANTIATE_METHOD
 

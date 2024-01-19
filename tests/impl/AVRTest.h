@@ -9,9 +9,9 @@ public:
     AVRTest(const char* testName);
     ~AVRTest();
     template <typename T>
-    void Expected_Eq(T actual, T expected);
+    void Expect_Eq(T actual, T expected);
     template <typename T>
-    void Expected_Neq(T actual, T expected);
+    void Expect_Neq(T actual, T expected);
     template <typename T>
     void Expected_True(T expected);
     template <typename T>
