@@ -59,8 +59,8 @@ template void AVRTest::Print<AVRTest::NumberMode::kDec>(int num);
 // ============================================================================
 
 AVRTest::AVRTest(const char* testName)
-    : print_(reinterpret_cast<volatile char *>(OUT_REG))
-    , testName_(testName)
+    : print_(reinterpret_cast<volatile char *>(OUT_REG)),
+      testName_(testName)
 { 
     Print("[ RUN      ] ");
     Print(testName_);
