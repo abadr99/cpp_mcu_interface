@@ -41,7 +41,7 @@ compile-hardware-test:
 # make compile-test src=path/to/main/file target=path/to/test_name
 # --------------------------------------------------------
 compile-test:$(AVR_OBJS)
-	$(AVR_GCC) $(AVR_GCC_TEST_FLAGS) $(AVR_OBJS) $(src) -o $(target).testelf
+	$(AVR_GCC) $(AVR_GCC_TEST_FLAGS) $(AVR_OBJS) $(src) tests/impl/AVRTest.cpp -o $(target).testelf
 	@echo "\n[Makefile]: Test compiled successfully."
 
 # ------------------------------------------
