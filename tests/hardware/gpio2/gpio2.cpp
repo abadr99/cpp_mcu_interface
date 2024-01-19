@@ -27,7 +27,7 @@ using namespace avr::types;
 
 int main() {
     // 1] Create a GPIO object with PortA
-    Gpio<Port::kPortA> gpioA;
+    Gpio<Port::kPortA> gpioA
      
     
     // 2] Set pin A1 as input pullup
