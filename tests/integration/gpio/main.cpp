@@ -14,7 +14,7 @@ int main () {
     Gpio<Port::kPortA> GPIOA;
     //Set pin A1 as output
     GPIOA.SetDirection<Pin::kPin1, DirectionState::kOutput>();
-    print_str("//////////////////////////GPIO_A////////////////////////");
+    print_str("//////////////////////////GPIO_AA////////////////////////");
     new_line();
     print_str("DDRA: ");
     print_num(*((volatile uint8_t*) DDRA));
