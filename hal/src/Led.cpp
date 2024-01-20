@@ -58,3 +58,6 @@ template <OutputMode M>
 bool Led<M>::IsOff() {
     return currentState_ == LedState::kOff;
 }
+
+template class Led<OutputMode::kActiveHigh>;
+template class Led<OutputMode::kActiveLow>;
