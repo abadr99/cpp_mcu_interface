@@ -19,6 +19,32 @@ enum Pin {
 using AvrRegWidth  = uint8_t;
 }}
 
+#define INT0                            (1)
+#define INT1                            (2)
+#define INT2                            (3)
+#define TIMER2_COMP                     (4)
+#define TIMER2_OVF                      (5)
+#define TIMER1_CAPT                     (6)
+#define TIMER1_COMPA                    (7)
+#define TIMER1_COMPB                    (8)
+#define TIMER1_OVF                      (9)
+#define TIMER0_COMP                     (10)
+#define TIMER0_OVF                      (11)
+#define SPI_STC                         (12)
+#define USART_RXC                       (13)
+#define USART_UDRE                      (14)
+#define USART_TXC                       (15)
+#define ADC_CONVERSION                  (16)
+#define EE_RDY                          (17)
+#define ANA_COMP                        (18)
+#define TWI                             (19)
+#define SPM_RDY                         (20)
+
+#define ISR(vec_)\
+ extern "C"\
+ void __vector_##vec_(void) __attribute__((signal, used, externally_visible));\
+ void __vector_##vec_(void)
+
 #define ATMEGA32_CLK                   (8000000)
 #define GPIOA_BASE_ADDRESS             (PORTA)
 #define PORTA                          (0x3B)
