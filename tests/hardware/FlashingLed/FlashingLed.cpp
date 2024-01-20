@@ -1,7 +1,6 @@
  /**
  * @file main.cpp
- * @author @abadr99 (abdelrhmanezzbadr@outlook.com)
- * @brief  - Very simple gpio test that flash a a led for 1s 
+ * @brief  - Very simple gpio program that flash a a led for 1s 
  *         - This is done by connecting positive pin on led with A1 and negative
  *           pin with 220ohm resistor connected to ground.
  * @version 0.1
@@ -29,9 +28,9 @@ int main() {
     
     while (1) {
         // 3] Toggle output voltage every 1 second
-        gpioA.Write<Pin::kPin1, DigitalLevel::kHigh>();
+        gpioA.Write<Pin::kPin1>(DigitalLevel::kHigh);
         _delay_ms(1000);
-        gpioA.Write<Pin::kPin1, DigitalLevel::kLow>();
+        gpioA.Write<Pin::kPin1>(DigitalLevel::kLow);
         _delay_ms(1000);
     }
 }
