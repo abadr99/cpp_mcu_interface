@@ -9,7 +9,9 @@ namespace utils {
 template<typename TRegWidth>
 class Register {
 public:
-    Register(const TRegWidth address);
+    Register(const TRegWidth address)
+    : pReg_(reinterpret_cast<volatile TRegWidth *>(address))
+    { /* EMPTY */}
     
     template<TRegWidth address>
     inline constexpr Register& SetAddress() {
@@ -65,6 +67,14 @@ public:
         static_assert(TStart <= TEnd, "Calling ReadBits with startBit first"); //IGNORE-STYLE-CHECK[L004]
         uint8_t numberOfBits = TEnd - TStart + 1;
         return (*pReg_ >> TStart) & (utils::GetOnes<TRegWidth>(numberOfBits));
+    }
+    
+    Register& WriteRegister(TRegWidth reg) {
+        *pReg_ = reg;
+        return *this;
+    }
+    TRegWidth ReadRegister() {
+        return *pReg_;
     }
 private:
     volatile TRegWidth* pReg_;
