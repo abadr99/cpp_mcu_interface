@@ -10,132 +10,86 @@ using namespace avr::types;
 // -----------------------------------------------------------------------------
 // GpioRegisters class implementations
 // -----------------------------------------------------------------------------
-template <Port UPort>
-GpioRegisters<UPort>::GpioRegisters(const AvrRegWidth base_address)
-    :port_(Register<AvrRegWidth>(base_address)), 
-     ddr_ (Register<AvrRegWidth>(base_address - 1)),
-     pin_ (Register<AvrRegWidth>(base_address - 2))
-{/* EMPTY */}
+GpioRegisters::GpioRegisters() : portReg_(0), ddrReg_(0), pinReg_(0)
+{ /* EMPTY */ }
 
-
-template <Port UPort>
-GpioRegisters<UPort> GpioRegisters<UPort>::CreateGpioRegistersObj() { 
-    switch (UPort) {
-        case Port::kPortA: return GpioRegisters<UPort>(GPIOA_BASE_ADDRESS);
-        case Port::kPortB: return GpioRegisters<UPort>(GPIOB_BASE_ADDRESS);
-        case Port::kPortC: return GpioRegisters<UPort>(GPIOC_BASE_ADDRESS);
-        case Port::kPortD: return GpioRegisters<UPort>(GPIOD_BASE_ADDRESS);
-    }
+void GpioRegisters::SetRegisterAddresses(const size base_address) {
+    portReg_ = Register<AvrRegWidth>(base_address);
+    ddrReg_  = Register<AvrRegWidth>(base_address - 1);
+    pinReg_  = Register<AvrRegWidth>(base_address - 2);
 }
 
-template <Port UPort>
 typename 
-GpioRegisters<UPort>::Register_t& GpioRegisters<UPort>::GetPortRegister() {
-    return port_;
-}
+GpioRegisters::Register_t& GpioRegisters::GetPortRegister() { return portReg_; }
 
-template <Port UPort>
 typename
-GpioRegisters<UPort>::Register_t& GpioRegisters<UPort>::GetDdrRegister() {
-    return ddr_;
-}
+GpioRegisters::Register_t& GpioRegisters::GetDdrRegister() { return ddrReg_; }
 
-template <Port UPort>
 typename
-GpioRegisters<UPort>::Register_t& GpioRegisters<UPort>::GetPinRegister() {
-    return pin_;
-}
+GpioRegisters::Register_t& GpioRegisters::GetPinRegister() { return pinReg_; }
 
 // -----------------------------------------------------------------------------
 // Gpio class implementations
 // -----------------------------------------------------------------------------
-template <Port TPort>
-Gpio<TPort>::Gpio() 
-: gpioRegisters_(GpioRegisters<TPort>::CreateGpioRegistersObj())
-{/* EMPTY */}
 
-template <Port TPort>
-template<Pin TPinNumber, DirectionState TDirectionState>
-void Gpio<TPort>::SetDirection() {
-    using DIR = DirectionState;
-    switch (TDirectionState) {
-        case DIR::kInput :  
-            gpioRegisters_.GetDdrRegister(). template ClearBit<TPinNumber>(); 
-            gpioRegisters_.GetPortRegister().template ClearBit<TPinNumber>(); 
+Gpio::Gpio(Port port) {
+    switch (port) {
+        case Port::kPortA: 
+            gpioRegisters_.SetRegisterAddresses(GPIOA_BASE_ADDRESS);
             break;
-        case DIR::kOutput:  
-            gpioRegisters_.GetDdrRegister().template SetBit<TPinNumber>();
+        case Port::kPortB: 
+            gpioRegisters_.SetRegisterAddresses(GPIOB_BASE_ADDRESS);
             break;
-        case DIR::kInputPullUp: 
-            gpioRegisters_.GetDdrRegister().template ClearBit<TPinNumber>(); 
-            gpioRegisters_.GetPortRegister().template SetBit<TPinNumber>();
+        case Port::kPortC: 
+            gpioRegisters_.SetRegisterAddresses(GPIOC_BASE_ADDRESS);
+            break;
+        case Port::kPortD: 
+            gpioRegisters_.SetRegisterAddresses(GPIOD_BASE_ADDRESS);
             break;
     }
 }
 
-template <Port TPort>
-void Gpio<TPort>::SetDirection(types::AvrRegWidth val) {
+void Gpio::SetPinDirection(Pin pinNumber, DirectionState directionState) {
+    using DIR = DirectionState;
+    switch (directionState) {
+        case DIR::kInput :  
+            gpioRegisters_.GetDdrRegister(). ClearBit(pinNumber); 
+            gpioRegisters_.GetPortRegister().ClearBit(pinNumber); 
+            break;
+        case DIR::kOutput:  
+            gpioRegisters_.GetDdrRegister().SetBit(pinNumber);
+            break;
+        case DIR::kInputPullUp: 
+            gpioRegisters_.GetDdrRegister().ClearBit(pinNumber); 
+            gpioRegisters_.GetPortRegister().SetBit(pinNumber);
+            break;
+    }
+}
+
+void Gpio::SetPortDirection(size val) {
     gpioRegisters_.GetDdrRegister().WriteRegister(val);
 }
 
-template <Port TPort>
-template <Pin TPinNumber>
-void Gpio<TPort>::Write(DigitalLevel digitalLevel) {
+void Gpio::WritePin(Pin pinNumber, DigitalLevel digitalVal) {
     using DL = DigitalLevel;
-    switch (digitalLevel) {
+    switch (digitalVal) {
         case DL::kHigh : 
-            gpioRegisters_.GetPortRegister().template SetBit<TPinNumber>();   
+            gpioRegisters_.GetPortRegister().SetBit(pinNumber);   
             break;
         case DL::kLow : 
-            gpioRegisters_.GetPortRegister().template ClearBit<TPinNumber>(); 
+            gpioRegisters_.GetPortRegister().ClearBit(pinNumber); 
             break;
     } 
 }
 
-template <Port TPort>
-void Gpio<TPort>::Write(AvrRegWidth val) {
+void Gpio::WritePort(AvrRegWidth val) {
     gpioRegisters_.GetPortRegister().WriteRegister(val);
 }
 
-template <Port TPort>
-AvrRegWidth Gpio<TPort>::Read() {
+typename Gpio::DigitalLevel Gpio::ReadPin(Pin pinNumber) {
+    return static_cast<DigitalLevel>(gpioRegisters_.GetPinRegister().ReadBit(pinNumber)); //IGNORE-STYLE-CHECK[L004] 
+}
+
+AvrRegWidth  Gpio::ReadPort() {
     return gpioRegisters_.GetPortRegister().ReadRegister();
 }
-
-template <Port TPort>
-template <Pin TPinNumber>
-DigitalLevel Gpio<TPort>::Read() {
-    return static_cast<DigitalLevel>(gpioRegisters_.GetPinRegister().template ReadBit<TPinNumber>()); //IGNORE-STYLE-CHECK[L004]
-}
-
-#define X(port_)    template class Gpio<Port::k##port_>;
-    ATMEGA32_PORTS
-#undef X
-
-#define X(port_)    template class GpioRegisters<Port::k##port_>;
-    ATMEGA32_PORTS
-#undef X
-
-#define T       template 
-
-#define X(port_, pin_)      T void Gpio<Port::k##port_>::SetDirection<Pin::k##pin_, DirectionState::kInput>(); //IGNORE-STYLE-CHECK[L004]
-    ATMEGA32_PORT_PIN
-#undef X
-
-#define X(port_, pin_)      T void Gpio<Port::k##port_>::SetDirection<Pin::k##pin_, DirectionState::kInputPullUp>(); //IGNORE-STYLE-CHECK[L004]
-    ATMEGA32_PORT_PIN
-#undef X
-
-#define X(port_, pin_)      T void Gpio<Port::k##port_>::SetDirection<Pin::k##pin_, DirectionState::kOutput>();  //IGNORE-STYLE-CHECK[L004]
-    ATMEGA32_PORT_PIN
-#undef X
-
-#define X(port_, pin_)      T void Gpio<Port::k##port_>::Write<Pin::k##pin_>(DigitalLevel);  //IGNORE-STYLE-CHECK[L004]
-    ATMEGA32_PORT_PIN
-#undef X
-
-#define X(port_, pin_)      T DigitalLevel Gpio<Port::k##port_>::Read<Pin::k##pin_>();  //IGNORE-STYLE-CHECK[L004]
-    ATMEGA32_PORT_PIN
-#undef X
-
-#undef T

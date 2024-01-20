@@ -14,83 +14,39 @@ using namespace avr::hal::gpio;
 // =============================================================================
 // ----------------- OutputDeviceInterface class impl --------------------------
 // =============================================================================
-template <Port TPort>
-OutputDeviceInterface<TPort>::OutputDeviceInterface() {}
+OutputDeviceInterface::OutputDeviceInterface(Port port): gpio_(port) {}
 
-template <Port TPort>
-template<Pin TPin> 
-OutputDeviceInterface<TPort>& OutputDeviceInterface<TPort>::Init() {
-    gpio_.template SetDirection<TPin, DirectionState::kOutput>();
+OutputDeviceInterface& OutputDeviceInterface::Init(Pin pin) {
+    using DS = Gpio::DirectionState;
+    gpio_.SetPinDirection(pin, DS::kOutput);
     return *this;
 }
 
-template <Port TPort>
-template<Pin TPin>  
-OutputDeviceInterface<TPort>& OutputDeviceInterface<TPort>::SetHighVoltage() {
-    gpio_.template Write<TPin>(DigitalLevel::kHigh);
+OutputDeviceInterface& OutputDeviceInterface::SetHighVoltage(Pin pin) {
+    using DL = Gpio::DigitalLevel;
+    gpio_.WritePin(pin, DL::kHigh);
     return *this;
 }
 
-template <Port TPort>
-template<Pin TPin>  
-OutputDeviceInterface<TPort>& OutputDeviceInterface<TPort>::SetLowVoltage() {
-    gpio_.template Write<TPin>(DigitalLevel::kLow);
+OutputDeviceInterface& OutputDeviceInterface::SetLowVoltage(Pin pin) {
+    using DL = Gpio::DigitalLevel;
+    gpio_.WritePin(pin, DL::kLow);
     return *this;
 }
-// =============================================================================
-// ------------------Explicit template method instantiations-------------------
-// =============================================================================
-#define X(port_)    template class OutputDeviceInterface<Port::k##port_>;
-ATMEGA32_PORTS
-#undef X
-
-#define X(port_, pin_)\
-    template OutputDeviceInterface<Port::k##port_>& OutputDeviceInterface<Port::k##port_>::Init<Pin::k##pin_>(); //IGNORE-STYLE-CHECK[L004]
-ATMEGA32_PORT_PIN
-#undef X
-
-#define X(port_, pin_)\
-    template OutputDeviceInterface<Port::k##port_>& OutputDeviceInterface<Port::k##port_>::SetHighVoltage<Pin::k##pin_>(); //IGNORE-STYLE-CHECK[L004]
-ATMEGA32_PORT_PIN
-#undef X
-
-#define X(port_, pin_)\
-    template OutputDeviceInterface<Port::k##port_>& OutputDeviceInterface<Port::k##port_>::SetLowVoltage<Pin::k##pin_>(); //IGNORE-STYLE-CHECK[L004]
-ATMEGA32_PORT_PIN
-#undef X
 
 // =============================================================================
 // --------------------- InputDeviceInterface impl ----------------------------
 // =============================================================================
-template <Port TPort> 
-InputDeviceInterface<TPort>::InputDeviceInterface() { }
+ 
+InputDeviceInterface::InputDeviceInterface(Port port): gpio_(port) { }
 
-template <Port TPort> 
-template<Pin TPin> 
-InputDeviceInterface<TPort>& InputDeviceInterface<TPort>::Init() {
-    gpio_.template SetDirection<TPin, DirectionState::kInput>();
+InputDeviceInterface& InputDeviceInterface::Init(Pin pin) {
+    using DS = Gpio::DirectionState;
+    gpio_.SetPinDirection(pin, DS::kInput);
     return *this;
 }
 
-template <Port TPort> 
-template<Pin TPin>
-DigitalLevel InputDeviceInterface<TPort>::GetPinState() {
-    return gpio_.template Read<TPin>();
+typename
+InputDeviceInterface::DigitalLevel InputDeviceInterface::GetPinState(Pin pin) {
+    return gpio_.ReadPin(pin);
 }
-// =============================================================================
-// ------------------Explicit template method instantiations-------------------
-// =============================================================================
-
-#define X(port_)    template class InputDeviceInterface<Port::k##port_>;
-ATMEGA32_PORTS
-#undef X
-
-#define X(port_, pin_)\
-    template InputDeviceInterface<Port::k##port_>& InputDeviceInterface<Port::k##port_>::Init<Pin::k##pin_>(); //IGNORE-STYLE-CHECK[L004]
-ATMEGA32_PORT_PIN
-#undef X
-
-#define X(port_, pin_)\
-    template DigitalLevel InputDeviceInterface<Port::k##port_>::GetPinState<Pin::k##pin_>(); //IGNORE-STYLE-CHECK[L004]
-ATMEGA32_PORT_PIN
-#undef X

@@ -5,18 +5,16 @@ namespace avr {
 namespace hal {
 namespace ir  {
 
-enum IrState {
-    kNotDetected,
-    kDetected
-};
-
-template <avr::types::Port TPort, avr::types::Pin TPin>
-class Ir : public avr::hal::gpio::OutputDeviceInterface<TPort>{
+class Ir : public avr::hal::gpio::InputDeviceInterface{
 public:
-    Ir();
-    avr::hal::ir::IrState GetState();
+    enum IrState { kNotDetected, kDetected };
+    using Port = avr::types::Port;
+    using Pin = avr::types::Pin;
+    using IRState = avr::hal::ir::Ir::IrState;
+    Ir(Port port, Pin pin);
+    IRState GetState();
 private:
-    avr::types::Pin IrPin_;
+    Pin IrPin_;
 };
 }}} // avr::hal::ir
 #endif // _IR_H_
