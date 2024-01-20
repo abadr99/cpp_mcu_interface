@@ -10,24 +10,29 @@ namespace gpio {
 template <avr::types::Port TPort>
 class OutputDeviceInterface {
 public:
+    using Pin = avr::types::Pin;
+    using Gpio_t = avr::mcal::gpio::Gpio<TPort>;
     OutputDeviceInterface();
-    template<avr::types::Pin TPin> OutputDeviceInterface& Init();
-    template<avr::types::Pin TPin> OutputDeviceInterface& SetHighVoltage();
-    template<avr::types::Pin TPin> OutputDeviceInterface& SetLowVoltage();
+    template<Pin TPin> OutputDeviceInterface& Init();
+    template<Pin TPin> OutputDeviceInterface& SetHighVoltage();
+    template<Pin TPin> OutputDeviceInterface& SetLowVoltage();
 private:
-    avr::mcal::gpio::Gpio<TPort> gpio_;
+    Gpio_t gpio_;
 };
 
 // All digital Input devices should inherit from this class
 template <avr::types::Port TPort>
 class InputDeviceInterface {
 public:
+    using Pin = avr::types::Pin;
+    using Gpio_t = avr::mcal::gpio::Gpio<TPort>;
+    using DigitalLevel = avr::mcal::gpio::DigitalLevel;
     InputDeviceInterface();
-    template<avr::types::Pin TPin> InputDeviceInterface& Init();
-    template<avr::types::Pin TPin>
-    avr::mcal::gpio::DigitalLevel GetPinState();
+    template<Pin TPin> InputDeviceInterface& Init();
+    template<Pin TPin>
+    DigitalLevel GetPinState();
 private:
-    avr::mcal::gpio::Gpio<TPort> gpio_;
+    Gpio_t gpio_;
 };
 
 }}} // avr::hal::gpio

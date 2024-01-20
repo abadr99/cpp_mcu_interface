@@ -15,20 +15,18 @@ enum LedState {
     kOff,
     kOn
 };
-
-// TODO(@abadr99): Make LED pin as template parameter
-template <avr::types::Port TPort, OutputMode M = OutputMode::kActiveHigh>
+template <avr::types::Port TPort,
+          avr::types::Pin  TPin,
+          OutputMode M = OutputMode::kActiveHigh>
 class Led : public avr::hal::gpio::OutputDeviceInterface<TPort> {
 public:
-    Led(avr::types::Pin pin);
+    Led();
     void TurnOn();
     void TurnOff();
     void Toggle();
     bool IsOn();
     bool IsOff();
-
 private:
-    avr::types::Pin ledPin_;
     LedState currentState_;
 };
 
