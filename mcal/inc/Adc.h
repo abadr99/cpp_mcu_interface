@@ -138,26 +138,25 @@ public:
         ResultAdjustMode   adjustMode;
     };
     void Init(const AdcConfigurations& conf = {kAref, kDivisionFactor_2x, kFreeRunningMode, kLeft}); //IGNORE-STYLE-CHECK[L004]
-    void SetReferenceVoltageMode(VoltageRefMode mode);
     void SelectChannel(ChannelMode cm);
     void Enable();
     void Disable();
     digitalVal_t StartConversion();
-    void SetPreScalarMode(DivisionFactorMode dfm);
-    void SetAutoTriggerMode(AutoTriggerMode atm);
-    void SetAdjustMode(ResultAdjustMode ram);
-    void SetConvertedValue(digitalVal_t val);
     digitalVal_t StartConversion(pFunction_t pFun);
     digitalVal_t GetConvertedValue();
     digitalVal_t GetDataRegister();
     void SetCallBack(pFunction_t pFun);
     pFunction_t GetCallBack();
     ResultAdjustMode GetAdjustMode();
-    
+    void SetConvertedValue(digitalVal_t val);
 private:
     AdcRegisters registers_;
     volatile digitalVal_t convertedVal_;
     pFunction_t AdcCallBack_;
+    void SetReferenceVoltageMode(VoltageRefMode mode);
+    void SetPreScalarMode(DivisionFactorMode dfm);
+    void SetAutoTriggerMode(AutoTriggerMode atm);
+    void SetAdjustMode(ResultAdjustMode ram);
 };
 
 }}}
