@@ -1,263 +1,170 @@
+/* 
+ * make compile-test src=tests/integration/gpio/main.cpp target=tests/integration/gpio/gpio //IGNORE-STYLE-CHECK[L004]
+ * sh scripts/testing/run-simu-avr.sh tests/integration/gpio/gpio.testelf
+ * sh scripts/testing/run-regressions.sh -d tests/integration/gpio/
+*/
+
 #include <stdint.h>
 
 #include "../../../mcal/inc/Atmega32.h"
 #include "../../../utils/inc/Register.h"
 #include "../../../mcal/inc/Gpio.h"
-#include "../../../utils/inc/Test.h"
+#include "../../../tests/impl/AVRTest.h"
  
 using namespace utils;
 using namespace avr::mcal::gpio;
 using namespace avr::types;
 
+#define PORTA                          (*((volatile uint8_t*)0x3B))
+#define DDRA                           (*((volatile uint8_t*)0x3A))
+#define PINA                           (*((volatile uint8_t*)0x39))
+#define PORTB                          (*((volatile uint8_t*)0x38))
+#define DDRB                           (*((volatile uint8_t*)0x37))
+#define PINB                           (*((volatile uint8_t*)0x36))
+#define PORTC                          (*((volatile uint8_t*)0x35))
+#define DDRC                           (*((volatile uint8_t*)0x34))
+#define PINC                           (*((volatile uint8_t*)0x33))
+#define PORTD                          (*((volatile uint8_t*)0x32))
+#define DDRD                           (*((volatile uint8_t*)0x31))
+#define PIND                           (*((volatile uint8_t*)0x30))
+
 int main () {
-    //Create a GPIO object of portA
-    Gpio<Port::kPortA> GPIOA;
-    //Set pin A1 as output
-    GPIOA.SetDirection<Pin::kPin1, DirectionState::kOutput>();
-    print_str("//////////////////////////GPIO_A////////////////////////");
-    new_line();
-    print_str("DDRA: ");
-    print_num(*((volatile uint8_t*) DDRA));
-    new_line();
-    //Set pin A1 as input
-    GPIOA.SetDirection<Pin::kPin1, DirectionState::kInput>();
-    print_str("DDRA: ");
-    print_num(*((volatile uint8_t*) DDRA));
-    new_line();
-    //Set portA  as output
-    GPIOA.SetDirection(255);
-    print_str("DDRA: ");
-    print_num(*((volatile uint8_t*) DDRA));
-    new_line();
-    //set pin a0 as high
-    GPIOA.Write<Pin:: kPin0, DigitalLevel :: kHigh>();
-    print_str("PORTA: ");
-    print_num(*((volatile uint8_t*) PORTA));
-    new_line();
-    //set pin a0 as low
-    GPIOA.Write<Pin:: kPin0, DigitalLevel :: kLow>();
-    print_str("PORTA: ");
-    print_num(*((volatile uint8_t*) PORTA));
-    new_line();
-    //set port A as high
-    GPIOA.Write(255);
-    print_str("PORTA: ");
-    print_num(*((volatile uint8_t*) PORTA));
-    new_line();
+    {
+        avr::test::AVRTest TESTER("GPIOA");
+        Gpio GPIO(kPortA);
+        
+        GPIO.SetPinDirection(kPin0, Gpio::DirectionState::kOutput );
+        TESTER.Expect_Eq(DDRA, static_cast<uint8_t>(0x01));
+    
+        GPIO.SetPinDirection(kPin0, Gpio::DirectionState::kInput );
+        TESTER.Expect_Eq(DDRA, static_cast<uint8_t>(0x00));
 
-    //set port A as low
-    GPIOA.Write(0);
-    print_str("PORTA: ");
-    print_num(*((volatile uint8_t*) PORTA));
-    new_line();
-    
-    //set pin A7 as input pullup
-    GPIOA.SetDirection<Pin::kPin7, DirectionState::kInputPullUp>();
-    print_str("DDRA: ");
-    print_num(*((volatile uint8_t*) DDRA));
-    new_line();
-    print_str("PORTA: ");
-    print_num(*((volatile uint8_t*) PORTA));
-    new_line();
+        GPIO.SetPortDirection(0x0F);
+        TESTER.Expect_Eq(DDRA, static_cast<uint8_t>(0x0F));
 
-    //set port A as input 
-    
-    GPIOA.SetDirection(0);
-    print_str("DDRA: ");
-    print_num(*((volatile uint8_t*) DDRA));
-    new_line();
-    print_str("PORTA: ");
-    print_num(*((volatile uint8_t*) PORTA));
-    new_line();
-    print_str("//////////////////////////GPIO_B////////////////////////");
-    new_line();
-    //Create a GPIO object of portB
-    Gpio<Port::kPortB> GPIOB;
-    //Set pin B1 as output
-    GPIOB.SetDirection<Pin::kPin1, DirectionState::kOutput>();
-    print_str("DDRB: ");
-    print_num(*((volatile uint8_t*) DDRB));
-    new_line();
-    //Set pin B1 as input
-    GPIOB.SetDirection<Pin::kPin1, DirectionState::kInput>();
-    print_str("DDRB: ");
-    print_num(*((volatile uint8_t*) DDRB));
-    new_line();
-    //Set portB  as output
-    GPIOB.SetDirection(255);
-    print_str("DDRB: ");
-    print_num(*((volatile uint8_t*) DDRB));
-    new_line();
-    //set pin B0 as high
-    GPIOB.Write<Pin:: kPin0, DigitalLevel :: kHigh>();
-    print_str("PORTB: ");
-    print_num(*((volatile uint8_t*) PORTB));
-    new_line();
-    //set pin B0 as low
-    GPIOB.Write<Pin:: kPin0, DigitalLevel :: kLow>();
-    print_str("PORTB: ");
-    print_num(*((volatile uint8_t*) PORTB));
-    new_line();
-    //set port B as high
-    GPIOB.Write(255);
-    print_str("PORTB: ");
-    print_num(*((volatile uint8_t*) PORTB));
-    new_line();
+        GPIO.SetPinDirection(kPin0, Gpio::DirectionState::kInputPullUp);
+        TESTER.Expect_Eq(DDRA, static_cast<uint8_t>(0x0E));
+        TESTER.Expect_Eq(PORTA, static_cast<uint8_t>(0x01));
 
-    //set port B as low
-    GPIOB.Write(0);
-    print_str("PORTB ");
-    print_num(*((volatile uint8_t*) PORTB));
-    new_line();
-    
-    //set pin A7 as input pullup
-    GPIOB.SetDirection<Pin::kPin7, DirectionState::kInputPullUp>();
-    print_str("DDRB: ");
-    print_num(*((volatile uint8_t*) DDRB));
-    new_line();
-    print_str("PORTB: ");
-    print_num(*((volatile uint8_t*) PORTB));
-    new_line();
+        GPIO.SetPortDirection(0xFF);
+        TESTER.Expect_Eq(DDRA, static_cast<uint8_t>(0xFF));
+        TESTER.Expect_Eq(PORTA, static_cast<uint8_t>(0x01));
 
-    //set port B as input 
+        GPIO.WritePin(kPin7, Gpio::DigitalLevel::kHigh);
+        TESTER.Expect_Eq(PORTA, static_cast<uint8_t>(0x81));
+
+        GPIO.WritePin(kPin7, Gpio::DigitalLevel::kLow);
+        TESTER.Expect_Eq(PORTA, static_cast<uint8_t>(0x01));
+
+        GPIO.WritePort(0xFF);
+        TESTER.Expect_Eq(PORTA, static_cast<uint8_t>(0xFF));
+    }
+    {
+        avr::test::AVRTest TESTER("GPIOB");
+        Gpio GPIO(kPortB);
+        GPIO.SetPinDirection(kPin5, Gpio::DirectionState::kOutput );
+        TESTER.Expect_Eq(DDRB, static_cast<uint8_t>(0x20));
+
+        GPIO.SetPinDirection(kPin6, Gpio::DirectionState::kOutput );
+        TESTER.Expect_Eq(DDRB, static_cast<uint8_t>(0x60));
     
-    GPIOB.SetDirection(0);
-    print_str("DDRB: ");
-    print_num(*((volatile uint8_t*) DDRB));
-    new_line();
-    print_str("PORTB: ");
-    print_num(*((volatile uint8_t*) PORTB));
-    new_line();
+        GPIO.SetPinDirection(kPin5, Gpio::DirectionState::kInput );
+        TESTER.Expect_Eq(DDRB, static_cast<uint8_t>(0x40));
+        GPIO.SetPinDirection(kPin6, Gpio::DirectionState::kInput );
+        TESTER.Expect_Eq(DDRB, static_cast<uint8_t>(0x00));
+
+        GPIO.SetPortDirection(0x88);
+        TESTER.Expect_Eq(DDRB, static_cast<uint8_t>(0x88));
+
+        GPIO.SetPinDirection(kPin1, Gpio::DirectionState::kInputPullUp);
+        TESTER.Expect_Eq(DDRB, static_cast<uint8_t>(0x88));
+        TESTER.Expect_Eq(PORTB, static_cast<uint8_t>(0x02));
+
+        GPIO.SetPortDirection(0xFF);
+        TESTER.Expect_Eq(DDRB, static_cast<uint8_t>(0xFF));
+        TESTER.Expect_Eq(PORTB, static_cast<uint8_t>(0x02));
+
+        GPIO.WritePin(kPin4, Gpio::DigitalLevel::kHigh);
+        TESTER.Expect_Eq(PORTB, static_cast<uint8_t>(0x12));
+
+        GPIO.WritePin(kPin4, Gpio::DigitalLevel::kLow);
+        TESTER.Expect_Eq(PORTB, static_cast<uint8_t>(0x02));
+
+        GPIO.WritePort(0xFF);
+        TESTER.Expect_Eq(PORTB, static_cast<uint8_t>(0xFF));
+
+    }
+    {
+        avr::test::AVRTest TESTER("GPIOC");
+        Gpio GPIO(kPortC);
+
+        GPIO.SetPinDirection(kPin2, Gpio::DirectionState::kOutput );
+        TESTER.Expect_Eq(DDRC, static_cast<uint8_t>(0x04));
+
+        GPIO.SetPinDirection(kPin3, Gpio::DirectionState::kOutput );
+        TESTER.Expect_Eq(DDRC, static_cast<uint8_t>(0x0C));
     
+        GPIO.SetPinDirection(kPin3, Gpio::DirectionState::kInput );
+        TESTER.Expect_Eq(DDRC, static_cast<uint8_t>(0x04));
+
+        GPIO.SetPinDirection(kPin2, Gpio::DirectionState::kInput );
+        TESTER.Expect_Eq(DDRC, static_cast<uint8_t>(0x00));
+
+        GPIO.SetPortDirection(0xF0);
+        TESTER.Expect_Eq(DDRC, static_cast<uint8_t>(0xF0));
+
+        GPIO.SetPinDirection(kPin7, Gpio::DirectionState::kInputPullUp);
+        TESTER.Expect_Eq(DDRC, static_cast<uint8_t>(0x70));
+        TESTER.Expect_Eq(PORTC, static_cast<uint8_t>(0x80));
+
+        GPIO.SetPortDirection(0xFF);
+        TESTER.Expect_Eq(DDRC, static_cast<uint8_t>(0xFF));
+        TESTER.Expect_Eq(PORTC, static_cast<uint8_t>(0x80));
+
+        GPIO.WritePin(kPin0, Gpio::DigitalLevel::kHigh);
+        TESTER.Expect_Eq(PORTC, static_cast<uint8_t>(0x81));
+
+        GPIO.WritePin(kPin0, Gpio::DigitalLevel::kLow);
+        TESTER.Expect_Eq(PORTC, static_cast<uint8_t>(0x80));
+
+        GPIO.WritePort(0xCD);
+        TESTER.Expect_Eq(PORTC, static_cast<uint8_t>(0xCD));
+    }
+    {
+        avr::test::AVRTest TESTER("GPIOD");
+        Gpio GPIO(kPortD);
    
-    print_str("//////////////////////////GPIO_C////////////////////////");
-    new_line();
-    //Create a GPIO object of portC
-    Gpio<Port::kPortC> GPIOC;
-    //Set pin C1 as output
-    GPIOC.SetDirection<Pin::kPin1, DirectionState::kOutput>();
-    print_str("DDRC: ");
-    print_num(*((volatile uint8_t*) DDRC));
-    new_line();
-    //Set pin C1 as input
-    GPIOC.SetDirection<Pin::kPin1, DirectionState::kInput>();
-    print_str("DDRC: ");
-    print_num(*((volatile uint8_t*) DDRC));
-    new_line();
-    //Set portC  as output
-    GPIOC.SetDirection(255);
-    print_str("DDRC: ");
-    print_num(*((volatile uint8_t*) DDRC));
-    new_line();
-    //set pin C0 as high
-    GPIOC.Write<Pin:: kPin0, DigitalLevel :: kHigh>();
-    print_str("PORTC: ");
-    print_num(*((volatile uint8_t*) PORTC));
-    new_line();
-    //set pin C0 as low
-    GPIOC.Write<Pin:: kPin0, DigitalLevel :: kLow>();
-    print_str("PORTC: ");
-    print_num(*((volatile uint8_t*) PORTC));
-    new_line();
-    //set port C as high
-    GPIOC.Write(255);
-    print_str("PORTC: ");
-    print_num(*((volatile uint8_t*) PORTC));
-    new_line();
+        GPIO.SetPinDirection(kPin1, Gpio::DirectionState::kOutput );
+        TESTER.Expect_Eq(DDRD, static_cast<uint8_t>(0x02));
 
-    //set port C as low
-    GPIOC.Write(0);
-    print_str("PORTC ");
-    print_num(*((volatile uint8_t*) PORTC));
-    new_line();
+        GPIO.SetPinDirection(kPin0, Gpio::DirectionState::kOutput );
+        TESTER.Expect_Eq(DDRD, static_cast<uint8_t>(0x03));
     
-    //set pin C7 as input pullup
-    GPIOC.SetDirection<Pin::kPin7, DirectionState::kInputPullUp>();
-    print_str("DDRC: ");
-    print_num(*((volatile uint8_t*) DDRC));
-    new_line();
-    print_str("PORTC: ");
-    print_num(*((volatile uint8_t*) PORTC));
-    new_line();
+        GPIO.SetPinDirection(kPin1, Gpio::DirectionState::kInput );
+        TESTER.Expect_Eq(DDRD, static_cast<uint8_t>(0x01));
 
-    //set port C as input 
-    
-    GPIOC.SetDirection(0);
-    print_str("DDRC: ");
-    print_num(*((volatile uint8_t*) DDRC));
-    new_line();
-    print_str("PORTC: ");
-    print_num(*((volatile uint8_t*) PORTC));
-    new_line();
+        GPIO.SetPinDirection(kPin0, Gpio::DirectionState::kInput );
+        TESTER.Expect_Eq(DDRD, static_cast<uint8_t>(0x00));
 
-    print_str("//////////////////////////GPIO_D////////////////////////");
-    new_line();
-    //Create a GPIO object of portD
-    Gpio<Port::kPortD> GPIOD;
+        GPIO.SetPortDirection(0xB8);
+        TESTER.Expect_Eq(DDRD, static_cast<uint8_t>(0xB8));
+
+        GPIO.SetPinDirection(kPin0, Gpio::DirectionState::kInputPullUp);
+        TESTER.Expect_Eq(DDRD, static_cast<uint8_t>(0xB8));
+        TESTER.Expect_Eq(PORTD,static_cast<uint8_t>(0x01));
+
+        GPIO.SetPortDirection(0xFF);
+        TESTER.Expect_Eq(DDRD, static_cast<uint8_t>(0xFF));
+        TESTER.Expect_Eq(PORTD, static_cast<uint8_t>(0x01));
+
+        GPIO.WritePin(kPin7, Gpio::DigitalLevel::kHigh);
+        TESTER.Expect_Eq(PORTD, static_cast<uint8_t>(0x81));
+
+        GPIO.WritePin(kPin7, Gpio::DigitalLevel::kLow);
+        TESTER.Expect_Eq(PORTD, static_cast<uint8_t>(0x01));
+
+        GPIO.WritePort(0x00);
+        TESTER.Expect_Eq(PORTD, static_cast<uint8_t>(0x00));
+    }
    
-    //Set pin D1 as output
-    GPIOD.SetDirection<Pin::kPin1, DirectionState::kOutput>();
-    print_str("DDRD: ");
-    print_num(*((volatile uint8_t*) DDRD));
-    new_line();
-    //Set pin D1 as input
-    GPIOD.SetDirection<Pin::kPin1, DirectionState::kInput>();
-    print_str("DDRD: ");
-    print_num(*((volatile uint8_t*) DDRD));
-    new_line();
-    //Set portD  as output
-    GPIOD.SetDirection(255);
-    print_str("DDRD: ");
-    print_num(*((volatile uint8_t*) DDRD));
-    new_line();
-    //set pin D0 as high
-    GPIOD.Write<Pin:: kPin0, DigitalLevel :: kHigh>();
-    print_str("PORTD: ");
-    print_num(*((volatile uint8_t*) PORTD));
-    new_line();
-    //set pin D0 as low
-    GPIOD.Write<Pin:: kPin0, DigitalLevel :: kLow>();
-    print_str("PORTD: ");
-    print_num(*((volatile uint8_t*) PORTD));
-    new_line();
-    //set port D as high
-    GPIOD.Write(255);
-    print_str("PORTD: ");
-    print_num(*((volatile uint8_t*) PORTD));
-    new_line();
-
-    //set port D as low
-    GPIOD.Write(0);
-    print_str("PORTD ");
-    print_num(*((volatile uint8_t*) PORTD));
-    new_line();
-    
-    //set pin D7 as input pullup
-    GPIOD.SetDirection<Pin::kPin7, DirectionState::kInputPullUp>();
-    print_str("DDRD: ");
-    print_num(*((volatile uint8_t*) DDRD));
-    new_line();
-    print_str("PORTD: ");
-    print_num(*((volatile uint8_t*) PORTD));
-    new_line();
-
-    //set port D as input 
-    
-    GPIOD.SetDirection(0);
-    print_str("DDRD: ");
-    print_num(*((volatile uint8_t*) DDRD));
-    new_line();
-    print_str("PORTD: ");
-    print_num(*((volatile uint8_t*) PORTD));
-    new_line();
-    print_num_binary(0);
-    print_str("\n");
-    print_num_binary(255);
-    print_str("\n");
-    print_num_binary(15);
-    print_str("\n");
-    print_num_binary(200);
-    print_str("\n");
-    print_num_binary(4);
-    print_str("\n");
 }
