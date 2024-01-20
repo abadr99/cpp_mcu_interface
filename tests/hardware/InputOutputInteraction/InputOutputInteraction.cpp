@@ -25,18 +25,21 @@ using namespace avr::types;
 
 #define DEBOUNCE_TIME   (50)
 int main() {
-    Gpio<Port::kPortA> gpioA;   
-    gpioA.SetDirection<Pin::kPin1, DirectionState::kInputPullUp>();
-    gpioA.SetDirection<Pin::kPin0, DirectionState::kOutput>();
-    DigitalLevel val = kHigh;
+    //Create a GPIO object of portA
+    Gpio GPIO(kPortA);
+    //set a0 as input pullup
+    GPIO.SetPinDirection(kPin0, Gpio::DirectionState::kInputPullUp);
+    //set a1 as output
+    GPIO.SetPinDirection(kPin1, Gpio::DirectionState::kOutput);
+   Gpio::DigitalLevel val =Gpio::DigitalLevel::kHigh;
     while (1) {
-        val = gpioA.Read<Pin::kPin1>();
+        val = GPIO.ReadPin(kPin0);
         _delay_ms(DEBOUNCE_TIME);
-        if (val == kLow) {
-            gpioA.Write<Pin::kPin0>(kHigh);
+        if (val == Gpio::DigitalLevel::kLow) {
+            GPIO.WritePin(kPin1, Gpio::DigitalLevel::kHigh);
         }
         else {
-            gpioA.Write<Pin::kPin0>(kLow);
+            GPIO.WritePin(kPin1, Gpio::DigitalLevel::kLow);
         } 
     }
     
