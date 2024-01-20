@@ -6,7 +6,6 @@
 // =============================================================================
 // ------------------------------ NAMESPACES -----------------------------------
 // =============================================================================
-
 using namespace avr::mcal::adc;
 using avr::types::AvrRegWidth;
 using utils::Register;
@@ -14,24 +13,23 @@ using utils::Register;
 // =============================================================================
 // ------------------------------ GLOBAL VARIABLES -----------------------------
 // =============================================================================
-
 Adc ADC;
 
 // =============================================================================
 // -------------------------- AdcRegisters impl --------------------------------
 // =============================================================================
-
-AdcRegisters::AdcRegisters(const AvrRegWidth baseAddr) 
-:admux_(baseAddr), adcsra_(baseAddr - 1), 
- adch_(baseAddr - 2), adcl_(baseAddr - 3),
- sfior_(SFIOR)
+AdcRegisters::AdcRegisters(const AvrRegWidth baseAddr): admux_(baseAddr),
+                                                        adcsra_(baseAddr - 1),
+                                                        adch_(baseAddr - 2),
+                                                        adcl_(baseAddr - 3),
+                                                        sfior_(SFIOR)
  { /* EMPTY */ } 
 
-Register<AvrRegWidth>& AdcRegisters::GetADMUX()  { return admux_;  }
-Register<AvrRegWidth>& AdcRegisters::GetADCSRA() { return adcsra_; }
-Register<AvrRegWidth>& AdcRegisters::GetADCL()   { return adcl_;   }
-Register<AvrRegWidth>& AdcRegisters::GetADCH()   { return adch_;   }
-Register<AvrRegWidth>& AdcRegisters::GetSFIOR()  { return sfior_;  }
+typename AdcRegisters::reg_t& AdcRegisters::GetADMUX()  { return admux_;  }
+typename AdcRegisters::reg_t& AdcRegisters::GetADCSRA() { return adcsra_; }
+typename AdcRegisters::reg_t& AdcRegisters::GetADCL()   { return adcl_;   }
+typename AdcRegisters::reg_t& AdcRegisters::GetADCH()   { return adch_;   }
+typename AdcRegisters::reg_t& AdcRegisters::GetSFIOR()  { return sfior_;  }
 
 // =============================================================================
 // ------------------------------ Adc impl -------------------------------------
@@ -40,84 +38,49 @@ Register<AvrRegWidth>& AdcRegisters::GetSFIOR()  { return sfior_;  }
 Adc::Adc() : registers_(ADC_BASE_REG), convertedVal_(0), AdcCallBack_(nullptr)
 { /* EMPTY */ }
 
-template<VoltageRefMode M>
-void Adc::SetReferenceVoltageMode() {
-    using VRM = VoltageRefMode;
-    switch (M) {
-        case VRM::kAref : 
-            registers_.GetADMUX().ClearBit<AdmuxReg::kREFS1>()
-                                 .ClearBit<AdmuxReg::kREFS0>();
-            break;
-        case VRM::kAvcc : 
-            registers_.GetADMUX().ClearBit<AdmuxReg::kREFS1>()
-                                 .SetBit<AdmuxReg::kREFS0>();
-            break;
-        case VRM::k2_56v:
-            registers_.GetADMUX().SetBit<AdmuxReg::kREFS1>()
-                                 .SetBit<AdmuxReg::kREFS0>();
-            break;
-    }
+void Adc::Init(const AdcConfigurations& conf) {
+    Enable();
+    SetReferenceVoltageMode(conf.voltageMode);
+    SetPreScalarMode(conf.divisionFactor);
+    SetAutoTriggerMode(conf.triggerMode);
+    SetAdjustMode(conf.adjustMode);
 }
-template void Adc::SetReferenceVoltageMode<VoltageRefMode::kAref>();
-template void Adc::SetReferenceVoltageMode<VoltageRefMode::kAvcc>();
-template void Adc::SetReferenceVoltageMode<VoltageRefMode::k2_56v>();
 
-template <ChannelMode M>
-void Adc::SelectChannel() {
-    registers_.GetADMUX().WriteWithMask<ADC_CHANNEL_MODE_MASK, 0, M>();
+void Adc::SetReferenceVoltageMode(VoltageRefMode mode) {
+    registers_.GetADMUX()
+              .template WriteBits<ADMUX::kREFS0, ADMUX::kREFS1>(mode);
 }
-#define X(mode_, val_)\
- template void Adc::SelectChannel<ChannelMode::k##mode_>();
- ADC_CHANNEL_MODES
-#undef X
+
+void Adc::SelectChannel(ChannelMode cm) {
+    registers_.GetADMUX().WriteBits<ADMUX::kMUX0, ADMUX::kMUX4>(cm);
+}
 
 void Adc::Enable() {
-    registers_.GetADCSRA().SetBit<Adcsra::kADEN>();
+    registers_.GetADCSRA().SetBit<ADCSRA::kADEN>();
 }
 
 void Adc::Disable() {
-    registers_.GetADCSRA().ClearBit<Adcsra::kADEN>();
+    registers_.GetADCSRA().ClearBit<ADCSRA::kADEN>();
 }
 
-template<DivisionFactorMode M>
-void Adc::SetPreScalarMode() {
-    registers_.GetADCSRA().WriteWithMask<ADC_PRESCALAR_MASK, 0, M>();
+void Adc::SetPreScalarMode(DivisionFactorMode dfm) {
+    registers_.GetADCSRA().WriteBits<ADCSRA::kADPS0, ADCSRA::kADPS2>(dfm);
 }
-#define X(mode_, val_)\
- template void Adc::SetPreScalarMode<DivisionFactorMode::k##mode_>();
- ADC_DIVISION_FACTOR
-#undef X
 
-template <AutoTriggerMode M>
-void Adc::SetAutoTriggerMode() {
+void Adc::SetAutoTriggerMode(AutoTriggerMode atm) {
     // Enable auto trigger
-    registers_.GetADCSRA().SetBit<Adcsra::kADATE>();
+    registers_.GetADCSRA().SetBit<ADCSRA::kADATE>();
     // Select auto trigger source
-    registers_.GetSFIOR().WriteWithMask<ADC_AUTO_TRIGGER_MASK, 5, M>();
+    registers_.GetSFIOR().WriteBits<5, 7>(atm);
 }
-#define X(mode_, val_)\
- template void Adc::SetAutoTriggerMode<AutoTriggerMode::k##mode_>();
- ADC_AUTO_TRIGGER_MODE
-#undef X
 
-template<ResultAdjustMode M>
-void Adc::SetAdjustMode() {
-    using RAM = ResultAdjustMode;
-    switch (M) {
-        case RAM::kLeft : registers_.GetADMUX().SetBit<AdmuxReg::kADLAR>();
-        break;
-        case RAM::kRight: registers_.GetADMUX().ClearBit<AdmuxReg::kADLAR>();
-        break;
-    }
+void Adc::SetAdjustMode(ResultAdjustMode ram) {
+    registers_.GetADMUX().WriteBits<ADMUX::kADLAR>(ram);
 }
-template void Adc::SetAdjustMode<ResultAdjustMode::kLeft>();
-template void Adc::SetAdjustMode<ResultAdjustMode::kRight>();
 
-ResultAdjustMode Adc::GetAdjustMode() {
+typename Adc::ResultAdjustMode Adc::GetAdjustMode() {
     using RAM = ResultAdjustMode;
-    return registers_.GetADMUX()
-                     .ReadBit<AdmuxReg::kADLAR>() == 1 ? RAM::kLeft
-                                                       : RAM::kRight;
+    return static_cast<RAM>(registers_.GetADMUX().ReadBit<ADMUX::kADLAR>());
 }
 
 Adc::digitalVal_t Adc::GetConvertedValue() {
@@ -129,13 +92,12 @@ Adc::digitalVal_t Adc::GetDataRegister() {
     // Read the converted value depending on :
     //   a) Adjust mode {left, right}
     if (GetAdjustMode() == ResultAdjustMode::kLeft) {
-        convertedVal = registers_.GetADCL().ReadBits<6, 7>() | 
-                       registers_.GetADCH().Read();
+        convertedVal = registers_.GetADCL().ReadBits<6, 7>()
+                     | registers_.GetADCH().ReadRegister();
+        return convertedVal;
     }
-    else {
-        convertedVal = registers_.GetADCL().Read() | 
-                       registers_.GetADCH().Read();
-    }
+    convertedVal = registers_.GetADCL().ReadRegister()
+                 | registers_.GetADCH().ReadRegister();
     return convertedVal;
 }
 
@@ -154,10 +116,10 @@ Adc::pFunction_t Adc::GetCallBack() {
 Adc::digitalVal_t Adc::StartConversion() {
     Adc::digitalVal_t convertedVal = 0;
     // 1] Start conversion
-    registers_.GetADCSRA().SetBit<Adcsra::kADSC>();
+    registers_.GetADCSRA().SetBit<ADCSRA::kADSC>();
     // 2] Wait until conversion be completed
     // TODO(@abadr99): Handle timeout to avoid endless loop
-    while (registers_.GetADCSRA().ReadBit<Adcsra::kADSC>() == 1) { /* EMPTY */}
+    while (registers_.GetADCSRA().ReadBit<ADCSRA::kADSC>() == 1) { /* EMPTY */}
     // 3] Get converted val
     convertedVal = GetDataRegister();
     SetConvertedValue(convertedVal);
@@ -166,18 +128,17 @@ Adc::digitalVal_t Adc::StartConversion() {
 
 Adc::digitalVal_t Adc::StartConversion(Adc::pFunction_t pFun) {
     // 1] Enable interrupt 
-    // TODO(@abadr): (NOTE: Global interrupt should be enabled)
-    registers_.GetADCSRA().SetBit<Adcsra::kADIE>();
+    SEI();
+    registers_.GetADCSRA().SetBit<ADCSRA::kADIE>();
     // 2] Set 'ADC' callback
     SetCallBack(pFun);
     // 3] Start Conversion
-    registers_.GetADCSRA().SetBit<Adcsra::kADSC>();
+    registers_.GetADCSRA().SetBit<ADCSRA::kADSC>();
     // 4] Get Converted value
     return GetConvertedValue();
 }
 
-extern "C" void __vector_16(void) __attribute__((signal));
-void __vector_16(void)
+ISR(ADC_CONVERSION)
 {
     // Get converted value
     ADC.SetConvertedValue(ADC.GetDataRegister());
