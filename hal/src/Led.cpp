@@ -10,35 +10,36 @@ using namespace avr::mcal::gpio;
 using namespace avr::hal;
 using namespace avr::hal::led;
 
-template <Port TPort, Pin TPin, OutputMode M>
-Led<TPort, TPin, M>::Led(): gpio::OutputDeviceInterface<TPort>(),
-                            currentState_(LedState::kOff)
+template <OutputMode M>
+Led<M>::Led(Port port, Pin pin): gpio::OutputDeviceInterface(port),
+                                 pin_(pin),
+                                 currentState_(LedState::kOff)
 {
-    this->template Init<TPin>();
+    this->Init(pin);
 }
 
-template <Port TPort, Pin TPin, OutputMode M>
-void Led<TPort, TPin, M>::TurnOn() {
+template <OutputMode M>
+void Led<M>::TurnOn() {
     using OM = OutputMode;
     switch (M) {
-        case OM::kActiveLow:  this->template SetLowVoltage<TPin>();  break;
-        case OM::kActiveHigh: this->template SetHighVoltage<TPin>(); break;
+        case OM::kActiveLow:  this->SetLowVoltage(pin_);  break;
+        case OM::kActiveHigh: this->SetHighVoltage(pin_); break;
     }
     currentState_ = LedState::kOn;
 }
 
-template <Port TPort, Pin TPin, OutputMode M>
-void Led<TPort, TPin, M>::TurnOff() {
+template <OutputMode M>
+void Led<M>::TurnOff() {
     using OM = OutputMode;
     switch (M) {
-        case OM::kActiveLow:  this->template SetHighVoltage<TPin>(); break;
-        case OM::kActiveHigh: this->template SetLowVoltage<TPin>();  break;
+        case OM::kActiveLow:  this->SetHighVoltage(pin_); break;
+        case OM::kActiveHigh: this->SetLowVoltage(pin_);  break;
     }
     currentState_ = LedState::kOff;
 }
 
-template <Port TPort, Pin TPin, OutputMode M>
-void Led<TPort, TPin, M>::Toggle() {
+template <OutputMode M>
+void Led<M>::Toggle() {
     if (currentState_ == LedState::kOff) {
         TurnOn();
         currentState_ = LedState::kOn;
@@ -48,24 +49,12 @@ void Led<TPort, TPin, M>::Toggle() {
     currentState_ = LedState::kOff;
 }
 
-template <Port TPort, Pin TPin, OutputMode M>
-bool Led<TPort, TPin, M>::IsOn() {
+template <OutputMode M>
+bool Led<M>::IsOn() {
     return currentState_ == LedState::kOn;
 }
 
-template <Port TPort, Pin TPin, OutputMode M>
-bool Led<TPort, TPin, M>::IsOff() {
+template <OutputMode M>
+bool Led<M>::IsOff() {
     return currentState_ == LedState::kOff;
 }
-
-// =============================================================================
-// ------------------Explicit template method instantiations-------------------
-// =============================================================================
-
-#define X(port_, pin_)      template class Led<Port::k##port_, Pin::k##pin_, OutputMode::kActiveHigh>; //IGNORE-STYLE-CHECK[L004]
-    ATMEGA32_PORT_PIN
-#undef X
-
-#define X(port_, pin_)      template class Led<Port::k##port_, Pin::k##pin_, OutputMode::kActiveLow>; //IGNORE-STYLE-CHECK[L004]
-    ATMEGA32_PORT_PIN
-#undef X
