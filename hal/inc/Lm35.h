@@ -4,12 +4,11 @@
 namespace avr {
 namespace hal {
 namespace temperature_sensor {
-
-template <avr::types::Pin TPin1>
-class Lm35 : avr::hal::adc::AdcDeviceInterface<TPin1> {
+class Lm35 : avr::hal::adc::AdcDeviceInterface {
 public:
     using temperature_t = float;
-    Lm35();
+    using Pin  = avr::types::Pin;
+    Lm35(Pin pin);
     temperature_t GetTemperature();
 };
 
