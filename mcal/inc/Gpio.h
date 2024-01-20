@@ -5,47 +5,43 @@ namespace avr {
 namespace mcal {
 namespace gpio{
 
-enum DigitalLevel{kLow, kHigh};
-
-enum DirectionState{
-    kInput, 
-    kInputPullUp,
-    kOutput,
-};
-template <avr::types::Port UPort>
 class GpioRegisters {
 public:
-    using Register_t = utils::Register<avr::types::AvrRegWidth>;
-    explicit GpioRegisters(const avr::types::AvrRegWidth base_address);
+    using size = avr::types::AvrRegWidth;
+    using Register_t = utils::Register<size>;
+    GpioRegisters();
+    void SetRegisterAddresses(const avr::types::AvrRegWidth base_address);
     Register_t& GetPortRegister();
     Register_t& GetDdrRegister();
     Register_t& GetPinRegister();
-    static GpioRegisters CreateGpioRegistersObj();
 private:
-    Register_t port_;
-    Register_t ddr_;
-    Register_t pin_;
+    Register_t portReg_;
+    Register_t ddrReg_;
+    Register_t pinReg_;
 };
-template <avr::types::Port TPort>
+
+// As many cases of GPIO we shouldn't template any parameter to save more 
+// memory 
 class Gpio {
 public:
-    Gpio();
+    using Port = avr::types::Port;
     using Pin = avr::types::Pin;
+    using size = types::AvrRegWidth;
+    enum DigitalLevel   {kLow, kHigh};
+    enum DirectionState {kInput, kInputPullUp, kOutput};
     
-    template<Pin TPinNumber, DirectionState TDirectionState>
-    void SetDirection();
-
-    void SetDirection(types::AvrRegWidth val);
-    template <Pin TPinNumber>
-    void Write(DigitalLevel digitalVal);
-    void Write(types::AvrRegWidth val);
-
-    template<Pin TPinNumber>
-    DigitalLevel Read();
+    Gpio(Port port);
     
-    avr::types::AvrRegWidth Read();
+    void SetPinDirection(Pin pinNumber, DirectionState directionState);
+    void SetPortDirection(size val);
+    
+    void WritePin(Pin pinNumber, DigitalLevel digitalVal);
+    void WritePort(size val);
+
+    DigitalLevel ReadPin(Pin pinNumber);    
+    size ReadPort();
 private:
-    GpioRegisters<TPort> gpioRegisters_;
+    GpioRegisters gpioRegisters_;
 };
 
 }}} // avr::mcal::gpio
