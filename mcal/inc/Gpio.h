@@ -1,6 +1,10 @@
 #ifndef _GPIO_H_H
 #define _GPIO_H_H
 
+#define GPIOA_BASE_ADDRESS             (0x3B)
+#define GPIOB_BASE_ADDRESS             (0x38)
+#define GPIOC_BASE_ADDRESS             (0x35)
+#define GPIOD_BASE_ADDRESS             (0x32)
 namespace avr {
 namespace mcal {
 namespace gpio{
