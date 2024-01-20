@@ -14,181 +14,83 @@ using namespace avr::hal::gpio;
 // =============================================================================
 // ----------------- OutputDeviceInterface class impl --------------------------
 // =============================================================================
+template <Port TPort>
+OutputDeviceInterface<TPort>::OutputDeviceInterface() {}
 
 template <Port TPort>
-void OutputDeviceInterface<TPort>::SetOutputPin(Pin pin) {
-    using DS = DirectionState;
-    #define X(Pin_)\
-      case (k##Pin_): gpio_.template SetDirection<Pin::k##Pin_, DS::kOutput>();\
-      break;
-
-    switch (pin) {
-        ATMEGA32_PINS
-        case kNotConnected: break;
-    }
-
-    #undef X
-}
-
-template <Port TPort>
-template<typename T>
-void OutputDeviceInterface<TPort>::helper_OutputDeviceInterface(T pin) {
-    SetOutputPin(pin);
-}
-
-template <Port TPort>
-template<typename T, typename... Ts>
-void 
-OutputDeviceInterface<TPort>::helper_OutputDeviceInterface(T pin, Ts... pins) {
-    SetOutputPin(pin);
-    helper_OutputDeviceInterface(pins...);
-}
-
-template <Port TPort>
-template<typename... Ts>
-OutputDeviceInterface<TPort>::OutputDeviceInterface(Ts... pins) {
-    helper_OutputDeviceInterface(pins...);
-}
-
-#define T template
-#define X(Port_)\
-  T OutputDeviceInterface<Port::k##Port_>::OutputDeviceInterface(Pin);\
-  T OutputDeviceInterface<Port::k##Port_>::OutputDeviceInterface(Pin, Pin);\
-  T OutputDeviceInterface<Port::k##Port_>::OutputDeviceInterface(Pin, Pin,\
-                                                                 Pin);\
-  T OutputDeviceInterface<Port::k##Port_>::OutputDeviceInterface(Pin, Pin,\
-                                                                 Pin, Pin);\
-  T OutputDeviceInterface<Port::k##Port_>::OutputDeviceInterface(Pin, Pin, Pin,\
-                                                                 Pin, Pin);\
-  T OutputDeviceInterface<Port::k##Port_>::OutputDeviceInterface(Pin, Pin, Pin,\
-                                                                 Pin, Pin,\
-                                                                 Pin);\
-  T OutputDeviceInterface<Port::k##Port_>::OutputDeviceInterface(Pin, Pin, Pin,\
-                                                                 Pin, Pin, Pin,\
-                                                                 Pin);\
-  T OutputDeviceInterface<Port::k##Port_>::OutputDeviceInterface(Pin, Pin, Pin,\
-                                                                 Pin, Pin, Pin,\
-                                                                 Pin, Pin);
-
-ATMEGA32_PORTS
-#undef X
-#undef T
-
-template <Port TPort>
-OutputDeviceInterface<TPort>& 
-OutputDeviceInterface<TPort>::SetHighVoltage(Pin pin) {
-    using DL = DigitalLevel;
-    #define X(Pin_)\
-        case (k##Pin_): gpio_.template Write<Pin::k##Pin_, DL::kHigh>();\
-        break;
-    
-    switch (pin) {
-        ATMEGA32_PINS
-        case kNotConnected: break;
-    }
-    #undef X
+template<Pin TPin> 
+OutputDeviceInterface<TPort>& OutputDeviceInterface<TPort>::Init() {
+    gpio_.template SetDirection<TPin, DirectionState::kOutput>();
     return *this;
 }
 
 template <Port TPort>
-OutputDeviceInterface<TPort>&  
-OutputDeviceInterface<TPort>::SetLowVoltage(Pin pin) {
-    using DL = DigitalLevel;
-    #define X(Pin_)\
-        case (k##Pin_): gpio_.template Write<Pin::k##Pin_, DL::kLow>();\
-        break;
-    
-    switch (pin) {
-        ATMEGA32_PINS
-        case kNotConnected : break;
-    }
-    #undef X
+template<Pin TPin>  
+OutputDeviceInterface<TPort>& OutputDeviceInterface<TPort>::SetHighVoltage() {
+    gpio_.template Write<TPin>(DigitalLevel::kHigh);
     return *this;
 }
 
+template <Port TPort>
+template<Pin TPin>  
+OutputDeviceInterface<TPort>& OutputDeviceInterface<TPort>::SetLowVoltage() {
+    gpio_.template Write<TPin>(DigitalLevel::kLow);
+    return *this;
+}
 // =============================================================================
 // ------------------Explicit template method instantiations-------------------
 // =============================================================================
-template class OutputDeviceInterface<Port::kPortA>;
-template class OutputDeviceInterface<Port::kPortB>;
-template class OutputDeviceInterface<Port::kPortC>;
-template class OutputDeviceInterface<Port::kPortD>;
+#define X(port_)    template class OutputDeviceInterface<Port::k##port_>;
+ATMEGA32_PORTS
+#undef X
+
+#define X(port_, pin_)\
+    template OutputDeviceInterface<Port::k##port_>& OutputDeviceInterface<Port::k##port_>::Init<Pin::k##pin_>(); //IGNORE-STYLE-CHECK[L004]
+ATMEGA32_PORT_PIN
+#undef X
+
+#define X(port_, pin_)\
+    template OutputDeviceInterface<Port::k##port_>& OutputDeviceInterface<Port::k##port_>::SetHighVoltage<Pin::k##pin_>(); //IGNORE-STYLE-CHECK[L004]
+ATMEGA32_PORT_PIN
+#undef X
+
+#define X(port_, pin_)\
+    template OutputDeviceInterface<Port::k##port_>& OutputDeviceInterface<Port::k##port_>::SetLowVoltage<Pin::k##pin_>(); //IGNORE-STYLE-CHECK[L004]
+ATMEGA32_PORT_PIN
+#undef X
 
 // =============================================================================
 // --------------------- InputDeviceInterface impl ----------------------------
 // =============================================================================
-template <Port TPort>
-void InputDeviceInterface<TPort>::SetInputPin(Pin pin) {
-    using DS = DirectionState;
-    #define X(Pin_)\
-      case (k##Pin_): gpio_.template SetDirection<Pin::k##Pin_, DS::kInput>();\
-      break;
+template <Port TPort> 
+InputDeviceInterface<TPort>::InputDeviceInterface() { }
 
-    switch (pin) {
-        ATMEGA32_PINS
-        case kNotConnected: break;
-    }
-    #undef X
+template <Port TPort> 
+template<Pin TPin> 
+InputDeviceInterface<TPort>& InputDeviceInterface<TPort>::Init() {
+    gpio_.template SetDirection<TPin, DirectionState::kInput>();
+    return *this;
 }
 
-template <Port TPort>
-template<typename T>
-void 
-InputDeviceInterface<TPort>::helper_InputDeviceInterface(T pin) {
-    SetInputPin(pin);
+template <Port TPort> 
+template<Pin TPin>
+DigitalLevel InputDeviceInterface<TPort>::GetPinState() {
+    return gpio_.template Read<TPin>();
 }
-
-template <Port TPort>
-template<typename T, typename... Ts>
-void 
-InputDeviceInterface<TPort>::helper_InputDeviceInterface(T pin, Ts... pins) {
-    SetInputPin(pin);
-    helper_InputDeviceInterface(pins...);
-}
-
-template <Port TPort>
-template<typename... Ts>
-InputDeviceInterface<TPort>::InputDeviceInterface(Ts... pins) {
-    helper_InputDeviceInterface(pins...);
-}
-
-template <Port TPort>
-DigitalLevel InputDeviceInterface<TPort>::GetPinState(Pin pin) {
-    #define X(pin_)\
-        if (pin == Pin::k##pin_) { return gpio_.template Read<Pin::k##pin_>(); }
-        ATMEGA32_PINS
-    #undef X
-    // TODO(@abadr99): Improve unreachable code system 
-    return static_cast<DigitalLevel>(0); // WE SHOULDN'T GET HERE
-}
-
-#define T template
-#define X(Port_)\
-  T InputDeviceInterface<Port::k##Port_>::InputDeviceInterface(Pin);\
-  T InputDeviceInterface<Port::k##Port_>::InputDeviceInterface(Pin, Pin);\
-  T InputDeviceInterface<Port::k##Port_>::InputDeviceInterface(Pin, Pin,\
-                                                                 Pin);\
-  T InputDeviceInterface<Port::k##Port_>::InputDeviceInterface(Pin, Pin,\
-                                                                 Pin, Pin);\
-  T InputDeviceInterface<Port::k##Port_>::InputDeviceInterface(Pin, Pin, Pin,\
-                                                                 Pin, Pin);\
-  T InputDeviceInterface<Port::k##Port_>::InputDeviceInterface(Pin, Pin, Pin,\
-                                                                 Pin, Pin,\
-                                                                 Pin);\
-  T InputDeviceInterface<Port::k##Port_>::InputDeviceInterface(Pin, Pin, Pin,\
-                                                                 Pin, Pin, Pin,\
-                                                                 Pin);\
-  T InputDeviceInterface<Port::k##Port_>::InputDeviceInterface(Pin, Pin, Pin,\
-                                                                 Pin, Pin, Pin,\
-                                                                 Pin, Pin);
-
-ATMEGA32_PORTS
-#undef X
-#undef T
 // =============================================================================
 // ------------------Explicit template method instantiations-------------------
 // =============================================================================
-template class InputDeviceInterface<Port::kPortA>;
-template class InputDeviceInterface<Port::kPortB>;
-template class InputDeviceInterface<Port::kPortC>;
-template class InputDeviceInterface<Port::kPortD>;
+
+#define X(port_)    template class InputDeviceInterface<Port::k##port_>;
+ATMEGA32_PORTS
+#undef X
+
+#define X(port_, pin_)\
+    template InputDeviceInterface<Port::k##port_>& InputDeviceInterface<Port::k##port_>::Init<Pin::k##pin_>(); //IGNORE-STYLE-CHECK[L004]
+ATMEGA32_PORT_PIN
+#undef X
+
+#define X(port_, pin_)\
+    template DigitalLevel InputDeviceInterface<Port::k##port_>::GetPinState<Pin::k##pin_>(); //IGNORE-STYLE-CHECK[L004]
+ATMEGA32_PORT_PIN
+#undef X
