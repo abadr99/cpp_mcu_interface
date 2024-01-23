@@ -107,7 +107,7 @@ public:
     enum VoltageRefMode: uint8_t {
         kAref = 0x00,   /*< AREF, Internal Vref turned off >*/
         kAvcc = 0x01,   /*< AVCC with external capacitor at AREF pin >*/
-        k2_56v = 0x11   /*< Internal 2.56V Voltage Reference with external 
+        k2_56v = 0x03   /*< Internal 2.56V Voltage Reference with external 
                             capacitor at AREF pin >*/
     };
     enum ChannelMode : uint8_t {
