@@ -36,9 +36,9 @@
     X(Differential_ADC0_ADC0_200x,  0b01010)\
     X(Differential_ADC1_ADC0_200x,  0b01011)\
     X(Differential_ADC2_ADC2_10x,   0b01100)\
-    X(Differential_ADC3_ADC0_10x,   0b01101)\
+    X(Differential_ADC3_ADC2_10x,   0b01101)\
     X(Differential_ADC2_ADC2_200x,  0b01110)\
-    X(Differential_ADC3_ADC0_200x,  0b01111)\
+    X(Differential_ADC3_ADC2_200x,  0b01111)\
     X(Differential_ADC0_ADC1_1x,    0b10000)\
     X(Differential_ADC1_ADC1_1x,    0b10001)\
     X(Differential_ADC2_ADC1_1x,    0b10010)\

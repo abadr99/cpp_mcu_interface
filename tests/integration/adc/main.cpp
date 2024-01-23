@@ -1,7 +1,7 @@
 /* 
- * make compile-test src=tests/integration/gpio/main.cpp target=tests/integration/gpio/gpio //IGNORE-STYLE-CHECK[L004]
- * sh scripts/testing/run-simu-avr.sh tests/integration/gpio/gpio.testelf
- * sh scripts/testing/run-regressions.sh -d tests/integration/gpio/
+ * make compile-test src=tests/integration/adc/main.cpp target=tests/integration/adc/adc
+ * sh scripts/testing/run-simu-avr.sh tests/integration/adc/adc.testelf
+ * sh scripts/testing/run-regressions.sh -d tests/integration/adc/
 */
 
 #include <stdint.h>
@@ -112,14 +112,14 @@ int main () {
     TESTER.Expect_Eq(SFIOR_, static_cast<uint8_t>(0x00));
 
 
-    ADC.SelectChannel(Adc::ChannelMode::kDifferential_ADC3_ADC0_10x);
+    ADC.SelectChannel(Adc::ChannelMode::kDifferential_ADC3_ADC2_10x);
     TESTER.Expect_Eq(ADMUX, static_cast<uint8_t>(0x2D));
     TESTER.Expect_Eq(ADCSRA, static_cast<uint8_t>(0xA0));
     TESTER.Expect_Eq(ADCL, static_cast<uint8_t>(0x00));
     TESTER.Expect_Eq(ADCH, static_cast<uint8_t>(0x00));
     TESTER.Expect_Eq(SFIOR_, static_cast<uint8_t>(0x00));
 
-    ADC.SelectChannel(Adc::ChannelMode::kDifferential_ADC3_ADC0_200x);
+    ADC.SelectChannel(Adc::ChannelMode::kDifferential_ADC3_ADC2_200x);
     TESTER.Expect_Eq(ADMUX, static_cast<uint8_t>(0x2F));
     TESTER.Expect_Eq(ADCSRA, static_cast<uint8_t>(0xA0));
     TESTER.Expect_Eq(ADCL, static_cast<uint8_t>(0x00));
