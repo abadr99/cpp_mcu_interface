@@ -13,7 +13,7 @@ public:
     using pFun_t = void (*) ();
     using pin_t = avr::types::Pin;
     AdcDeviceInterface(const pin_t pin1, 
-                       const pin_t pin2 = pin_t::kNotConnected);
+                       const pin_t pin2 = pin_t::kPinNotConnected);
     volt_t GetInputVoltage(pFun_t pFunction = nullptr);
 private:
     pin_t pins[2];

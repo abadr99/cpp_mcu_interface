@@ -17,34 +17,41 @@ using namespace avr::hal::gpio;
 // =============================================================================
 OutputDeviceInterface::OutputDeviceInterface() { /* EMPTY */ }
 
-OutputDeviceInterface& OutputDeviceInterface::Init(DevicePin dp) {
+void OutputDeviceInterface::Init(DevicePin dp) {
     using DS = Gpio::DirectionState;
     Gpio::SetPinDirection(dp.port, dp.pin, DS::kOutput);
-    return *this;
 }
 
-OutputDeviceInterface& OutputDeviceInterface::SetHighVoltage(DevicePin dp) {
+void OutputDeviceInterface::Init(Port port) {
+    Gpio::SetPortDirection(port, 0xFF);
+}
+
+void OutputDeviceInterface::WritePort(Port port, AvrRegWidth val) { //IGNORE-STYLE-CHECK[L004]
+    Gpio::WritePort(port, val);
+}
+
+void OutputDeviceInterface::SetHighVoltage(DevicePin dp) {
     using DL = Gpio::DigitalLevel;
     Gpio::WritePin(dp.port, dp.pin, DL::kHigh);
-    return *this;
 }
 
-OutputDeviceInterface& OutputDeviceInterface::SetLowVoltage(DevicePin dp) {
+void OutputDeviceInterface::SetLowVoltage(DevicePin dp) {
     using DL = Gpio::DigitalLevel;
     Gpio::WritePin(dp.port, dp.pin, DL::kLow);
-    return *this;
 }
 
+void OutputDeviceInterface::SetVoltage(DevicePin dp, Gpio::DigitalLevel val) {
+    Gpio::WritePin(dp.port, dp.pin, val);
+}
 // =============================================================================
 // --------------------- InputDeviceInterface impl ----------------------------
 // =============================================================================
  
 InputDeviceInterface::InputDeviceInterface() { /* EMPTY */ }
 
-InputDeviceInterface& InputDeviceInterface::Init(DevicePin dp) {
+void InputDeviceInterface::Init(DevicePin dp) {
     using DS = Gpio::DirectionState;
     Gpio::SetPinDirection(dp.port, dp.pin, DS::kInput);
-    return *this;
 }
 
 typename InputDeviceInterface::DigitalLevel 

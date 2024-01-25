@@ -15,7 +15,7 @@ typename AdcDeviceInterface::
 volt_t AdcDeviceInterface::GetInputVoltage(pFun_t pFunction) {
     using CM = avr::mcal::adc::Adc::ChannelMode;
     // Select Channel according to device pins
-    if (pins[1] == pin_t::kNotConnected) {
+    if (pins[1] == pin_t::kPinNotConnected) {
       ADC.SelectChannel(static_cast<CM>(pins[0]));
     }
     else {

@@ -4,17 +4,18 @@
 namespace avr{
 namespace types{
 
-enum Port {
+enum Port : uint8_t {
     kPortA,
     kPortB,
     kPortC,
     kPortD,
+    kPortNotConnected,
 };
 
-enum Pin {
+enum Pin : uint8_t {
     kPin0, kPin1, kPin2, kPin3,
     kPin4, kPin5, kPin6, kPin7,
-    kNotConnected,
+    kPinNotConnected,
 };
 using AvrRegWidth  = uint8_t;
 }}

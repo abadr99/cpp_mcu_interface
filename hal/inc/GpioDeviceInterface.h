@@ -11,10 +11,14 @@ protected:
     using Pin = avr::types::Pin;
     using Port = avr::types::Port;
     using DevicePin = utils::types::DevicePin;
+    using AvrRegWidth = avr::types::AvrRegWidth;
     OutputDeviceInterface();
-    OutputDeviceInterface& Init(DevicePin dp);
-    OutputDeviceInterface& SetHighVoltage(DevicePin dp);
-    OutputDeviceInterface& SetLowVoltage(DevicePin dp);
+    void Init(DevicePin dp);
+    void Init(Port port);
+    void WritePort(Port port, AvrRegWidth val);
+    void SetHighVoltage(DevicePin dp);
+    void SetLowVoltage(DevicePin dp);
+    void SetVoltage(DevicePin dp, avr::mcal::gpio::Gpio::DigitalLevel val);
 };
 
 // All digital Input devices should inherit from this class
@@ -26,7 +30,7 @@ protected:
     using DigitalLevel = avr::mcal::gpio::Gpio::DigitalLevel;
     using DevicePin = utils::types::DevicePin;
     InputDeviceInterface();
-    InputDeviceInterface& Init(DevicePin dp);
+    void Init(DevicePin dp);
     DigitalLevel GetPinState(DevicePin dp);
 };
 

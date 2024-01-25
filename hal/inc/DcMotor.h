@@ -5,7 +5,7 @@ namespace avr {
 namespace hal {
 namespace dc_motor {
 
-class DcMotor : avr::hal::gpio::OutputDeviceInterface{
+class DcMotor : public avr::hal::gpio::OutputDeviceInterface {
 public:
     enum Direction {kClockWise, kCounterClockWise};
     using Port      = avr::types::Port;

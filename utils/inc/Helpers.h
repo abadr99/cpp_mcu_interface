@@ -16,6 +16,7 @@ struct DevicePin {
 
 } // namespace utils::types
 
+#define READ_BIT(val_, bit_)        ((val_ & (1 << bit_)) >> bit_)
 template<typename T>
 T GetAllOnes() {
     return static_cast<T>(-1);

@@ -11,15 +11,15 @@ using namespace avr::hal::dc_motor;
 DcMotor::DcMotor(Port port, Pin pin1, Pin pin2) 
 : m1_({.port = port, .pin = pin1}), m2_({.port = port, .pin = pin2})
 {
-    this->Init(m1_)
-         .Init(m2_);
+    this->Init(m1_);
+    this->Init(m2_);
     Stop();
 }
 DcMotor::DcMotor(DevicePin dp1, DevicePin dp2)
 : m1_(dp1), m2_(dp2)
 {
-    this->Init(m1_)
-         .Init(m2_);
+    this->Init(m1_);
+    this->Init(m2_);
     Stop();
 }
 

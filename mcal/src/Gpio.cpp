@@ -30,6 +30,7 @@ static Register<AvrRegWidth> Get_DDR(Port p) {
         case kPortB: return Register<AvrRegWidth>(DDRB);
         case kPortC: return Register<AvrRegWidth>(DDRC);
         case kPortD: return Register<AvrRegWidth>(DDRD);
+        case kPortNotConnected: return Register<AvrRegWidth>(0);
     }
     return Register<AvrRegWidth>(0);
 }
@@ -39,6 +40,7 @@ static Register<AvrRegWidth> Get_PORT(Port p) {
         case kPortB: return Register<AvrRegWidth>(PORTB);
         case kPortC: return Register<AvrRegWidth>(PORTC);
         case kPortD: return Register<AvrRegWidth>(PORTD);
+        case kPortNotConnected: return Register<AvrRegWidth>(0);
     }
     return Register<AvrRegWidth>(0);
 }
@@ -48,6 +50,7 @@ static Register<AvrRegWidth> Get_PIN(Port p) {
         case kPortB: return Register<AvrRegWidth>(PINB);
         case kPortC: return Register<AvrRegWidth>(PINC);
         case kPortD: return Register<AvrRegWidth>(PIND);
+        case kPortNotConnected: return Register<AvrRegWidth>(0);
     }
     return Register<AvrRegWidth>(0);
 }

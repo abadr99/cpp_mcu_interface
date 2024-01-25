@@ -6,4 +6,5 @@ hal/src/AdcDeviceInterface
 hal/src/Led
 hal/src/Ir
 hal/src/DcMotor
+hal/src/SevenSegment
 hal/src/Lm35
