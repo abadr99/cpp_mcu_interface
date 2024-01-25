@@ -31,140 +31,136 @@ using namespace avr::types;
 int main () {
     {
         avr::test::AVRTest TESTER("GPIOA");
-        Gpio GPIO(kPortA);
         
-        GPIO.SetPinDirection(kPin0, Gpio::DirectionState::kOutput );
+        Gpio::SetPinDirection(kPortA, kPin0, Gpio::DirectionState::kOutput);
         TESTER.Expect_Eq(DDRA, static_cast<uint8_t>(0x01));
     
-        GPIO.SetPinDirection(kPin0, Gpio::DirectionState::kInput );
+        Gpio::SetPinDirection(kPortA, kPin0, Gpio::DirectionState::kInput );
         TESTER.Expect_Eq(DDRA, static_cast<uint8_t>(0x00));
 
-        GPIO.SetPortDirection(0x0F);
+        Gpio::SetPortDirection(kPortA, 0x0F);
         TESTER.Expect_Eq(DDRA, static_cast<uint8_t>(0x0F));
 
-        GPIO.SetPinDirection(kPin0, Gpio::DirectionState::kInputPullUp);
+        Gpio::SetPinDirection(kPortA, kPin0, Gpio::DirectionState::kInputPullUp);
         TESTER.Expect_Eq(DDRA, static_cast<uint8_t>(0x0E));
         TESTER.Expect_Eq(PORTA, static_cast<uint8_t>(0x01));
 
-        GPIO.SetPortDirection(0xFF);
+        Gpio::SetPortDirection(kPortA, 0xFF);
         TESTER.Expect_Eq(DDRA, static_cast<uint8_t>(0xFF));
         TESTER.Expect_Eq(PORTA, static_cast<uint8_t>(0x01));
 
-        GPIO.WritePin(kPin7, Gpio::DigitalLevel::kHigh);
+        Gpio::WritePin(kPortA, kPin7, Gpio::DigitalLevel::kHigh);
         TESTER.Expect_Eq(PORTA, static_cast<uint8_t>(0x81));
 
-        GPIO.WritePin(kPin7, Gpio::DigitalLevel::kLow);
+        Gpio::WritePin(kPortA, kPin7, Gpio::DigitalLevel::kLow);
         TESTER.Expect_Eq(PORTA, static_cast<uint8_t>(0x01));
 
-        GPIO.WritePort(0xFF);
+        Gpio::WritePort(kPortA, 0xFF);
         TESTER.Expect_Eq(PORTA, static_cast<uint8_t>(0xFF));
     }
     {
         avr::test::AVRTest TESTER("GPIOB");
-        Gpio GPIO(kPortB);
-        GPIO.SetPinDirection(kPin5, Gpio::DirectionState::kOutput );
+
+        Gpio::SetPinDirection(kPortB, kPin5, Gpio::DirectionState::kOutput );
         TESTER.Expect_Eq(DDRB, static_cast<uint8_t>(0x20));
 
-        GPIO.SetPinDirection(kPin6, Gpio::DirectionState::kOutput );
+        Gpio::SetPinDirection(kPortB, kPin6, Gpio::DirectionState::kOutput);
         TESTER.Expect_Eq(DDRB, static_cast<uint8_t>(0x60));
     
-        GPIO.SetPinDirection(kPin5, Gpio::DirectionState::kInput );
+        Gpio::SetPinDirection(kPortB, kPin5, Gpio::DirectionState::kInput );
         TESTER.Expect_Eq(DDRB, static_cast<uint8_t>(0x40));
-        GPIO.SetPinDirection(kPin6, Gpio::DirectionState::kInput );
+        Gpio::SetPinDirection(kPortB, kPin6, Gpio::DirectionState::kInput );
         TESTER.Expect_Eq(DDRB, static_cast<uint8_t>(0x00));
 
-        GPIO.SetPortDirection(0x88);
+        Gpio::SetPortDirection(kPortB, 0x88);
         TESTER.Expect_Eq(DDRB, static_cast<uint8_t>(0x88));
 
-        GPIO.SetPinDirection(kPin1, Gpio::DirectionState::kInputPullUp);
+        Gpio::SetPinDirection(kPortB, kPin1, Gpio::DirectionState::kInputPullUp);
         TESTER.Expect_Eq(DDRB, static_cast<uint8_t>(0x88));
         TESTER.Expect_Eq(PORTB, static_cast<uint8_t>(0x02));
 
-        GPIO.SetPortDirection(0xFF);
+        Gpio::SetPortDirection(kPortB, 0xFF);
         TESTER.Expect_Eq(DDRB, static_cast<uint8_t>(0xFF));
         TESTER.Expect_Eq(PORTB, static_cast<uint8_t>(0x02));
 
-        GPIO.WritePin(kPin4, Gpio::DigitalLevel::kHigh);
+        Gpio::WritePin(kPortB, kPin4, Gpio::DigitalLevel::kHigh);
         TESTER.Expect_Eq(PORTB, static_cast<uint8_t>(0x12));
 
-        GPIO.WritePin(kPin4, Gpio::DigitalLevel::kLow);
+        Gpio::WritePin(kPortB, kPin4, Gpio::DigitalLevel::kLow);
         TESTER.Expect_Eq(PORTB, static_cast<uint8_t>(0x02));
 
-        GPIO.WritePort(0xFF);
+        Gpio::WritePort(kPortB, 0xFF);
         TESTER.Expect_Eq(PORTB, static_cast<uint8_t>(0xFF));
 
     }
     {
         avr::test::AVRTest TESTER("GPIOC");
-        Gpio GPIO(kPortC);
 
-        GPIO.SetPinDirection(kPin2, Gpio::DirectionState::kOutput );
+        Gpio::SetPinDirection(kPortC, kPin2, Gpio::DirectionState::kOutput );
         TESTER.Expect_Eq(DDRC, static_cast<uint8_t>(0x04));
 
-        GPIO.SetPinDirection(kPin3, Gpio::DirectionState::kOutput );
+        Gpio::SetPinDirection(kPortC, kPin3, Gpio::DirectionState::kOutput );
         TESTER.Expect_Eq(DDRC, static_cast<uint8_t>(0x0C));
     
-        GPIO.SetPinDirection(kPin3, Gpio::DirectionState::kInput );
+        Gpio::SetPinDirection(kPortC, kPin3, Gpio::DirectionState::kInput );
         TESTER.Expect_Eq(DDRC, static_cast<uint8_t>(0x04));
 
-        GPIO.SetPinDirection(kPin2, Gpio::DirectionState::kInput );
+        Gpio::SetPinDirection(kPortC, kPin2, Gpio::DirectionState::kInput );
         TESTER.Expect_Eq(DDRC, static_cast<uint8_t>(0x00));
 
-        GPIO.SetPortDirection(0xF0);
+        Gpio::SetPortDirection(kPortC, 0xF0);
         TESTER.Expect_Eq(DDRC, static_cast<uint8_t>(0xF0));
 
-        GPIO.SetPinDirection(kPin7, Gpio::DirectionState::kInputPullUp);
+        Gpio::SetPinDirection(kPortC, kPin7, Gpio::DirectionState::kInputPullUp);
         TESTER.Expect_Eq(DDRC, static_cast<uint8_t>(0x70));
         TESTER.Expect_Eq(PORTC, static_cast<uint8_t>(0x80));
 
-        GPIO.SetPortDirection(0xFF);
+        Gpio::SetPortDirection(kPortC, 0xFF);
         TESTER.Expect_Eq(DDRC, static_cast<uint8_t>(0xFF));
         TESTER.Expect_Eq(PORTC, static_cast<uint8_t>(0x80));
 
-        GPIO.WritePin(kPin0, Gpio::DigitalLevel::kHigh);
+        Gpio::WritePin(kPortC, kPin0, Gpio::DigitalLevel::kHigh);
         TESTER.Expect_Eq(PORTC, static_cast<uint8_t>(0x81));
 
-        GPIO.WritePin(kPin0, Gpio::DigitalLevel::kLow);
+        Gpio::WritePin(kPortC, kPin0, Gpio::DigitalLevel::kLow);
         TESTER.Expect_Eq(PORTC, static_cast<uint8_t>(0x80));
 
-        GPIO.WritePort(0xCD);
+        Gpio::WritePort(kPortC, 0xCD);
         TESTER.Expect_Eq(PORTC, static_cast<uint8_t>(0xCD));
     }
     {
         avr::test::AVRTest TESTER("GPIOD");
-        Gpio GPIO(kPortD);
    
-        GPIO.SetPinDirection(kPin1, Gpio::DirectionState::kOutput );
+        Gpio::SetPinDirection(kPortD, kPin1, Gpio::DirectionState::kOutput );
         TESTER.Expect_Eq(DDRD, static_cast<uint8_t>(0x02));
 
-        GPIO.SetPinDirection(kPin0, Gpio::DirectionState::kOutput );
+        Gpio::SetPinDirection(kPortD, kPin0, Gpio::DirectionState::kOutput );
         TESTER.Expect_Eq(DDRD, static_cast<uint8_t>(0x03));
     
-        GPIO.SetPinDirection(kPin1, Gpio::DirectionState::kInput );
+        Gpio::SetPinDirection(kPortD, kPin1, Gpio::DirectionState::kInput );
         TESTER.Expect_Eq(DDRD, static_cast<uint8_t>(0x01));
 
-        GPIO.SetPinDirection(kPin0, Gpio::DirectionState::kInput );
+        Gpio::SetPinDirection(kPortD, kPin0, Gpio::DirectionState::kInput );
         TESTER.Expect_Eq(DDRD, static_cast<uint8_t>(0x00));
 
-        GPIO.SetPortDirection(0xB8);
+        Gpio::SetPortDirection(kPortD, 0xB8);
         TESTER.Expect_Eq(DDRD, static_cast<uint8_t>(0xB8));
 
-        GPIO.SetPinDirection(kPin0, Gpio::DirectionState::kInputPullUp);
+        Gpio::SetPinDirection(kPortD, kPin0, Gpio::DirectionState::kInputPullUp);
         TESTER.Expect_Eq(DDRD, static_cast<uint8_t>(0xB8));
         TESTER.Expect_Eq(PORTD,static_cast<uint8_t>(0x01));
 
-        GPIO.SetPortDirection(0xFF);
+        Gpio::SetPortDirection(kPortD, 0xFF);
         TESTER.Expect_Eq(DDRD, static_cast<uint8_t>(0xFF));
         TESTER.Expect_Eq(PORTD, static_cast<uint8_t>(0x01));
 
-        GPIO.WritePin(kPin7, Gpio::DigitalLevel::kHigh);
+        Gpio::WritePin(kPortD, kPin7, Gpio::DigitalLevel::kHigh);
         TESTER.Expect_Eq(PORTD, static_cast<uint8_t>(0x81));
 
-        GPIO.WritePin(kPin7, Gpio::DigitalLevel::kLow);
+        Gpio::WritePin(kPortD, kPin7, Gpio::DigitalLevel::kLow);
         TESTER.Expect_Eq(PORTD, static_cast<uint8_t>(0x01));
 
-        GPIO.WritePort(0x00);
+        Gpio::WritePort(kPortD, 0x00);
         TESTER.Expect_Eq(PORTD, static_cast<uint8_t>(0x00));
     }
-   
 }
