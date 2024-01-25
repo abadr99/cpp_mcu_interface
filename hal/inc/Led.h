@@ -14,17 +14,16 @@ template <OutputMode M = OutputMode::kActiveHigh>
 class Led : public avr::hal::gpio::OutputDeviceInterface {
 public:
     enum LedState { kOff, kOn };
-    using Port = avr::types::Port;
-    using Pin  = avr::types::Pin;
-    Led(Port port, Pin pin);
+    using DevicePin = utils::types::DevicePin;
+    Led(DevicePin dp);
     void TurnOn();
     void TurnOff();
     void Toggle();
     bool IsOn();
     bool IsOff();
 private:
-    Pin pin_;
-    LedState currentState_;
+    DevicePin pin_;
+    LedState  currentState_;
 };
 
 }}} // avr::hal::led

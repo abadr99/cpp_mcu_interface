@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include "Atmega32.h"
 #include "Register.h"
+#include "Helpers.h"
 #include "Gpio.h"
 #include "GpioDeviceInterface.h"
 #include "Led.h"
@@ -11,11 +12,10 @@ using namespace avr::hal;
 using namespace avr::hal::led;
 
 template <OutputMode M>
-Led<M>::Led(Port port, Pin pin): gpio::OutputDeviceInterface(port),
-                                 pin_(pin),
-                                 currentState_(LedState::kOff)
+Led<M>::Led(DevicePin dp): pin_(dp),
+                            currentState_(LedState::kOff)
 {
-    this->Init(pin);
+    this->Init(dp);
 }
 
 template <OutputMode M>

@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include "Atmega32.h"
 #include "Register.h"
+#include "Helpers.h"
 #include "Gpio.h"
 #include "GpioDeviceInterface.h"
 
@@ -16,21 +17,21 @@ using namespace avr::hal::gpio;
 // =============================================================================
 OutputDeviceInterface::OutputDeviceInterface() { /* EMPTY */ }
 
-OutputDeviceInterface& OutputDeviceInterface::Init(Port port, Pin pin) {
+OutputDeviceInterface& OutputDeviceInterface::Init(DevicePin dp) {
     using DS = Gpio::DirectionState;
-    Gpio::SetPinDirection(port, pin, DS::kOutput);
+    Gpio::SetPinDirection(dp.port, dp.pin, DS::kOutput);
     return *this;
 }
 
-OutputDeviceInterface& OutputDeviceInterface::SetHighVoltage(Port port, Pin pin) {
+OutputDeviceInterface& OutputDeviceInterface::SetHighVoltage(DevicePin dp) {
     using DL = Gpio::DigitalLevel;
-    Gpio::WritePin(port, pin, DL::kHigh);
+    Gpio::WritePin(dp.port, dp.pin, DL::kHigh);
     return *this;
 }
 
-OutputDeviceInterface& OutputDeviceInterface::SetLowVoltage(Port port, Pin pin) {
+OutputDeviceInterface& OutputDeviceInterface::SetLowVoltage(DevicePin dp) {
     using DL = Gpio::DigitalLevel;
-    Gpio::WritePin(port, pin, DL::kLow);
+    Gpio::WritePin(dp.port, dp.pin, DL::kLow);
     return *this;
 }
 
@@ -40,13 +41,13 @@ OutputDeviceInterface& OutputDeviceInterface::SetLowVoltage(Port port, Pin pin) 
  
 InputDeviceInterface::InputDeviceInterface() { /* EMPTY */ }
 
-InputDeviceInterface& InputDeviceInterface::Init(Port port, Pin pin) {
+InputDeviceInterface& InputDeviceInterface::Init(DevicePin dp) {
     using DS = Gpio::DirectionState;
-    Gpio::SetPinDirection(port, pin, DS::kInput);
+    Gpio::SetPinDirection(dp.port, dp.pin, DS::kInput);
     return *this;
 }
 
 typename InputDeviceInterface::DigitalLevel 
-InputDeviceInterface::GetPinState(Port port, Pin pin) {
-    return Gpio::ReadPin(port, pin);
+InputDeviceInterface::GetPinState(DevicePin dp) {
+    return Gpio::ReadPin(dp.port, dp.pin);
 }

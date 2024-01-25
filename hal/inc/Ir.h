@@ -8,13 +8,14 @@ namespace ir  {
 class Ir : public avr::hal::gpio::InputDeviceInterface{
 public:
     enum IrState { kNotDetected, kDetected };
+    using DevicePin = utils::types::DevicePin;
     using Port = avr::types::Port;
     using Pin = avr::types::Pin;
     using IRState = avr::hal::ir::Ir::IrState;
-    Ir(Port port, Pin pin);
+    Ir(DevicePin dp);
     IRState GetState();
 private:
-    Pin IrPin_;
+    DevicePin IrPin_;
 };
 }}} // avr::hal::ir
 #endif // _IR_H_

@@ -10,10 +10,11 @@ class OutputDeviceInterface {
 public:
     using Pin = avr::types::Pin;
     using Port = avr::types::Port;
+    using DevicePin = utils::types::DevicePin;
     OutputDeviceInterface();
-    OutputDeviceInterface& Init(Port port, Pin pin);
-    OutputDeviceInterface& SetHighVoltage(Port port, Pin pin);
-    OutputDeviceInterface& SetLowVoltage(Port port, Pin pin);
+    OutputDeviceInterface& Init(DevicePin dp);
+    OutputDeviceInterface& SetHighVoltage(DevicePin dp);
+    OutputDeviceInterface& SetLowVoltage(DevicePin dp);
 };
 
 // All digital Input devices should inherit from this class
@@ -23,10 +24,10 @@ public:
     using Port = avr::types::Port;
     using Gpio_t = avr::mcal::gpio::Gpio;
     using DigitalLevel = avr::mcal::gpio::Gpio::DigitalLevel;
+    using DevicePin = utils::types::DevicePin;
     InputDeviceInterface();
-    InputDeviceInterface& Init(Port port, Pin pin);
-    DigitalLevel GetPinState(Port port, Pin pin);
-private:
+    InputDeviceInterface& Init(DevicePin dp);
+    DigitalLevel GetPinState(DevicePin dp);
 };
 
 }}} // avr::hal::gpio

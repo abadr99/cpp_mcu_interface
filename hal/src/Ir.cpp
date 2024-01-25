@@ -10,8 +10,7 @@ using namespace avr::mcal::gpio;
 using namespace avr::hal;
 using namespace avr::hal::ir;
 
-Ir::Ir(Port port, Pin pin) : gpio::InputDeviceInterface(port), 
-                             IrPin_(pin)
+Ir::Ir(DevicePin dp): IrPin_(dp)
 {/* EMPTY */}
 
 typename
