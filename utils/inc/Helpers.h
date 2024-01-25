@@ -2,6 +2,19 @@
 #define _HELPERS_H_
 
 namespace utils {
+namespace types {
+// helper type that combine port and pin together in order to describe hardware
+// device pins
+struct DevicePin {
+    avr::types::Port port;
+    avr::types::Pin  pin;
+    void operator=(const DevicePin& DP) { 
+        port = DP.port; 
+        pin = DP.pin; 
+    } 
+};
+
+}
 
 template<typename T>
 T GetAllOnes() {

@@ -14,23 +14,23 @@ using namespace avr::hal::gpio;
 // =============================================================================
 // ----------------- OutputDeviceInterface class impl --------------------------
 // =============================================================================
-OutputDeviceInterface::OutputDeviceInterface(Port port): gpio_(port) {}
+OutputDeviceInterface::OutputDeviceInterface() { /* EMPTY */ }
 
-OutputDeviceInterface& OutputDeviceInterface::Init(Pin pin) {
+OutputDeviceInterface& OutputDeviceInterface::Init(Port port, Pin pin) {
     using DS = Gpio::DirectionState;
-    gpio_.SetPinDirection(pin, DS::kOutput);
+    Gpio::SetPinDirection(port, pin, DS::kOutput);
     return *this;
 }
 
-OutputDeviceInterface& OutputDeviceInterface::SetHighVoltage(Pin pin) {
+OutputDeviceInterface& OutputDeviceInterface::SetHighVoltage(Port port, Pin pin) {
     using DL = Gpio::DigitalLevel;
-    gpio_.WritePin(pin, DL::kHigh);
+    Gpio::WritePin(port, pin, DL::kHigh);
     return *this;
 }
 
-OutputDeviceInterface& OutputDeviceInterface::SetLowVoltage(Pin pin) {
+OutputDeviceInterface& OutputDeviceInterface::SetLowVoltage(Port port, Pin pin) {
     using DL = Gpio::DigitalLevel;
-    gpio_.WritePin(pin, DL::kLow);
+    Gpio::WritePin(port, pin, DL::kLow);
     return *this;
 }
 
@@ -38,15 +38,15 @@ OutputDeviceInterface& OutputDeviceInterface::SetLowVoltage(Pin pin) {
 // --------------------- InputDeviceInterface impl ----------------------------
 // =============================================================================
  
-InputDeviceInterface::InputDeviceInterface(Port port): gpio_(port) { }
+InputDeviceInterface::InputDeviceInterface() { /* EMPTY */ }
 
-InputDeviceInterface& InputDeviceInterface::Init(Pin pin) {
+InputDeviceInterface& InputDeviceInterface::Init(Port port, Pin pin) {
     using DS = Gpio::DirectionState;
-    gpio_.SetPinDirection(pin, DS::kInput);
+    Gpio::SetPinDirection(port, pin, DS::kInput);
     return *this;
 }
 
-typename
-InputDeviceInterface::DigitalLevel InputDeviceInterface::GetPinState(Pin pin) {
-    return gpio_.ReadPin(pin);
+typename InputDeviceInterface::DigitalLevel 
+InputDeviceInterface::GetPinState(Port port, Pin pin) {
+    return Gpio::ReadPin(port, pin);
 }
