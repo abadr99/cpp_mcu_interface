@@ -1,6 +1,6 @@
 #ifndef _HELPERS_H_
 #define _HELPERS_H_
-
+#include "../../mcal/inc/Atmega32.h"
 namespace utils {
 namespace types {
 // helper type that combine port and pin together in order to describe hardware
@@ -14,7 +14,7 @@ struct DevicePin {
     } 
 };
 
-}
+} // namespace utils::types
 
 template<typename T>
 T GetAllOnes() {

@@ -1,5 +1,5 @@
 /* 
- * make compile-test src=tests/integration/adc/main.cpp target=tests/integration/adc/adc
+ * make compile-test src=tests/integration/adc/main.cpp target=tests/integration/adc/adc //IGNORE-STYLE-CHECK[L004]
  * sh scripts/testing/run-simu-avr.sh tests/integration/adc/adc.testelf
  * sh scripts/testing/run-regressions.sh -d tests/integration/adc/
 */
@@ -17,10 +17,10 @@ using namespace avr::types;
 using namespace avr::mcal::adc;
 
 #define ADMUX                           (*((volatile uint8_t*)0x27))
-#define ADCSRA                           (*((volatile uint8_t*)0x26))
-#define ADCL                             (*((volatile uint8_t*)0x24))
-#define ADCH                             (*((volatile uint8_t*)0x25))
-#define SFIOR_                            (*((volatile uint8_t*)0x50))
+#define ADCSRA                          (*((volatile uint8_t*)0x26))
+#define ADCL                            (*((volatile uint8_t*)0x24))
+#define ADCH                            (*((volatile uint8_t*)0x25))
+#define SFIOR_                          (*((volatile uint8_t*)0x50))
 
 int main () {
    {
@@ -441,7 +441,5 @@ int main () {
     TESTER.Expect_Eq(ADCL, static_cast<uint8_t>(0x00));
     TESTER.Expect_Eq(ADCH, static_cast<uint8_t>(0x00));
     TESTER.Expect_Eq(SFIOR_, static_cast<uint8_t>(0x00));
-
-
   }
 }

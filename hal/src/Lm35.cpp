@@ -1,7 +1,7 @@
 #include <stdint.h>
-#include <Helpers.h>
 #include "Atmega32.h"
 #include "Register.h"
+#include "Helpers.h"
 #include "Adc.h"
 #include "AdcDeviceInterface.h"
 #include "Lm35.h"
