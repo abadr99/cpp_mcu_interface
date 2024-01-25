@@ -18,19 +18,19 @@
 using namespace utils;
 using namespace avr::mcal::gpio;
 using namespace avr::types;
+using DR = Gpio::DirectionState;
+using DL = Gpio::DigitalLevel;
 
 int main() {
-    // 1] Create a GPIO object with PortA
-    Gpio<Port::kPortA> gpioA;
-    
-    // 2] Set pin A1 as output
-    gpioA.SetDirection<Pin::kPin1, DirectionState::kOutput>();
+
+    // Set pin A1 as output
+    Gpio::SetPinDirection(kPortA, kPin1, DR::kOutput);
     
     while (1) {
-        // 3] Toggle output voltage every 1 second
-        gpioA.Write<Pin::kPin1>(DigitalLevel::kHigh);
+        // Toggle output voltage every 1 second
+        Gpio::WritePin(kPortA, kPin1, DL::kHigh);
         _delay_ms(1000);
-        gpioA.Write<Pin::kPin1>(DigitalLevel::kLow);
+        Gpio::WritePin(kPortA, kPin1, DL::kLow);
         _delay_ms(1000);
     }
 }

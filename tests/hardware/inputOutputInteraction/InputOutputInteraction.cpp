@@ -22,24 +22,24 @@
 using namespace utils;
 using namespace avr::mcal::gpio;
 using namespace avr::types;
-
+using DR = Gpio::DirectionState;
+using DL = Gpio::DigitalLevel;
 #define DEBOUNCE_TIME   (50)
+
 int main() {
-    //Create a GPIO object of portA
-    Gpio GPIO(kPortA);
     //set a0 as input pullup
-    GPIO.SetPinDirection(kPin0, Gpio::DirectionState::kInputPullUp);
+    Gpio::SetPinDirection(kPortA, kPin0, DR::kInputPullUp);
     //set a1 as output
-    GPIO.SetPinDirection(kPin1, Gpio::DirectionState::kOutput);
-   Gpio::DigitalLevel val =Gpio::DigitalLevel::kHigh;
+    Gpio::SetPinDirection(kPortA, kPin1, DR::kOutput);
+    DL val = DL::kHigh;
     while (1) {
-        val = GPIO.ReadPin(kPin0);
+        val = Gpio::ReadPin(kPortA, kPin0);
         _delay_ms(DEBOUNCE_TIME);
         if (val == Gpio::DigitalLevel::kLow) {
-            GPIO.WritePin(kPin1, Gpio::DigitalLevel::kHigh);
+            Gpio::WritePin(kPortA, kPin1, DL::kHigh);
         }
         else {
-            GPIO.WritePin(kPin1, Gpio::DigitalLevel::kLow);
+            Gpio::WritePin(kPortA, kPin1, DL::kLow);
         } 
     }
     

@@ -12,3 +12,4 @@ DOXYGEN_CONFIG = ./doxygen.cnf
 # ---- TESTING 
 REGRESSION_TEST_SCRIPT 	   = scripts/testing/run-regressions.sh
 REGRESSION_ALL_TEST_SCRIPT = scripts/testing/run-all-regressions.sh
+CLEAN_HW_TESTS_SCRIPTS = scripts/testing/clean-hw-tests.sh

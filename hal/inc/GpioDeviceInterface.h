@@ -7,7 +7,7 @@ namespace gpio {
 
 // All digital output devices should inherit from this class
 class OutputDeviceInterface {
-public:
+protected:
     using Pin = avr::types::Pin;
     using Port = avr::types::Port;
     using DevicePin = utils::types::DevicePin;
@@ -19,7 +19,7 @@ public:
 
 // All digital Input devices should inherit from this class
 class InputDeviceInterface {
-public:
+protected:
     using Pin = avr::types::Pin;
     using Port = avr::types::Port;
     using Gpio_t = avr::mcal::gpio::Gpio;
