@@ -49,6 +49,20 @@ Usart::Usart() : registers_(USART_BASE_ADDR),
                  rx_data_(0),
                  config_(0x80)  // to select UCSRC
  { /* EMPTY */ }
+void Usart::Init(const UsartConfigurations& cnf) {
+    SetDataSize(cnf.dataSize);
+    SetParityMode(cnf.parityMode);
+    SetNumberOfStopBits(cnf.stopBitsNumber);
+    SelectTransferMode(cnf.transferMode);
+    SetBaudRate(cnf.baudRate);
+    SetTxRxMode(cnf.tx_rx_mode);
+
+    if(cnf.transferMode==kSynchronous)
+    {
+    SetClockPolarity(cnf.clkPolarity);
+    }
+    registers_.GetUCSRC().WriteRegister(config_);
+}
 
 void Usart::SetParityMode(ParityMode pm) {
     config_ |= pm << UCSRC::kUPM0;
@@ -61,6 +75,10 @@ void Usart::SetNumberOfStopBits(StopBits sp) {
 void Usart::SetDataSize(DataSize ds) {
     if (ds == DataSize::kNineBits) {
         registers_.GetUCSRB().SetBit<UCSRB::kUCSZ2>();
+    }
+    else if(ds == DataSize::kEightBits)
+    {
+        registers_.GetUCSRB().ClearBit<UCSRB::kUCSZ2>();
     }
     else {
         registers_.GetUCSRB().ClearBit<UCSRB::kUCSZ2>();
