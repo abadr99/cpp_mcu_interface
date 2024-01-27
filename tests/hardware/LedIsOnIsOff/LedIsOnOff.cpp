@@ -29,19 +29,19 @@ using namespace avr::types;
 int main() 
 {
     // 1] Create a led object with PortA
-    Led<kActiveHigh>led_1({kPortA,kPin0});
+    Led<kActiveHigh> led_1({kPortA, kPin0});
     bool val=0;
     while (1) {
       led_1.TurnOn();
       _delay_ms(1000);
       val=led_1.IsOn();
-      if(val==1)
+      if (val==1)
       {
       led_1.TurnOff();
       _delay_ms(1000);
       }
       val=led_1.IsOff();
-      if(val==1)
+      if (val==1)
       {
       led_1.TurnOn();
       _delay_ms(1000);

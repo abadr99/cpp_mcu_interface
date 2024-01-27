@@ -76,7 +76,7 @@ void SevenSegment<Type>::Display(size num) {
 
 template<SevenSegmentType Type>
 void SevenSegment<Type>::TurnOnDot() {
-    if (!isDot_) {
+    if (isDot_ == false) {
         return;  // EARLY EXIT
     }
     if (Type == SevenSegmentType::kCommonCathode) {
@@ -88,7 +88,7 @@ void SevenSegment<Type>::TurnOnDot() {
 
 template<SevenSegmentType Type>
 void SevenSegment<Type>::TurnOffDot() {
-    if (!isDot_) {
+    if (isDot_ == false) {
         return;  // EARLY EXIT
     }
     if (Type == SevenSegmentType::kCommonCathode) {
