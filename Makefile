@@ -1,4 +1,4 @@
-INPUT_FILE := ./modules.in
+INPUT_FILE ?= ./modules.in
 DIRS := ./mcal ./hal ./utils
 SOURCES := $(shell sed 's/$$/.cpp/' "$(INPUT_FILE)")
 SOURCES += $(wildcard utils/src/*.cpp) # ALl utils should be added with all modules
@@ -28,7 +28,7 @@ build-avr: $(AVR_OBJS)
 # Rule to build avr for real applications
 # make opt-build-avr
 # ------------------------------------------
-build-avr-opt:$(AVR_OBJS)
+build-avr-opt: $(AVR_OBJS) 
 	@$(AVR_GCC) $(AVR_OPT_CCFLAGS) $(AVR_OBJS) ./main.cpp -o $(AVR_ELF_TARGET)
 	@$(AVR_OBJ_COPY) $(AVR_OBJ_COPY_OPTS) $(AVR_ELF_TARGET) $(AVR_HEX_TARGET)
 	@echo "\n[Makefile][opt-build] : Compiled successfully."	
@@ -38,6 +38,15 @@ compile-hardware-test:
 	@$(AVR_OBJ_COPY) -O ihex $(dir $(test))/$(name).elf $(dir $(test))/$(name).hex
 clean-hw-tests:
 	@sh $(CLEAN_HW_TESTS_SCRIPTS)
+
+# ------------------------------------------
+# Rule to compile benchmarks
+# make compile-benchmark INPUT_FILE=path/to/needed/modules/file DIR=dir/to/benchmark
+# ------------------------------------------
+compile-benchmark: build-avr-opt
+	$(AVR_GCC) $(AVR_OPT_CCFLAGS) $(AVR_OBJS) $(wildcard $(DIR)/*.cpp) -o $(DIR)/benchmark.elf
+clean-benchmarks:
+	@sh $(CLEAN_BENCHMARKS_SCRIPT)
 # --------------------------------------------------------
 # Rule to compile test 
 # make compile-test src=path/to/main/file target=path/to/test_name
