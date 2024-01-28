@@ -1,7 +1,8 @@
 /* 
- * make compile-test src=tests/integration/adc/main.cpp target=tests/integration/adc/adc
- * sh scripts/testing/run-simu-avr.sh tests/integration/adc/adc.testelf
- * sh scripts/testing/run-regressions.sh -d tests/integration/adc/
+ * make compile-test src=tests/integration/usart/main.cpp 
+   target=tests/integration/usart/usart
+ * sh scripts/testing/run-simu-avr.sh tests/integration/usart/usart.testelf
+ * sh scripts/testing/run-regressions.sh -d tests/integration/usart/
 */
 
 #include <stdint.h>
@@ -25,7 +26,7 @@ using namespace avr::mcal::usart;
 
 
 int main () {
-   {
+ {
     avr::test::AVRTest TESTER("RX/TX enable/disable test");
 
     uint8_t val=0;
@@ -72,10 +73,8 @@ int main () {
     val=UCSRC;
     TESTER.Expect_Eq(val, static_cast<uint8_t>(0x06));
     TESTER.Expect_Eq(UBBRL, static_cast<uint8_t>(0x33));
-    
-   }
-   {
-
+ }
+ {
     avr::test::AVRTest TESTER("Data size test");
 
     uint8_t val=0;
@@ -101,7 +100,7 @@ int main () {
     TESTER.Expect_Eq(val, static_cast<uint8_t>(0x00));
     TESTER.Expect_Eq(UBBRL, static_cast<uint8_t>(0x33));
 
-   fig.dataSize=Usart::DataSize::kSixBits;
+    fig.dataSize=Usart::DataSize::kSixBits;
     USART.Init(fig);
     TESTER.Expect_Eq(UDR,   static_cast<uint8_t>(0x00));
     TESTER.Expect_Eq(UCSRA, static_cast<uint8_t>(0x20));
@@ -109,7 +108,7 @@ int main () {
     TESTER.Expect_Eq(UBBRH, static_cast<uint8_t>(0x00));
     val=UCSRC;
     val=UCSRC;
-    TESTER.Expect_Eq(val, static_cast<uint8_t>(0x01));
+    TESTER.Expect_Eq(val, static_cast<uint8_t>(0x02));
     TESTER.Expect_Eq(UBBRL, static_cast<uint8_t>(0x33));
 
     fig.dataSize=Usart::DataSize::kSevenBits;
@@ -120,7 +119,7 @@ int main () {
     TESTER.Expect_Eq(UBBRH, static_cast<uint8_t>(0x00));
     val=UCSRC;
     val=UCSRC;
-    TESTER.Expect_Eq(val, static_cast<uint8_t>(0x02));
+    TESTER.Expect_Eq(val, static_cast<uint8_t>(0x04));
     TESTER.Expect_Eq(UBBRL, static_cast<uint8_t>(0x33));
 
     fig.dataSize=Usart::DataSize::kEightBits;
@@ -145,8 +144,7 @@ int main () {
     TESTER.Expect_Eq(val, static_cast<uint8_t>(0x06));
     TESTER.Expect_Eq(UBBRL, static_cast<uint8_t>(0x33));
 
-   }
- 
+ }
  {
     avr::test::AVRTest TESTER("Stop bits/Pairty/Transfer bits test");
 
@@ -225,17 +223,12 @@ int main () {
     val=UCSRC;
     val=UCSRC;
     TESTER.Expect_Eq(val, static_cast<uint8_t>(0x79));
-
-    
- 
  }
  {
-
     avr::test::AVRTest TESTER("Baudrate test");
 
     uint8_t val=0;
     Usart::UsartConfigurations fig;
-    
     Usart Usart_;
     Usart_.Init();
     TESTER.Expect_Eq(UDR,   static_cast<uint8_t>(0x00));
@@ -258,8 +251,6 @@ int main () {
     TESTER.Expect_Eq(val, static_cast<uint8_t>(0x06));
     TESTER.Expect_Eq(UBBRL, static_cast<uint8_t>(0x40));
 
-
-
     fig.baudRate=115200;
     Usart_.Init(fig);
     TESTER.Expect_Eq(UDR,   static_cast<uint8_t>(0x00));
@@ -270,7 +261,5 @@ int main () {
     val=UCSRC;
     TESTER.Expect_Eq(val, static_cast<uint8_t>(0x06));
     TESTER.Expect_Eq(UBBRL, static_cast<uint8_t>(0x03));
-
  }
-
-}
+ }
