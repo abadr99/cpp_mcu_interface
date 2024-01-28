@@ -14,14 +14,12 @@
     X(OneBit,  0)\
     X(TwoBits, 1)
 
-// represent the following order: 
-// kUCSZ2 kUCSZ1 kUCSZ0
 #define USART_DATA_SIZE\
-    X(FiveBits,  0b000)\
-    X(SixBits,   0b001)\
-    X(SevenBits, 0b010)\
-    X(EightBits, 0b011)\
-    X(NineBits,  0b111)
+    X(FiveBits,  0b00)\
+    X(SixBits,   0b01)\
+    X(SevenBits, 0b10)\
+    X(EightBits, 0b11)\
+    X(NineBits,  0b11)
 
 #define USART_CLK_POLARITY\
     X(TxFalling_RxRising, 1)\
@@ -124,7 +122,6 @@ public:
         ClockPolarity   clkPolarity;
     };
     Usart();
-    void Reset();
     void Init(const UsartConfigurations& cnf = {9600, kEnableRX_EnableTX, kEightBits, kDisabled, kOneBit, kAsynchronous_1x, kTxRising_RxFalling}); //IGNORE-STYLE-CHECK[L004]
     void Send(uint16_t data);
     void Send(uint16_t data, PFunction_t pFun);
