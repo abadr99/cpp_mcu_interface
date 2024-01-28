@@ -49,26 +49,17 @@ Usart::Usart() : registers_(USART_BASE_ADDR),
                  rx_data_(0),
                  config_(0x80)  // to select UCSRC
  { /* EMPTY */ }
-void Usart::Reset() {
-    registers_ = USART_BASE_ADDR;
-    transmitterCallBack_ = nullptr;
-    receiverCallBack_ = nullptr; 
-    tx_data_ = 0;
-    rx_data_ = 0;
-    config_ = 0x80;
-}
+void Usart::Init(const UsartConfigurations& cnf) {
+    SetDataSize(cnf.dataSize);
+    SetParityMode(cnf.parityMode);
+    SetNumberOfStopBits(cnf.stopBitsNumber);
+    SelectTransferMode(cnf.transferMode);
+    SetBaudRate(cnf.baudRate);
+    SetTxRxMode(cnf.tx_rx_mode);
 
-void Usart::Init(const UsartConfigurations& confg) {
-    // For multiple initiate we should reset all data members values
-    Reset();
-    SetDataSize(confg.dataSize);
-    SetParityMode(confg.parityMode);
-    SetNumberOfStopBits(confg.stopBitsNumber);
-    SelectTransferMode(confg.transferMode);
-    SetBaudRate(confg.baudRate);
-    SetTxRxMode(confg.tx_rx_mode);
-    if (confg.transferMode == kSynchronous) {
-        SetClockPolarity(confg.clkPolarity);
+    if (cnf.transferMode==kSynchronous)
+    {
+    SetClockPolarity(cnf.clkPolarity);
     }
     registers_.GetUCSRC().WriteRegister(config_);
 }
@@ -82,15 +73,20 @@ void Usart::SetNumberOfStopBits(StopBits sp) {
 }
 
 void Usart::SetDataSize(DataSize ds) {
-    registers_.GetUCSRB().WriteBits<UCSRB::kUCSZ2>(READ_BIT(ds, 2));
-    config_ |= ((ds & 0x3) << UCSRC::kUCSZ0);
+    if (ds == DataSize::kNineBits) {
+        registers_.GetUCSRB().SetBit<UCSRB::kUCSZ2>();
+    }
+    else {
+        registers_.GetUCSRB().ClearBit<UCSRB::kUCSZ2>();
+    }
+    config_ |= ds << UCSRC::kUCSZ0;
 }
 
 typename Usart::DataSize Usart::GetDataSize() {
     if (registers_.GetUCSRB().ReadBit<UCSRB::kUCSZ2>()) {
         return DataSize::kNineBits;
     }
-    return static_cast<DataSize>((config_ >> UCSRC::kUCSZ0) & 0b11);
+    return static_cast<DataSize>((config_ >> UCSRC::kUCSZ0) & 0b11); //IGNORE-STYLE-CHECK[L004]
 }
 
 void Usart::SetClockPolarity(ClockPolarity cp) {
@@ -131,8 +127,8 @@ typename Usart::TransferMode Usart::GetTransferMode() {
 void Usart::SetBaudRate(BaudRate_t baudRate) {
 
     auto Calculate_ubrr = [&](const uint8_t mode) -> uint32_t {
-        return ((ATMEGA32_CLK) / (static_cast<float>(mode) * baudRate)) - 1; //IGNORE-STYLE-CHECK[L004]
-    };
+          return ((ATMEGA32_CLK) / (static_cast<float>(mode) * baudRate)) - 1; //IGNORE-STYLE-CHECK[L004]
+        };
     uint32_t ubrr = 0;
     TransferMode mode = GetTransferMode();
     switch (mode) {
@@ -220,7 +216,7 @@ ISR(USART_RXC)
 {
     USART.SetReceivedData(USART.ReadDataRegister());
     if (USART.GetReceiverCallBack()) {
-        USART.GetReceiverCallBack()();
+        USART.GetReceiverCallBack();
     }
 }
 
