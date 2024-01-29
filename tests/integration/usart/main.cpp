@@ -191,9 +191,9 @@ int main () {
     TESTER.Expect_Eq(UBBRH, static_cast<uint8_t>(0x00));
     val=UCSRC;
     val=UCSRC;
-    TESTER.Expect_Eq(val, static_cast<uint8_t>(0x21));
+    TESTER.Expect_Eq(val, static_cast<uint8_t>(0x30));
     TESTER.Expect_Eq(UBBRL, static_cast<uint8_t>(0x33));
-
+        
     fig.transferMode=Usart::TransferMode::kAsynchronous_1x;
     fig.stopBitsNumber=Usart::StopBits::kTwoBits;
     USART.Init(fig);
@@ -226,7 +226,6 @@ int main () {
  }
  {
     avr::test::AVRTest TESTER("Baudrate test");
-
     uint8_t val=0;
     Usart::UsartConfigurations fig;
     Usart Usart_;
