@@ -228,8 +228,7 @@ int main () {
     avr::test::AVRTest TESTER("Baudrate test");
     uint8_t val=0;
     Usart::UsartConfigurations fig;
-    Usart Usart_;
-    Usart_.Init();
+    USART.Init();
     TESTER.Expect_Eq(UDR,   static_cast<uint8_t>(0x00));
     TESTER.Expect_Eq(UCSRA, static_cast<uint8_t>(0x20));
     TESTER.Expect_Eq(UCSRB, static_cast<uint8_t>(0x18));
@@ -240,7 +239,7 @@ int main () {
     TESTER.Expect_Eq(UBBRL, static_cast<uint8_t>(0x33));
 
     fig.baudRate=600;
-    Usart_.Init(fig);
+    USART.Init(fig);
     TESTER.Expect_Eq(UDR,   static_cast<uint8_t>(0x00));
     TESTER.Expect_Eq(UCSRA, static_cast<uint8_t>(0x20));
     TESTER.Expect_Eq(UCSRB, static_cast<uint8_t>(0x18));
@@ -251,7 +250,7 @@ int main () {
     TESTER.Expect_Eq(UBBRL, static_cast<uint8_t>(0x40));
 
     fig.baudRate=115200;
-    Usart_.Init(fig);
+    USART.Init(fig);
     TESTER.Expect_Eq(UDR,   static_cast<uint8_t>(0x00));
     TESTER.Expect_Eq(UCSRA, static_cast<uint8_t>(0x20));
     TESTER.Expect_Eq(UCSRB, static_cast<uint8_t>(0x18));
