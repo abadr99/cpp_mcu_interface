@@ -50,7 +50,7 @@ void Lcd::Send(uint8_t d) {
             SetLowVoltage(config_.ctrlPort, config_.rw);
             break;
     }
-    // Handle 8-bits high nibble case
+    // Handle 8-bits data transfer mode
     if (config_.IsEightBit()) {
         WritePort(config_.ctrlPort, d);
         Pulse();
