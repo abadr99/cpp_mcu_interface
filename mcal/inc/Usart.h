@@ -1,10 +1,6 @@
 #ifndef _USART_H_H
 #define _USART_H_H
 
-namespace avr {
-namespace mcal {
-namespace usart {
-
 #define USART_BASE_ADDR             (0x2C)
 #define UCSRC_REGISTER              (0x40)
 #define UCSRH_REGISTER              (UCSRC_REGISTER)
@@ -18,6 +14,8 @@ namespace usart {
     X(OneBit,  0)\
     X(TwoBits, 1)
 
+// represent the following order: 
+// kUCSZ2 kUCSZ1 kUCSZ0
 #define USART_DATA_SIZE\
     X(FiveBits,  0b000)\
     X(SixBits,   0b001)\
@@ -26,8 +24,8 @@ namespace usart {
     X(NineBits,  0b111)
 
 #define USART_CLK_POLARITY\
-    X(TxRising_RxFalling, 0)\
-    X(TxFalling_RxRising, 1)
+    X(TxFalling_RxRising, 1)\
+    X(TxRising_RxFalling, 0)
 
 #define USART_ERROR_TYPE\
     X(FrameError)\
@@ -36,108 +34,22 @@ namespace usart {
     X(Success)
 
 #define USART_TRANSFER_MODE\
-    X(Asynchronous_1x)\
-    X(Asynchronous_2x)\
-    X(Synchronous)
-    
-#define USART_BAUD_RATES\
-    X(300) \
-    X(600) \
-    X(1200) \
-    X(2400) \
-    X(4800) \
-    X(9600) \
-    X(19200) \
-    X(38400) \
-    X(57600) \
-    X(115200) \
-    X(230400) \
-    X(460800) \
-    X(921600) \
-    X(1000000) \
-    X(2000000) \
-    X(3000000) \
-    X(4000000)
-
-enum ParityMode {
-    #define X(name_, val_)  k##name_ = val_,
-        USART_PARITY_MODE
-    #undef X
-};
-
-enum StopBits {
-    #define X(name_, val_)  k##name_ = val_,
-        USART_STOP_BITS
-    #undef X
-};
-
-enum DataSize {
-    #define X(name_, val_)  k##name_ = val_,
-        USART_DATA_SIZE
-    #undef X
-};
-
-enum ClockPolarity {
-    #define X(name_, val_)  k##name_ = val_,
-        USART_CLK_POLARITY
-    #undef X
-};
-
-enum ErrorType {
-    #define X(name_)  k##name_,
-        USART_ERROR_TYPE
-    #undef X
-};
-
-enum TransferMode {
-    #define X(name_)  k##name_,
-        USART_TRANSFER_MODE
-    #undef X
-};
-
-enum TX_RX_Mode {
-    kDisableRX_DisableTX = 0x00,
-    kDisableRX_EnableTX  = 0x01,
-    kEnableRX_DisableTX  = 0x10,
-    kEnableRX_EnableTX   = 0x11,
-};
+    X(Asynchronous_1x, 0b00)\
+    X(Asynchronous_2x, 0b10)\
+    X(Synchronous,     0b01)
+namespace avr {
+namespace mcal {
+namespace usart {
 class UsartRegisters {
 public:
     enum UCSRC {
-        kUCPOL = 0x00,
-        kUCSZ0,
-        kUCSZ1,
-        kUSBS,
-        kUPM0,
-        kUPM1,
-        kUMSEL,
-        kURSEL,      
+        kUCPOL = 0, kUCSZ0, kUCSZ1, kUSBS, kUPM0, kUPM1, kUMSEL, kURSEL,      
     };
     enum UCSRB {
-        kTXB8 = 0,
-        kRXB8,
-        kUCSZ2,
-        kTXEN,
-        kRXEN,
-        kUDRIE,
-        kTXCIE,
-        kRXCIE,
+        kTXB8 = 0, kRXB8, kUCSZ2, kTXEN, kRXEN, kUDRIE, kTXCIE, kRXCIE,
     };
     enum UCSRA {
-        kMPCM = 0,
-        kU2X,
-        kPE,
-        kDOR,
-        kFE,
-        kUDRE,
-        kTXC,
-        kRXC,
-    };
-    enum Mask {
-        kParityMode = 0xC2,
-        kHighDataBits = 0xF0,
-        kTxRx = 0xE7,
-        kTxB8 = 0x01,
+        kMPCM = 0, kU2X, kPE, kDOR, kFE, kUDRE, kTXC, kRXC,
     };
     using Register_t = utils::Register<avr::types::AvrRegWidth>;
     UsartRegisters(avr::types::AvrRegWidth baseAddr);
@@ -164,30 +76,56 @@ public:
     using UCSRA = UsartRegisters::UCSRA;
     using UCSRB = UsartRegisters::UCSRB;
     using UCSRC = UsartRegisters::UCSRC;
-    using Mask  = UsartRegisters::Mask;
     using BaudRate_t = uint32_t;
     using PFunction_t  = void(*)();
+    enum ParityMode {
+        #define X(name_, val_)  k##name_ = val_,
+            USART_PARITY_MODE
+        #undef X
+    };
+    enum StopBits {
+        #define X(name_, val_)  k##name_ = val_,
+            USART_STOP_BITS
+        #undef X
+    };
+    enum DataSize {
+        #define X(name_, val_)  k##name_ = val_,
+            USART_DATA_SIZE
+        #undef X
+    };
+    enum ClockPolarity {
+        #define X(name_, val_)  k##name_ = val_,
+            USART_CLK_POLARITY
+        #undef X
+    };
+    enum ErrorType {
+        #define X(name_)  k##name_,
+            USART_ERROR_TYPE
+        #undef X
+    };
+    enum TransferMode {
+        #define X(name_, val_)  k##name_ = val_,
+            USART_TRANSFER_MODE
+        #undef X
+    };
+    enum TX_RX_Mode {
+        kDisableRX_DisableTX = 0x00,
+        kDisableRX_EnableTX  = 0x01,
+        kEnableRX_DisableTX  = 0x02,
+        kEnableRX_EnableTX   = 0x03,
+    };
+    struct UsartConfigurations {
+        BaudRate_t      baudRate;
+        TX_RX_Mode      tx_rx_mode;
+        DataSize        dataSize;
+        ParityMode      parityMode;
+        StopBits        stopBitsNumber;
+        TransferMode    transferMode;
+        ClockPolarity   clkPolarity;
+    };
     Usart();
-    template <
-              BaudRate_t    BR   = 9600,
-              TX_RX_Mode    TR   = TX_RX_Mode::kEnableRX_EnableTX,
-              DataSize      DS   = DataSize::kEightBits,
-              ParityMode    PM   = ParityMode::kDisabled,
-              StopBits      SP   = StopBits::kOneBit,
-              TransferMode  TM   = TransferMode::kAsynchronous_1x,
-              ClockPolarity CP   = ClockPolarity::kTxRising_RxFalling
-             >
-    void Init() {
-        SetDataSize<DS>();
-        SetParityMode<PM>();
-        SetNumberOfStopBits<SP>();
-        SelectTransferMode<TM>();
-        SetBaudRate<BR>();
-        SetTxRxMode<TR>();
-        if (TM == TransferMode::kSynchronous) {
-            SetClockPolarity<CP>();
-        }
-    }
+    void Reset();
+    void Init(const UsartConfigurations& cnf = {9600, kEnableRX_EnableTX, kEightBits, kDisabled, kOneBit, kAsynchronous_1x, kTxRising_RxFalling}); //IGNORE-STYLE-CHECK[L004]
     void Send(uint16_t data);
     void Send(uint16_t data, PFunction_t pFun);
     PFunction_t GetTransmitterCallBack();
@@ -199,7 +137,6 @@ public:
     uint16_t GetReceivedData();
     uint16_t Receive();
     uint16_t Receive(PFunction_t pFun);
-    template<ErrorType E>
     ErrorType GetErrorType();
 private:
     UsartRegisters registers_;
@@ -207,26 +144,29 @@ private:
     PFunction_t receiverCallBack_;
     uint16_t tx_data_;
     uint16_t rx_data_;
-    template <ParityMode M>
-    void SetParityMode();
-    template <StopBits N>
-    void SetNumberOfStopBits();
-    template <DataSize S>
-    void SetDataSize();
+    uint8_t config_; // THIS VARIABLE IS TO WRITE UCSRC IN ONE INSTRUCTION
+    void SetParityMode(ParityMode pm);
+    void SetNumberOfStopBits(StopBits sp);
+    void SetDataSize(DataSize ds);
     DataSize GetDataSize();
-    template<ClockPolarity P>
-    void SetClockPolarity();
-    template<TransferMode M>
-    void SelectTransferMode();
+    void SetClockPolarity(ClockPolarity cp);
+    void SelectTransferMode(TransferMode tm);
     TransferMode GetTransferMode();
-    template <TX_RX_Mode M>
-    void SetTxRxMode();
+    void SetTxRxMode(TX_RX_Mode mode);
     // This function should be called after configuring TransferMode as the 
     // calculations are depending on mode of data transfer
-    template <BaudRate_t BR>
-    void SetBaudRate();
+    void SetBaudRate(BaudRate_t baudRate);
 };
 
 }}} // avr::mcal::usart
+
+extern avr::mcal::usart::Usart USART;
+
+#undef USART_PARITY_MODE
+#undef USART_STOP_BITS
+#undef USART_DATA_SIZE
+#undef USART_CLK_POLARITY
+#undef USART_ERROR_TYPE
+#undef USART_TRANSFER_MODE
 
 #endif // _USART_H_H

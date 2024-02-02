@@ -4,39 +4,54 @@
 namespace avr{
 namespace types{
 
-enum Port {
+enum Port : uint8_t {
     kPortA,
     kPortB,
     kPortC,
     kPortD,
+    kPortNotConnected,
 };
 
-enum Pin {
+enum Pin : uint8_t {
     kPin0, kPin1, kPin2, kPin3,
     kPin4, kPin5, kPin6, kPin7,
-    kNotConnected,
+    kPinNotConnected,
 };
 using AvrRegWidth  = uint8_t;
 }}
 
+// Set enable interrupt
+#define SEI() asm volatile ("sei" ::: "memory");
+
+#define INT0                            (1)
+#define INT1                            (2)
+#define INT2                            (3)
+#define TIMER2_COMP                     (4)
+#define TIMER2_OVF                      (5)
+#define TIMER1_CAPT                     (6)
+#define TIMER1_COMPA                    (7)
+#define TIMER1_COMPB                    (8)
+#define TIMER1_OVF                      (9)
+#define TIMER0_COMP                     (10)
+#define TIMER0_OVF                      (11)
+#define SPI_STC                         (12)
+#define USART_RXC                       (13)
+#define USART_UDRE                      (14)
+#define USART_TXC                       (15)
+#define ADC_CONVERSION                  (16)
+#define EE_RDY                          (17)
+#define ANA_COMP                        (18)
+#define TWI                             (19)
+#define SPM_RDY                         (20)
+
+#define ISR(vec_)\
+ extern "C"\
+ void __vector_##vec_(void) __attribute__((signal, used, externally_visible));\
+ void __vector_##vec_(void)
+
 #define ATMEGA32_CLK                   (8000000)
-#define GPIOA_BASE_ADDRESS             (PORTA)
-#define PORTA                          (0x3B)
-#define DDRA                           (0x3A)
-#define PINA                           (0x39)
-#define GPIOB_BASE_ADDRESS             (PORTB)
-#define PORTB                          (0x38)
-#define DDRB                           (0x37)
-#define PINB                           (0x36)
-#define GPIOC_BASE_ADDRESS             (PORTC)
-#define PORTC                          (0x35)
-#define DDRC                           (0x34)
-#define PINC                           (0x33)
-#define GPIOD_BASE_ADDRESS             (PORTD)
-#define PORTD                          (0x32)
-#define DDRD                           (0x31)
-#define PIND                           (0x30)
 #define SFIOR                          (0x50)
+
 #define ATMEGA32_PINS\
     X(Pin0)\
     X(Pin1)\

@@ -7,16 +7,16 @@ namespace adc {
 
 // All ADC-Devices should inherit from this class
 // @note: We should initialize ADC before using any adc device
-template <avr::types::Pin TPin1, avr::types::Pin TPin2 = avr::types::Pin::kNotConnected> //IGNORE-STYLE-CHECK[L004]
 class AdcDeviceInterface {
 public:
     using volt_t = float;
     using pFun_t = void (*) ();
     using pin_t = avr::types::Pin;
-    AdcDeviceInterface();
+    AdcDeviceInterface(const pin_t pin1, 
+                       const pin_t pin2 = pin_t::kPinNotConnected);
     volt_t GetInputVoltage(pFun_t pFunction = nullptr);
 private:
-
+    pin_t pins[2];
 };
 
 }}} // avr::hal::adc

@@ -1,10 +1,7 @@
 mcal/src/Gpio
-mcal/src/Usart
 mcal/src/Adc
 hal/src/GpioDeviceInterface
 hal/src/AdcDeviceInterface
 hal/src/Led
-hal/src/Ir
 hal/src/DcMotor
-hal/src/SevenSegment
 hal/src/Lm35

@@ -6,42 +6,32 @@ namespace hal {
 namespace gpio {
 
 // All digital output devices should inherit from this class
-template <avr::types::Port TPort>
 class OutputDeviceInterface {
-public:
-    template<typename... Ts>
-    OutputDeviceInterface(Ts... pins);
-
-    OutputDeviceInterface& SetHighVoltage(avr::types::Pin pin);
-    OutputDeviceInterface& SetLowVoltage(avr::types::Pin pin);
-private:
-    avr::mcal::gpio::Gpio<TPort> gpio_;
-    template<typename T>
-    void helper_OutputDeviceInterface(T pin);
-    template<typename T, typename... Ts>
-    void helper_OutputDeviceInterface(T pin, Ts... pins);
-    void SetOutputPin(avr::types::Pin pin);
+protected:
+    using Pin = avr::types::Pin;
+    using Port = avr::types::Port;
+    using DevicePin = utils::types::DevicePin;
+    using AvrRegWidth = avr::types::AvrRegWidth;
+    OutputDeviceInterface();
+    void Init(DevicePin dp);
+    void Init(Port port);
+    void WritePort(Port port, AvrRegWidth val);
+    void SetHighVoltage(DevicePin dp);
+    void SetLowVoltage(DevicePin dp);
+    void SetVoltage(DevicePin dp, avr::mcal::gpio::Gpio::DigitalLevel val);
 };
 
-
 // All digital Input devices should inherit from this class
-template <avr::types::Port TPort>
 class InputDeviceInterface {
-public:
-    // As we use template variadic methods then we should have the base case
-    // for each method. 
-    // See: https://en.cppreference.com/w/cpp/language/parameter_pack
-    // NOTE: Base case should be before recursive case
-    template<typename... Ts>
-    InputDeviceInterface(Ts... pins);
-    avr::mcal::gpio::DigitalLevel GetPinState(avr::types::Pin pin);
-private:
-    avr::mcal::gpio::Gpio<TPort> gpio_;
-    void SetInputPin(avr::types::Pin pin);
-    template<typename T>
-    void helper_InputDeviceInterface(T pin);
-    template<typename T, typename... Ts>
-    void helper_InputDeviceInterface(T pin, Ts... pins);
+protected:
+    using Pin = avr::types::Pin;
+    using Port = avr::types::Port;
+    using Gpio_t = avr::mcal::gpio::Gpio;
+    using DigitalLevel = avr::mcal::gpio::Gpio::DigitalLevel;
+    using DevicePin = utils::types::DevicePin;
+    InputDeviceInterface();
+    void Init(DevicePin dp);
+    DigitalLevel GetPinState(DevicePin dp);
 };
 
 }}} // avr::hal::gpio
