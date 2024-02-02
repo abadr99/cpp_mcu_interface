@@ -24,30 +24,27 @@ using namespace avr::types;
 
 int main() {
    // ------- Set ADC configurations
-   // 1] Enable ADC
+   //  Enable ADC
+   ADC.Init();
    ADC.Enable();
-   // 2] Set reference voltage as 'AREF' pin
-   ADC.SetReferenceVoltageMode<VoltageRefMode::kAref>();
-   // 3] Select ADC channel to be channel1 i.e. A0
-   ADC.SelectChannel<ChannelMode::kSingleEnded_ADC0>();
-   // 4] Select Adjust mode to be left
-   ADC.SetAdjustMode<ResultAdjustMode::kLeft>();
+   
+   //  Select ADC channel to be channel1 i.e. A0
+   ADC.SelectChannel(Adc::ChannelMode::kSingleEnded_ADC0);
+   //  Select Adjust mode to be left
 
    // ------- Set GPIOB configurations
-   // 1] Create GPIOB object
-   Gpio<Port::kPortB> GPIOB;
-   // 2] Set all pins as output pins
-   GPIOB.SetDirection(0xFF);
-   GPIOB.Write(0xFF);
+   //  Set all pins as output pins
+   Gpio::SetPortDirection(kPortB, 0xFF);
+   Gpio::WritePort(kPortB, 0xFF);
    _delay_ms(500);
-   GPIOB.Write(0x00);
+   Gpio::WritePort(kPortB, 0x00);
 
    while (1) {
-      GPIOB.template Write<Pin::kPin0, DigitalLevel::kHigh>();
+      Gpio::WritePin(kPortB, kPin0, Gpio::DigitalLevel::kHigh);
       _delay_ms(300);
       auto C = ADC.StartConversion();
-      GPIOB.Write((AvrRegWidth)C);
-      GPIOB.template Write<Pin::kPin0, DigitalLevel::kLow>();
+      Gpio::WritePort(kPortB, (AvrRegWidth)C);
+      Gpio::WritePin(kPortB, kPin0, Gpio::DigitalLevel::kLow);
       _delay_ms(300);
    }
 }

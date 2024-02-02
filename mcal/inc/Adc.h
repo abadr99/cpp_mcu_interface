@@ -1,6 +1,5 @@
 /**
  * @file Adc.h
- * @author abadr99 (abdelrhmanezzbadr@outlook.com)
  * @brief  How to use this driver?
  *          // TODO(@abadr99): Make this class as singleton class
  *          - As we have only one ADC in atmega32 then you should deal with 
@@ -22,56 +21,6 @@
 #ifndef _ADC_H_H
 #define _ADC_H_H
 
-namespace avr {
-namespace mcal {
-namespace adc {
-
-#define ADC_BASE_REG             (0x27)
-#define ADC_CHANNEL_MODE_MASK    (0xE0)
-#define ADC_PRESCALAR_MASK       (0xF8)
-#define ADC_AUTO_TRIGGER_MASK    (0x1F)
-
-struct AdcRegisters {
-    AdcRegisters(const avr::types::AvrRegWidth baseAddr);
-    utils::Register<avr::types::AvrRegWidth> admux_;
-    utils::Register<avr::types::AvrRegWidth> adcsra_;
-    utils::Register<avr::types::AvrRegWidth> adch_;
-    utils::Register<avr::types::AvrRegWidth> adcl_;
-    utils::Register<avr::types::AvrRegWidth> sfior_;
-    utils::Register<avr::types::AvrRegWidth>& GetADMUX();
-    utils::Register<avr::types::AvrRegWidth>& GetADCSRA();
-    utils::Register<avr::types::AvrRegWidth>& GetADCL();
-    utils::Register<avr::types::AvrRegWidth>& GetADCH();
-    utils::Register<avr::types::AvrRegWidth>& GetSFIOR();
-};
-
-enum VoltageRefMode: uint8_t {
-    kAref = 0x00,   /*< AREF, Internal Vref turned off >*/
-    kAvcc = 0x01,   /*< AVCC with external capacitor at AREF pin >*/
-    k2_56v = 0x11   /*< Internal 2.56V Voltage Reference with external 
-                        capacitor at AREF pin >*/
-};
-enum AdmuxReg : uint8_t {
-    kMUX0 = 0x00,
-    kMUX1,
-    kMUX2,
-    kMUX3,
-    kMUX4,
-    kADLAR,
-    kREFS0,
-    kREFS1       
-};
-
-enum Adcsra : uint8_t {
-    kADPS0 = 0x00,
-    kADPS1,
-    kADPS2,
-    kADIE,
-    kADIF,
-    kADATE,
-    kADSC,
-    kADEN
-};
 // Mode Value
 #define ADC_CHANNEL_MODES\
     X(SingleEnded_ADC0,             0b00000)\
@@ -87,9 +36,9 @@ enum Adcsra : uint8_t {
     X(Differential_ADC0_ADC0_200x,  0b01010)\
     X(Differential_ADC1_ADC0_200x,  0b01011)\
     X(Differential_ADC2_ADC2_10x,   0b01100)\
-    X(Differential_ADC3_ADC0_10x,   0b01101)\
+    X(Differential_ADC3_ADC2_10x,   0b01101)\
     X(Differential_ADC2_ADC2_200x,  0b01110)\
-    X(Differential_ADC3_ADC0_200x,  0b01111)\
+    X(Differential_ADC3_ADC2_200x,  0b01111)\
     X(Differential_ADC0_ADC1_1x,    0b10000)\
     X(Differential_ADC1_ADC1_1x,    0b10001)\
     X(Differential_ADC2_ADC1_1x,    0b10010)\
@@ -126,85 +75,95 @@ enum Adcsra : uint8_t {
     X(Timer1_OverFlow,          0b110)\
     X(Timer1_CaptureEvent,      0b111)
 
-enum ChannelMode : uint8_t {
-    #define X(mode_, val_)  k##mode_ = val_,
-    ADC_CHANNEL_MODES
-    #undef X
-};
+namespace avr {
+namespace mcal {
+namespace adc {
 
-enum DivisionFactorMode : uint8_t {
-    #define X(factor_, val_)    k##factor_ = val_,
-    ADC_DIVISION_FACTOR
-    #undef X
+#define ADC_BASE_REG             (0x27)
+class AdcRegisters {
+public:
+    enum Admux : uint8_t {
+        kMUX0 = 0x00, kMUX1, kMUX2, kMUX3, kMUX4, kADLAR, kREFS0, kREFS1
+    };
+    enum Adcsra : uint8_t {
+        kADPS0 = 0x00, kADPS1, kADPS2, kADIE, kADIF, kADATE, kADSC, kADEN
+    };
+    using reg_t = utils::Register<avr::types::AvrRegWidth>;
+    AdcRegisters(const avr::types::AvrRegWidth baseAddr);
+    reg_t& GetADMUX();
+    reg_t& GetADCSRA();
+    reg_t& GetADCL();
+    reg_t& GetADCH();
+    reg_t& GetSFIOR();
+private:
+    reg_t admux_;
+    reg_t adcsra_;
+    reg_t adch_;
+    reg_t adcl_;
+    reg_t sfior_;
 };
-
-enum AutoTriggerMode : uint8_t {
-    #define X(mode_, val_)       k##mode_ = val_,
-    ADC_AUTO_TRIGGER_MODE
-    #undef X
-};
-
-enum ResultAdjustMode : uint8_t {
-    kLeft,
-    kRight
-};
-
 class Adc {
 public:
+    enum VoltageRefMode: uint8_t {
+        kAref = 0x00,   /*< AREF, Internal Vref turned off >*/
+        kAvcc = 0x01,   /*< AVCC with external capacitor at AREF pin >*/
+        k2_56v = 0x03   /*< Internal 2.56V Voltage Reference with external 
+                            capacitor at AREF pin >*/
+    };
+    enum ChannelMode : uint8_t {
+        #define X(mode_, val_)  k##mode_ = val_,
+        ADC_CHANNEL_MODES
+        #undef X
+    };
+    enum DivisionFactorMode : uint8_t {
+        #define X(factor_, val_)    k##factor_ = val_,
+        ADC_DIVISION_FACTOR
+        #undef X
+    };
+    enum AutoTriggerMode : uint8_t {
+        #define X(mode_, val_)       k##mode_ = val_,
+        ADC_AUTO_TRIGGER_MODE
+        #undef X
+    };
+    enum ResultAdjustMode : uint8_t { kRight, kLeft };
     using pFunction_t = void (*)();
     using digitalVal_t = uint16_t;
+    using ADMUX = adc::AdcRegisters::Admux;
+    using ADCSRA = adc::AdcRegisters::Adcsra;
     Adc();
-
-    template <VoltageRefMode     TVoltageMode    = VoltageRefMode::kAref,
-              DivisionFactorMode TDivisionFactor = DivisionFactorMode::kDivisionFactor_2x,  //IGNORE-STYLE-CHECK[L004]
-              AutoTriggerMode    TTriggerMode    = AutoTriggerMode::kFreeRunningMode,       //IGNORE-STYLE-CHECK[L004]
-              ResultAdjustMode   TAdjustMode     = ResultAdjustMode::kLeft>                 //IGNORE-STYLE-CHECK[L004]
-    void Init() {
-        Enable();
-        SetReferenceVoltageMode<TVoltageMode>();
-        SetPreScalarMode<TDivisionFactor>();
-        SetAutoTriggerMode<TTriggerMode>();
-        SetAdjustMode<TAdjustMode>();
-    }
-    
-    template<VoltageRefMode M>
-    void SetReferenceVoltageMode();
-
-    template <ChannelMode M>
-    void SelectChannel();
-
+    struct AdcConfigurations {
+        VoltageRefMode     voltageMode;
+        DivisionFactorMode divisionFactor;
+        AutoTriggerMode    triggerMode;
+        ResultAdjustMode   adjustMode;
+    };
+    void Init(const AdcConfigurations& conf = {kAref, kDivisionFactor_2x, kFreeRunningMode, kLeft}); //IGNORE-STYLE-CHECK[L004]
+    void SelectChannel(ChannelMode cm);
     void Enable();
     void Disable();
-    
     digitalVal_t StartConversion();
-
-    template<DivisionFactorMode M>
-    void SetPreScalarMode();
-
-    template <AutoTriggerMode M>
-    void SetAutoTriggerMode();
-
-    template<ResultAdjustMode M>
-    void SetAdjustMode();
-
-    void SetConvertedValue(digitalVal_t val);
-    
     digitalVal_t StartConversion(pFunction_t pFun);
-
     digitalVal_t GetConvertedValue();
     digitalVal_t GetDataRegister();
     void SetCallBack(pFunction_t pFun);
     pFunction_t GetCallBack();
     ResultAdjustMode GetAdjustMode();
-    
+    void SetConvertedValue(digitalVal_t val);
 private:
     AdcRegisters registers_;
     volatile digitalVal_t convertedVal_;
     pFunction_t AdcCallBack_;
+    void SetReferenceVoltageMode(VoltageRefMode mode);
+    void SetPreScalarMode(DivisionFactorMode dfm);
+    void SetAutoTriggerMode(AutoTriggerMode atm);
+    void SetAdjustMode(ResultAdjustMode ram);
 };
 
 }}}
 
 extern avr::mcal::adc::Adc ADC;
 
+#undef ADC_CHANNEL_MODES
+#undef ADC_DIVISION_FACTOR
+#undef ADC_AUTO_TRIGGER_MODE
 #endif // _ADC_H_H

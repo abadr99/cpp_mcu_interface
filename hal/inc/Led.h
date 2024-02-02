@@ -7,29 +7,23 @@ namespace hal {
 namespace led {
 
 enum OutputMode {
-    kActiveLow,     /**< Indicates the device will be on with low signal>*/
-    kActiveHigh,    /**< Indicates the device will be off with low signal>*/
+    kActiveLow,    /**< Indicates the device will be on with low signal>*/
+    kActiveHigh,   /**< Indicates the device will be off with low signal>*/
 };
-
-enum LedState {
-    kOff,
-    kOn
-};
-
-// TODO(@abadr99): Make LED pin as template parameter
-template <avr::types::Port TPort, OutputMode M = OutputMode::kActiveHigh>
-class Led : public avr::hal::gpio::OutputDeviceInterface<TPort> {
+template <OutputMode M = OutputMode::kActiveHigh>
+class Led : public avr::hal::gpio::OutputDeviceInterface {
 public:
-    Led(avr::types::Pin pin);
+    enum LedState { kOff, kOn };
+    using DevicePin = utils::types::DevicePin;
+    Led(DevicePin dp);
     void TurnOn();
     void TurnOff();
     void Toggle();
     bool IsOn();
     bool IsOff();
-
 private:
-    avr::types::Pin ledPin_;
-    LedState currentState_;
+    DevicePin pin_;
+    LedState  currentState_;
 };
 
 }}} // avr::hal::led
