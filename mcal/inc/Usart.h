@@ -14,16 +14,18 @@
     X(OneBit,  0)\
     X(TwoBits, 1)
 
+// represent the following order: 
+// kUCSZ2 kUCSZ1 kUCSZ0
 #define USART_DATA_SIZE\
-    X(FiveBits,  0b00)\
-    X(SixBits,   0b01)\
-    X(SevenBits, 0b10)\
-    X(EightBits, 0b11)\
-    X(NineBits,  0b11)
+    X(FiveBits,  0b000)\
+    X(SixBits,   0b001)\
+    X(SevenBits, 0b010)\
+    X(EightBits, 0b011)\
+    X(NineBits,  0b111)
 
 #define USART_CLK_POLARITY\
-    X(TxFalling_RxRising, 0)\
-    X(TxRising_RxFalling, 1)
+    X(TxFalling_RxRising, 1)\
+    X(TxRising_RxFalling, 0)
 
 #define USART_ERROR_TYPE\
     X(FrameError)\
@@ -109,8 +111,8 @@ public:
     enum TX_RX_Mode {
         kDisableRX_DisableTX = 0x00,
         kDisableRX_EnableTX  = 0x01,
-        kEnableRX_DisableTX  = 0x10,
-        kEnableRX_EnableTX   = 0x11,
+        kEnableRX_DisableTX  = 0x02,
+        kEnableRX_EnableTX   = 0x03,
     };
     struct UsartConfigurations {
         BaudRate_t      baudRate;
@@ -122,6 +124,7 @@ public:
         ClockPolarity   clkPolarity;
     };
     Usart();
+    void Reset();
     void Init(const UsartConfigurations& cnf = {9600, kEnableRX_EnableTX, kEightBits, kDisabled, kOneBit, kAsynchronous_1x, kTxRising_RxFalling}); //IGNORE-STYLE-CHECK[L004]
     void Send(uint16_t data);
     void Send(uint16_t data, PFunction_t pFun);
@@ -156,6 +159,8 @@ private:
 };
 
 }}} // avr::mcal::usart
+
+extern avr::mcal::usart::Usart USART;
 
 #undef USART_PARITY_MODE
 #undef USART_STOP_BITS
