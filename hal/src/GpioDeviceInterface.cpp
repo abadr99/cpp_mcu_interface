@@ -22,6 +22,11 @@ void OutputDeviceInterface::Init(DevicePin dp) {
     Gpio::SetPinDirection(dp.port, dp.pin, DS::kOutput);
 }
 
+void OutputDeviceInterface::Init(Port port, Pin pin) {
+    using DS = Gpio::DirectionState;
+    Gpio::SetPinDirection(port, pin, DS::kOutput);
+}
+
 void OutputDeviceInterface::Init(Port port) {
     Gpio::SetPortDirection(port, 0xFF);
 }
@@ -40,8 +45,22 @@ void OutputDeviceInterface::SetLowVoltage(DevicePin dp) {
     Gpio::WritePin(dp.port, dp.pin, DL::kLow);
 }
 
+void OutputDeviceInterface::SetHighVoltage(Port port, Pin pin) {
+    using DL = Gpio::DigitalLevel;
+    Gpio::WritePin(port, pin, DL::kHigh);
+}
+
+void OutputDeviceInterface::SetLowVoltage(Port port, Pin pin) {
+    using DL = Gpio::DigitalLevel;
+    Gpio::WritePin(port, pin, DL::kLow);
+}
+
 void OutputDeviceInterface::SetVoltage(DevicePin dp, Gpio::DigitalLevel val) {
     Gpio::WritePin(dp.port, dp.pin, val);
+}
+
+void OutputDeviceInterface::SetVoltage(Port port, Pin pin, DL val) {
+    Gpio::WritePin(port, pin, val);
 }
 // =============================================================================
 // --------------------- InputDeviceInterface impl ----------------------------
