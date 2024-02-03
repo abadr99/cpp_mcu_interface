@@ -18,7 +18,19 @@ enum Pin : uint8_t {
     kPinNotConnected,
 };
 using AvrRegWidth  = uint8_t;
-}}
+}} // namespace avr::types
+
+namespace avr {
+namespace errors {
+
+inline void ERROR() {
+    // TODO(@abadr99): Handle error
+}
+
+inline void ERROR(const char* msg) {
+    // TODO(@abadr99): Handle error
+}
+}} // namespace avr::utils
 
 // Set enable interrupt
 #define SEI() asm volatile ("sei" ::: "memory");
