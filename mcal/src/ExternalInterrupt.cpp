@@ -28,7 +28,9 @@ struct ExternalInterruptRegisters {
     enum GICR   {kINT2=5, kINT0, kINT1};
 };
 
-void EXTI:: SetInterrupt(InterruptSource interrupt, InterruptMode mode, pFun callback){
+void EXTI::SetInterrupt(InterruptSource interrupt,
+ InterruptMode mode, pFun callback)
+{
     using EIR = ExternalInterruptRegisters;
     EIR reg;
     // --- ENABLE GLOBAL INTERRUPT 
