@@ -144,7 +144,8 @@ void Lcd::Display(float data, uint8_t prec) {
     // --- Display fraction part
     Display(floatNum.fractionPart);
 }
-
+/*FIX ME (@abadr99): This method is not working
+as expected*/
 void Lcd::SetCursor(uint8_t row, uint8_t col) { // 0-based rows and cols
     // Evaluate the command mode
     // Handle case of invalid rows and cols (return to 0,0)
