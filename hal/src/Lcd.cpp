@@ -202,7 +202,8 @@ void Lcd::BlinkOff() {
     Send<SM::kCommand>(Command::kBlinkOff);
     _delay_us(50);
 }
-
+/*FIX ME (@abadr99): This method is not working
+as expected*/
 void Lcd::StoreCustomChar( char pChar_Arr[], uint8_t location) {
     // 1) Point to CG-RAM
     Send<SM::kCommand>(Command::kCGRAM + (location * 8));
