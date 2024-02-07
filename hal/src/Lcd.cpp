@@ -52,7 +52,7 @@ void Lcd::Send(uint8_t d) {
     }
     // Handle 8-bits data transfer mode
     if (config_.IsEightBit()) {
-        WritePort(config_.ctrlPort, d);
+        WritePort(config_.dataPort, d);
         Pulse();
         return;
     }
@@ -115,8 +115,12 @@ void Lcd::ClearScreen() {
 }
 
 void Lcd::Display(size_t data, NumberMode mode) {
+    uint8_t i = 0;
     char buff[16];
     itoa(data, buff, mode);
+    while (buff[i] != '\0') {
+        Send<SM::kData>(buff[i++]);
+    }
 }
 
 void Lcd::Display(char data) {
@@ -150,7 +154,7 @@ void Lcd::SetCursor(uint8_t row, uint8_t col) { // 0-based rows and cols
         _delay_ms(1);
         return;
     }
-    
+
     // auto GetOffset = [&]() -> uint8_t {
     //     row == 0 ? 0 : 64;
     // };
@@ -199,7 +203,7 @@ void Lcd::BlinkOff() {
     _delay_us(50);
 }
 
-void Lcd::StoreCustomChar(char pChar_Arr[], uint8_t location) {
+void Lcd::StoreCustomChar( char pChar_Arr[], uint8_t location) {
     // 1) Point to CG-RAM
     Send<SM::kCommand>(Command::kCGRAM + (location * 8));
     // 2) Copy characters from byte 0 to byte 7 to CGRAM
