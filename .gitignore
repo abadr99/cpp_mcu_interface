@@ -38,3 +38,7 @@
 
 # vscode
 .vscode
+
+# tests output
+*.testelf
+results.output

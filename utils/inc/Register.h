@@ -1,48 +1,97 @@
 #ifndef _REGISTER_H_
 #define _REGISTER_H_
 
+#include "Helpers.h"
 namespace utils {
 // Wrapper class for register 
 // All register modification should be handled in 
 // this class
-template<typename RegWidth_t>
+template<typename TRegWidth>
 class Register {
 public:
-    Register(const RegWidth_t address);
+    Register(const TRegWidth address)
+    : pReg_(reinterpret_cast<volatile TRegWidth *>(address))
+    { /* EMPTY */}
     
-    template<RegWidth_t address>
-    void SetAddress() {
-        _pReg = reinterpret_cast<volatile RegWidth_t *>(address);
-    }
-    
-    template<uint8_t bitNumber>
-    void SetBit() const {
-        *_pReg |=  (1 << bitNumber);
+    template<TRegWidth address>
+    inline constexpr Register& SetAddress() {
+        pReg_ = reinterpret_cast<volatile TRegWidth *>(address);
+        return *this;
     }
     
-    template<uint8_t bitNumber>
-    void ClearBit() const{
-        *_pReg  &= ~(1 << bitNumber);
+    template<uint8_t TBitNumber>
+    inline constexpr Register& SetBit() {
+        *pReg_ |=  (1 << TBitNumber);
+        return *this;
+    }
+    
+    template<uint8_t TBitNumber>
+    inline constexpr Register& ClearBit() {
+        *pReg_  &= ~(1 << TBitNumber);
+        return *this;
     }
 
-    template<uint8_t bitNumber>
-    uint8_t ReadBit() const {
-        return ((*_pReg & (1 << bitNumber)) >> bitNumber);
+    inline constexpr Register& SetBit(uint8_t bitNumber) {
+        *pReg_ |=  (1 << bitNumber);
+        return *this;
+    }
+    
+    inline constexpr Register& ClearBit(uint8_t bitNumber) {
+        *pReg_  &= ~(1 << bitNumber);
+        return *this;
     }
 
-    template<uint8_t bitNumber>
-    void ToggleBit() const {
-        *_pReg ^=  (1 << bitNumber);
+    template<uint8_t TBitNumber>
+    inline constexpr uint8_t ReadBit() {
+        return ((*pReg_ & (1 << TBitNumber)) >> TBitNumber);
     }
 
-    void SetRegisterValue(RegWidth_t R);
-    RegWidth_t GetRegisterValue();
-    // Set all bits to one
-    void Set() const;
-    void Clear() const;
-    RegWidth_t Get() const;
+    inline constexpr uint8_t ReadBit(uint8_t bitNumber) {
+        return ((*pReg_ & (1 << bitNumber)) >> bitNumber);
+    }
+    
+    template<uint8_t TBitNumber>
+    inline constexpr Register& ToggleBit() {
+        *pReg_ ^=  (1 << TBitNumber);
+        return *this;
+    }
+    
+    template<TRegWidth TVal, uint8_t TStart, uint8_t TEnd = TStart>
+    inline constexpr Register& WriteBits() {
+        static_assert(TStart <= TEnd, "Calling WriteBits with startBit first"); //IGNORE-STYLE-CHECK[L004]
+        static_assert(sizeof(TRegWidth)*8 > TStart, "large integer implicitly truncated to unsigned type"); //IGNORE-STYLE-CHECK[L004]
+        TRegWidth ones = utils::GetOnes<TRegWidth>(static_cast<TRegWidth>(TEnd - TStart) + 1); //IGNORE-STYLE-CHECK[L004]
+        TRegWidth mask = ~(ones << TStart); //IGNORE-STYLE-CHECK[L004]
+        *pReg_ = (*pReg_ & mask) | (TVal << TStart);
+        return *this;
+    }
+
+    template<uint8_t TStart, uint8_t TEnd = TStart>
+    inline constexpr Register& WriteBits(TRegWidth val) {
+        static_assert(TStart <= TEnd, "Calling WriteBits with startBit first"); //IGNORE-STYLE-CHECK[L004]
+        static_assert(sizeof(TRegWidth)*8 > TStart, "large integer implicitly truncated to unsigned type"); //IGNORE-STYLE-CHECK[L004]
+        TRegWidth ones = utils::GetOnes<TRegWidth>(static_cast<TRegWidth>(TEnd - TStart) + 1); //IGNORE-STYLE-CHECK[L004]
+        TRegWidth mask = ~(ones << TStart);
+        *pReg_ = (*pReg_ & mask) | (val << TStart);
+        return *this;
+    }
+
+    template<uint8_t TStart, uint8_t TEnd = TStart>
+    inline constexpr TRegWidth ReadBits() {
+        static_assert(TStart <= TEnd, "Calling ReadBits with startBit first");
+        uint8_t numberOfBits = TEnd - TStart + 1;
+        return (*pReg_ >> TStart) & (utils::GetOnes<TRegWidth>(numberOfBits));
+    }
+    
+    Register& WriteRegister(TRegWidth reg) {
+        *pReg_ = reg;
+        return *this;
+    }
+    TRegWidth ReadRegister() {
+        return *pReg_;
+    }
 private:
-    volatile RegWidth_t* _pReg;
+    volatile TRegWidth* pReg_;
 };
 
 }

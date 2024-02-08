@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Run this script at CPP_MCU_INTERFACE
-# sh run-regressionn.sh path/to/elf/dir
+# sh run-regressions.sh path/to/elf/dir
 
 # Define ANSI color codes
 RED='\033[0;31m'
@@ -76,14 +76,6 @@ fi
 test_dir=$(dirname "$test_file")
 echo "\033[1;36m [-- TESTING --]:$RESET $test_file $RESET" 
 
-if [ -s "$test_dir/results.expected" ]
-then
-  echo "$OK Expected results file have been found : $test_dir/results.expected"
-else
-  echo "$OPS No results.expected file found in the directory: $test_dir"
-  exit 1
-fi
-
 simulavr -d atmega32 -f $test_file -W 0x20,- -R 0x22,- -T exit > $test_dir/resultss.output
 head -n -1 $test_dir/resultss.output > $test_dir/results.output
 rm -rf $test_dir/resultss.output
@@ -93,9 +85,9 @@ then
   echo "$OK Output file has been generated successfully : $test_dir/results.output"
 fi
 
-diff $test_dir/results.output $test_dir/results.expected
+grep "FAIL" $test_dir/results.output
 
-if [ $? -eq 0 ]
+if [ $? -gt 0 ]
 then  
     echo "$GREEN[--- PASS  ---] $RESET: $test_file" >> $main_CPP_test_directory/summary
     echo "$GREEN[--- PASS  ---] $RESET: $test_file" 

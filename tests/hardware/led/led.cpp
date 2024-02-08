@@ -1,7 +1,6 @@
  /**
  * @file led_1.cpp
- * @author @MariamAhmed44 (madiam.ahmed300@gmail.com)
- * @brief  - Very simple led test that turns it on for 1 second
+ * @brief  - Led test that turns it on for 1 second
  *         - After that it turns it off for 1 second
  *         - Then it toggles for 
  *         - After 5 seconds it toggles again
@@ -31,21 +30,16 @@ using namespace avr::types;
 int main() 
 {
     // 1] Create a led object with PortA
-           Led<kPortA, kActiveHigh>led_1(kPin0);
+    Led<kActiveHigh>led_1({kPortA, kPin0});
     
-         while (1) {
-    // 2] Turn the led on  
-             led_1.TurnOn();
-    // 3] after a second, turn it off
-              _delay_ms(1000);
-             led_1.TurnOff();
-    // 4] after a second toggle it
-             _delay_ms(1000);
-             led_1.Toggle();
-    // 5] after 5 seconds toggle it again
-             _delay_ms(5000);
-             led_1.Toggle();
-             _delay_ms(5000);
-      
-          }
+    while (1) {
+      led_1.TurnOn();
+      _delay_ms(1000);
+      led_1.TurnOff();
+      _delay_ms(1000);
+      led_1.Toggle();
+      _delay_ms(5000);
+      led_1.Toggle();
+      _delay_ms(5000);
+    }
 }
