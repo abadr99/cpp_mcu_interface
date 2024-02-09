@@ -163,7 +163,7 @@ uint16_t Usart::ReadDataRegister() {
     if (GetDataSize() == DataSize::kNineBits) {
         data = registers_.GetUCSRB().ReadBit<UCSRB::kRXB8>();
     }
-    return (data << 8) | registers_.GetUCSRB().ReadRegister();
+    return (data << 8) | registers_.GetUDR().ReadRegister();
 }
 
 void Usart::Send(uint16_t data) {
