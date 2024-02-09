@@ -194,8 +194,8 @@ void Usart::Send(uint16_t data, PFunction_t pFun) {
     transmitterCallBack_ = pFun;
     // --- Set data
     tx_data_ = data;
-    // --- Enable transmit complete interrupt 
-    registers_.GetUCSRB().SetBit<UCSRB::kUDRIE>();
+    // --- Enable transmit  interrupt 
+    registers_.GetUCSRB().SetBit<UCSRB::kTXCIE>();
     // TODO(abadr99): --- Enable global interrupt
 }
 
@@ -208,8 +208,8 @@ uint16_t Usart::Receive() {
 uint16_t Usart::Receive(PFunction_t pFun) {
     // --- Set callback
     receiverCallBack_ = pFun;
-    // --- Enable transmit complete interrupt 
-    registers_.GetUCSRB().SetBit<7>();
+    // --- Enable receive interrupt 
+    registers_.GetUCSRB().SetBit<UCSRB::kRXCIE>();
     // --- Enable global interrupt
     SEI();
     return rx_data_;
