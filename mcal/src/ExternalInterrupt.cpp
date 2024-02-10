@@ -11,6 +11,8 @@ using namespace avr::mcal::external_interrupt;
 using namespace utils;
 using namespace avr::errors;
 using namespace avr::types;
+namespace EXTI=avr::mcal::external_interrupt;
+
 static volatile pFun ExternalInterruptCallBacks[3];
 
 struct ExternalInterruptRegisters {
@@ -23,10 +25,12 @@ struct ExternalInterruptRegisters {
     { /* EMPTY */}
     enum MCUCR  {kISC00, kISC01, kISC10, kISC11};
     enum MCUCSR {kISC2 = 6};
-    enum GICR   {kINT2, kINT0, kINT1};
+    enum GICR   {kINT2=5, kINT0, kINT1};
 };
 
-void SetInterrupt(InterruptSource interrupt, InterruptMode mode, pFun callback){
+void EXTI::SetInterrupt(InterruptSource interrupt,
+ InterruptMode mode, pFun callback)
+{
     using EIR = ExternalInterruptRegisters;
     EIR reg;
     // --- ENABLE GLOBAL INTERRUPT 
@@ -54,19 +58,19 @@ void SetInterrupt(InterruptSource interrupt, InterruptMode mode, pFun callback){
     ExternalInterruptCallBacks[interrupt] = callback;
 }
 
-ISR(INT0) {
+ISR(1) {
     if (ExternalInterruptCallBacks[0]) {
         ExternalInterruptCallBacks[0]();
     }
 }
 
-ISR(INT1) {
+ISR(2) {
     if (ExternalInterruptCallBacks[1]) {
         ExternalInterruptCallBacks[1]();
     }
 }
 
-ISR(INT2) {
+ISR(3) {
     if (ExternalInterruptCallBacks[2]) {
         ExternalInterruptCallBacks[2]();
     }
