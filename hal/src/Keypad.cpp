@@ -32,7 +32,7 @@ Keypad::Keypad(Port port,
     }
 
 }
-void Keypad::KeypadKeysInit(char arr[COL_SIZE][ROW_SIZE])
+void Keypad::KeypadKeysInit(char arr[ROW_SIZE][COL_SIZE])
 {
  for (uint8_t i = 0 ; i < COL_SIZE; ++i) {
    for (uint8_t y=0 ; y < ROW_SIZE; ++y)
