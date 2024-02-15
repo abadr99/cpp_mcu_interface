@@ -20,7 +20,7 @@ class Keypad :
     Keypad(Port port,
            Pin c1, Pin c2, Pin c3, Pin c4,
            Pin r1, Pin r2, Pin r3, Pin r4);
-    void KeypadKeysInit(char arr[COL_SIZE][ROW_SIZE]);
+    void KeypadKeysInit(char arr[ROW_SIZE][COL_SIZE]);
     uint8_t KeypadGetPressed();
 
 private:
