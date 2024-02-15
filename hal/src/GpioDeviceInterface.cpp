@@ -68,9 +68,18 @@ void OutputDeviceInterface::SetVoltage(Port port, Pin pin, DL val) {
  
 InputDeviceInterface::InputDeviceInterface() { /* EMPTY */ }
 
-void InputDeviceInterface::Init(DevicePin dp) {
+void InputDeviceInterface::Init(DevicePin dp, Input_mode ip=kfloat) {
     using DS = Gpio::DirectionState;
-    Gpio::SetPinDirection(dp.port, dp.pin, DS::kInput);
+    switch (ip)
+    {
+    case kfloat:
+        Gpio::SetPinDirection(dp.port, dp.pin, DS::kInput);
+        break;
+    case kpullup:
+        Gpio::SetPinDirection(dp.port, dp.pin, DS::kInputPullUp);
+        break;
+    }
+
 }
 
 typename InputDeviceInterface::DigitalLevel 
