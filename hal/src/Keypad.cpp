@@ -40,11 +40,7 @@ Keypad::Keypad(Port colport,
     }
 
 }
-<<<<<<< HEAD
-void Keypad::KeypadKeysInit(char arr[ROW_SIZE][COL_SIZE])
-=======
 void Keypad::KeypadKeysInit(char** arr)
->>>>>>> e907440 (Updating keypad driver + updating InputDeviceInterface (@Mariamahmed44, @abadr99))
 {
  for (uint8_t i = 0 ; i < ColPort_; ++i) {
    for (uint8_t y=0 ; y < RowSize_; ++y)
@@ -73,7 +69,8 @@ uint8_t Keypad::KeypadGetPressed()
         /*get the value of the pressed key*/
        KeyValue=KEYPAD_KEYS[RowCounter][ColCounter];
        /*wait until its not pressed*/
-       while (GetPinState({RowPort_, RowPins_[RowCounter]})==DigitalLevel::kLow) 
+       while (GetPinState({RowPort_, RowPins_[RowCounter]})
+            == DigitalLevel::kLow) 
              {/*empty*/}
        /*wait for debouncing time*/
        _delay_ms(KEYPAD_DEBOUNCING_TIME);
