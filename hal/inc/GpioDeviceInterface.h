@@ -29,13 +29,18 @@ protected:
 // All digital Input devices should inherit from this class
 class InputDeviceInterface {
 protected:
+    enum Input_mode
+    {
+     kfloat,
+     kpullup
+    };
     using Pin = avr::types::Pin;
     using Port = avr::types::Port;
     using Gpio_t = avr::mcal::gpio::Gpio;
     using DigitalLevel = avr::mcal::gpio::Gpio::DigitalLevel;
     using DevicePin = utils::types::DevicePin;
     InputDeviceInterface();
-    void Init(DevicePin dp);
+    void Init(DevicePin dp, Input_mode ip);
     DigitalLevel GetPinState(DevicePin dp);
 };
 
