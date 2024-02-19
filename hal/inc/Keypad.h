@@ -2,8 +2,6 @@
 #define _KEYPAD_H_
 
 #define KEYPAD_DEBOUNCING_TIME 20
-#define COL_SIZE               4
-#define ROW_SIZE               4
 
 namespace avr {
 namespace hal {
@@ -17,16 +15,23 @@ class Keypad :
     enum KeypadState { KPressed, KNotPressed };
     using Port = avr::mcal::gpio::Gpio::Port;
     using Pin = avr::mcal::gpio::Gpio::Pin;
-    Keypad(Port port,
-           Pin c1, Pin c2, Pin c3, Pin c4,
-           Pin r1, Pin r2, Pin r3, Pin r4);
-    void KeypadKeysInit(char arr[ROW_SIZE][COL_SIZE]);
+    Keypad(Port colport, 
+           Port rowport, 
+           uint8_t colsize, 
+           uint8_t rowsize, 
+           Pin* colpins, 
+           Pin* rowpins);
+    void KeypadKeysInit(char** arr);
     uint8_t KeypadGetPressed();
 
 private:
-      Port KeypadPort_;
-      Pin pins_[8];
-      char KEYPAD_KEYS [ROW_SIZE][COL_SIZE];
+      Port ColPort_;
+      Port RowPort_;
+      uint8_t ColSize_;
+      uint8_t RowSize_;
+      Pin* ColPins_;
+      Pin* RowPins_;
+      char** KEYPAD_KEYS;
 
 };
 }}} // avr::hal::keypad
