@@ -10,3 +10,4 @@ hal/src/DcMotor
 hal/src/SevenSegment
 hal/src/Lm35
 hal/src/Lcd
+mcal/src/Spi
